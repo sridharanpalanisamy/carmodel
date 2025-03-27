@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Old Ford Car Models</title>
+    <link rel="stylesheet" href="home.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .car-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .car {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .car img {
+            max-width: 80%;
+            height: fit-content;
+            border-radius: 5px;
+        }
+
+        .car h2 {
+            margin: 10px 0;
+        }
+
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 70%;
+            height: 80%;
+            
+        }
+
+        .modal-content {
+            background: rgb(217, 235, 213);
+            margin: 10% auto;
+            padding: 20px;
+            width: 50%;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .modal-content img {
+            max-width: 90%;
+            height:fixed;
+            border-radius: 5px;
+        }
+
+        .close {
+            color: red;
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: darkred;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="index.html">Ford Brand Cars</a></li>
+                <li><a href="contact.html">Contact us</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <h1>Classic Ford Car Models</h1>
+        <div class="car-grid">
+            <!-- Ford Model T -->
+            <div class="car">
+                <img src="ford-model-t.png" alt="Ford Model T">
+                <h2>Ford Model T (1908)</h2>
+                <p>The Ford Model T revolutionized the automobile industry.</p>
+                <button onclick="viewCarDetails('Ford Model T', '1908', 'Petrol', '2.9L I4', '72 km/h', '18 km/l', 'The first mass-produced car that made automobiles affordable.', 'ford-model-t.png')">View Details</button>
+            </div>
+
+            <!-- Ford Model A -->
+            <div class="car">
+                <img src="ford_model_a.png" alt="Ford Model A">
+                <h2>Ford Model A (1927)</h2>
+                <p>The successor to the Model T, introducing better styling.</p>
+                <button onclick="viewCarDetails('Ford Model A', '1927', 'Petrol', '3.3L I4', '104 km/h', '15 km/l', 'A stylish and improved version of the Model T with better performance.', 'ford_model_a.png')">View Details</button>
+            </div>
+
+            <!-- Ford Deluxe Coupe -->
+            <div class="car">
+                <img src="ford_deluxe.png" alt="Ford Deluxe Coupe">
+                <h2>Ford Deluxe Coupe (1940)</h2>
+                <p>A stylish and powerful coupe with a V8 engine.</p>
+                <button onclick="viewCarDetails('Ford Deluxe Coupe', '1940', 'Petrol', '3.6L V8', '140 km/h', '10 km/l', 'A stylish coupe that became popular for its elegance and performance.', 'ford_deluxe.png')">View Details</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for Car Details -->
+    <div id="carModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title"></h2>
+            <img id="modal-image" src="" alt="">
+            <p id="modal-description"></p>
+            <ul>
+                <li><strong>Model Year:</strong> <span id="modal-year"></span></li>
+
+                <li><strong>Fuel Type:</strong> <span id="modal-fuel"></span></li>
+                <li><strong>Engine:</strong> <span id="modal-engine"></span></li>
+                <li><strong>Top Speed:</strong> <span id="modal-speed"></span></li>
+                <li><strong>Mileage:</strong> <span id="modal-mileage"></span></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function viewCarDetails(model, year, fuel, engine, speed, mileage, description, image) {
+            document.getElementById("modal-title").textContent = model + " (" + year + ")";
+            document.getElementById("modal-image").src = image;
+            document.getElementById("modal-description").textContent = description;
+            document.getElementById("modal-year").textContent = year;
+            document.getElementById("modal-fuel").textContent = fuel;
+            document.getElementById("modal-engine").textContent = engine;
+            document.getElementById("modal-speed").textContent = speed;
+            document.getElementById("modal-mileage").textContent = mileage;
+
+            document.getElementById("carModal").style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById("carModal").style.display = "none";
+        }
+    </script>
+</body>
+</html>
