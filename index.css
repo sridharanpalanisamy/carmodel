@@ -134,7 +134,7 @@ button:hover {
 }
 .slider-container {
     width: 100%; /* Adjust size */
-    height: 500px;
+    height: 400px;
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -154,11 +154,12 @@ button:hover {
 .slider img {
     position: absolute;
     width: 100%;
-    height: 100%;
-    object-fit: contain;
+    height: 400px;
+    object-fit: cover;
     background-color:white;
     opacity: 0;
     transition: opacity 1s ease-in-out;
+    display: inline-block;
 }
 
 /* Ensure the first image is visible initially */
