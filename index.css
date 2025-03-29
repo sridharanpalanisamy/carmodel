@@ -155,7 +155,7 @@ button:hover {
     position: absolute;
     width: 100%;
     height: 400px;
-    object-fit: contain;
+    object-fit: cover;
     opacity: 0;
     transition: opacity 1s ease-in-out;
     display: inline-block;
