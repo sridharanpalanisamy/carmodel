@@ -45,15 +45,16 @@ nav ul li a:hover {
 }
 
 .contact-container {
-    max-width: 600px;
+    max-width: 500px;
     margin: auto;
     padding: 20px;
-    background: #f4f4f4;
+    background: #f7f4f4;
     border-radius: 8px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .contact-container h1 {
+    margin: 0;
     color: #003366;
 }
 
@@ -66,10 +67,12 @@ nav ul li a:hover {
 
 .contact-container input, .contact-container textarea {
     width: 100%;
-    padding: 10px;
+    max-width: 450px;
+    padding: 8px;
     margin-top: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    font-size: 14px;
 }
 
 .contact-container button {

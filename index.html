@@ -3,106 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classic Ford Cars</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Old Ford Car Models</title>
+    <link rel="stylesheet" href="index.css">
+    <script src="index.js" defer></script>
+
 </head>
 <body>
     <header>
         <nav>
             <ul>
-                <li><a href="home.html">Home</a></li>
+                <li><a href="index.html">Home</a></li>
                 <li><a href="about.html">About Us</a></li>
-                <li><a href="index.html">Ford Brand Cars</a></li>
+                <li><a href="home.html">Ford Brand Cars</a></li>
                 <li><a href="contact.html">Contact us</a></li>
-                <li><input type="text" placeholder="Search Cars..." id="search-box" onkeyup="filterCars()">
-                <button onclick="filterCars()">Search</button></li>
             </ul>
         </nav>
     </header>
+    
+    <main>
+        <h1>Vintage Ford Classics: Power, Style & Heritage</h1>
+        <div class="slider-container">
+            <div class="slider" id="imageSlider">
+            <img class="sliderImage" src="ford-model-t.png" alt="Random Image">
+            <img class="sliderImage" src="ford-thunderbird.png" alt="Random Image">
+            <img class="sliderImage" src="ford-v8.png" alt="Random Image">
+            <img class="sliderImage" src="ford-falcon.png" alt="Random Image">
+            <img class="sliderImage" src="ford-f100.png" alt="Random Image">
+        </div>    
+        </div>
+
+        <h2>Classic Ford Car Models</h2>
+        <div class="car-grid">
+            <!-- Ford Model T -->
+            <div class="car">
+                <img src="ford-model-t.png" alt="Ford Model T">
+                <h2>Ford Model T (1908)</h2>
+                <p>The Ford Model T revolutionized the automobile industry.</p>
+                <button onclick="viewCarDetails('Ford Model T', '1908', 'Petrol', '2.9L I4', '72 km/h', '18 km/l', 'The first mass-produced car that made automobiles affordable.', 'ford-model-t.png')">View Details</button>
+            </div>
+
+            <!-- Ford Model A -->
+            <div class="car">
+                <img src="ford_model_a.png" alt="Ford Model A">
+                <h2>Ford Model A (1927)</h2>
+                <p>The successor to the Model T, introducing better styling.</p>
+                <button onclick="viewCarDetails('Ford Model A', '1927', 'Petrol', '3.3L I4', '104 km/h', '15 km/l', 'A stylish and improved version of the Model T with better performance.', 'ford_model_a.png')">View Details</button>
+            </div>
+
+            <!-- Ford Deluxe Coupe -->
+            <div class="car">
+                <img src="ford_deluxe.png" alt="Ford Deluxe Coupe">
+                <h2>Ford Deluxe Coupe (1940)</h2>
+                <p>A stylish and powerful coupe with a V8 engine.</p>
+                <button onclick="viewCarDetails('Ford Deluxe Coupe', '1940', 'Petrol', '3.6L V8', '140 km/h', '10 km/l', 'A stylish coupe that became popular for its elegance and performance.', 'ford_deluxe.png')">View Details</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for Car Details -->
+    <div id="carModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title"></h2>
+            <img id="modal-image" src="" alt="">
+            <p id="modal-description"></p>
+            <ul>
+                <li><strong>Model Year:</strong> <span id="modal-year"></span></li>
+
+                <li><strong>Fuel Type:</strong> <span id="modal-fuel"></span></li>
+                <li><strong>Engine:</strong> <span id="modal-engine"></span></li>
+                <li><strong>Top Speed:</strong> <span id="modal-speed"></span></li>
+                <li><strong>Mileage:</strong> <span id="modal-mileage"></span></li>
+            </ul>
+        </div>
+    </div>
+
     <script>
-        function filterCars() {
-            let input = document.getElementById("search-box").value.toLowerCase();
-            let carCards = document.getElementsByClassName("car-card");
-    
-            for (let i = 0; i < carCards.length; i++) {
-                let carTitle = carCards[i].getElementsByTagName("h2")[0].innerText.toLowerCase();
-                
-                if (carTitle.includes(input)) {
-                    carCards[i].style.display = "block";  // Show the card
-                } else {
-                    carCards[i].style.display = "none";   // Hide the card
-                }
-            }
+        function viewCarDetails(model, year, fuel, engine, speed, mileage, description, image) {
+            document.getElementById("modal-title").textContent = model + " (" + year + ")";
+            document.getElementById("modal-image").src = image;
+            document.getElementById("modal-description").textContent = description;
+            document.getElementById("modal-year").textContent = year;
+            document.getElementById("modal-fuel").textContent = fuel;
+            document.getElementById("modal-engine").textContent = engine;
+            document.getElementById("modal-speed").textContent = speed;
+            document.getElementById("modal-mileage").textContent = mileage;
+
+            document.getElementById("carModal").style.display = "block";
         }
+
+        function closeModal() {
+            document.getElementById("carModal").style.display = "none";
+        }
+        
     </script>
-    
-    <section class="car-grid">
-        <div class="car-card">
-            <img src="ford-model-t.png" alt="Ford Model T">
-            <h2>Ford Model T (1908-1927)</h2>
-            <p>The first mass-produced car, revolutionizing the automobile industry.</p>
-        </div>
-        <div class="car-card">
-            <img src="ford-model-a.png" alt="Ford Model A">
-            <h2>Ford Model A (1927-1931)</h2>
-            <p>Successor to the Model T, featuring better performance and styling.</p>
-        </div>
-        <div class="car-card">
-            <img src="ford-v8.png" alt="Ford V8">
-            <h2>Ford V8 (1932)</h2>
-            <p>Introduced the flathead V8 engine, setting new performance standards.</p>
-        </div>
-        <div class="car-card">
-            <img src="ford-thunderbird.png" alt="Ford Thunderbird">
-            <h2>Ford Thunderbird (1955-2005)</h2>
-            <p>A luxury sports car that competed with the Chevrolet Corvette.</p>
-        </div>
-        <div class="car-card">
-            <img src="ford-mustang.png" alt="Ford Mustang">
-            <h2>Ford Mustang (1964-Present)</h2>
-            <p>An iconic pony car known for its performance and style.</p>
-        </div>
-        <div class="car-card">
-            <img src="ford-gt40.png" alt="Ford GT40">
-            <h2>Ford GT40 (1964-1969)</h2>
-            <p>Defeated Ferrari at Le Mans, becoming a racing legend.</p>
-        </div>
-        <div class="car-card">
-            <img src="ford-f100.png" alt="Ford F-100">
-            <h2>Ford F-100 (1953-1983)</h2>
-            <p>Part of the legendary F-Series trucks, widely popular in the U.S.</p>
-        </div>
-        <div class="car-card">
-            <img src="ford-pinto.png" alt="Ford Pinto">
-            <h2>Ford Pinto (1971-1980)</h2>
-            <p>A subcompact car known for its affordability and fuel efficiency.</p>
-        </div>
-        <div class="car-card">
-            <img src="ford-falcon.png" alt="Ford Falcon">
-            <h2>Ford Falcon (1960-1970)</h2>
-            <p>A compact car that paved the way for the Mustang.</p>
-        </div>
-        <div class="car-card">
-            <img src="ford-bronco.png" alt="Ford Bronco">
-            <h2>Ford Bronco (1966-Present)</h2>
-            <p>An off-road SUV with a cult following.</p>
-        </div>
-        <div class="car-card">
-            <img src="ford_model_t.png" alt="Ford Model T">
-            <h2>Ford Model T (1908)</h2>
-            <p>The Ford Model T revolutionized the automobile industry with its affordability and mass production.</p>
-        </div>
-        <div class="car-card">
-            <img src="ford_model_a.png" alt="Ford Model A">
-            <h2>Ford Model A (1927)</h2>
-            <p>A successor to the Model T, the Ford Model A introduced new styling and technical advancements.</p>
-        </div>
-        <div class="car-card">
-            <img src="ford_deluxe.png" alt="Ford Deluxe Coupe">
-            <h2>Ford Deluxe Coupe (1940)</h2>
-            <p>A stylish and powerful coupe, the Ford Deluxe was popular for its V8 engine and elegant design.</p>
-        </div>
-        <!-- Add more models here to reach 50 -->
-    </section>
 </body>
 </html>

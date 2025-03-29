@@ -38,7 +38,7 @@ const fordCars = [
         mileage: "7 km/l",
         description: "Defeated Ferrari at Le Mans, becoming a racing legend.",
         image: "ford-gt40.png"
-    }
+    },
 
     {
         model: "Ford Model T",

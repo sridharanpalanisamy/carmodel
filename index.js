@@ -30,3 +30,25 @@ const fordCars = [
         image: "ford_deluxe.png"
     }
 ];
+
+            document.addEventListener("DOMContentLoaded", function () {
+    const images = document.querySelectorAll(".sliderImage"); // Use class instead of id
+    let index = 0;
+
+    function showNextImage() {
+        images.forEach((img, i) => {
+            img.style.opacity = i === index ? "1" : "0"; // Show one image at a time
+        });
+        index = (index + 1) % images.length; // Move to the next image
+    }
+
+    // Initialize styles for images
+    images.forEach((img, i) => {
+        img.style.position = "absolute";
+        img.style.opacity = i === 0 ? "1" : "0";
+        img.style.transition = "opacity 1s ease-in-out"; // Smooth transition
+    });
+
+    // Change image every 3 seconds
+    setInterval(showNextImage, 2000);
+});
