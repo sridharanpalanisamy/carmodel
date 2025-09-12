@@ -16,7 +16,7 @@ Visit the live page:
 This site features:
 
 - **Photography & images** of vintage Ford cars such as the Model T (1908), Model A (1927), Deluxe Coupe (1940), etc.  
-- A short description (`“revolutionized the automobile industry”`, better styling, powerful V8 engine, etc.) for each car model.  
+- A short description (“revolutionized the automobile industry”, better styling, powerful V8 engine, etc.) for each car model.  
 - A clean, minimal navigation menu with links: Home, About Us, Ford Brand Cars, Contact Us.
 
 ---
