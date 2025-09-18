@@ -6,8 +6,7 @@ A simple, responsive static website showcasing old Ford car models with details 
 
 ## 🔍 Live Demo
 
-Visit the live page:  
-                 [Classic Ford Car Models](https://sridharanpalanisamy.github.io/carmodel/)
+Visit the live page: [Classic Ford Car Models](https://sridharanpalanisamy.github.io/carmodel/)
 
 ---
 
