@@ -11,7 +11,6 @@ Visit the live page: [Click here](https://sridharanpalanisamy.github.io/carmodel
 ---
 
 ## 📖 About
-
 This site features:
 
 - **Photography & images** of vintage Ford cars such as the Model T (1908), Model A (1927), Deluxe Coupe (1940), etc.  
@@ -20,8 +19,7 @@ This site features:
 
 ---
 
-## 🛠️ Features
-
+## 🛠️ Features=
 - Static HTML/CSS site, easy to navigate.  
 - Responsive layout (works well on desktop & mobile).  
 - Visual focus: large images + descriptive headings.  
@@ -31,7 +29,6 @@ This site features:
 ---
 
 ## 🎯 Tech Stack
-
 - HTML5  
 - CSS3  
 - Optional JS for interactivity (if extended)  
