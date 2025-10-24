@@ -18,7 +18,7 @@ This site features:
 
 ---
 
-## 🛠️ Features=
+## 🛠️ Features
 - Static HTML/CSS site, easy to navigate.  
 - Responsive layout (works well on desktop & mobile).  
 - Visual focus: large images + descriptive headings.  
