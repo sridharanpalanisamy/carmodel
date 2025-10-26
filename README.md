@@ -69,5 +69,4 @@ If you notice any errors, want to suggest a model, or want to help improve the w
 (Optional: Add a proper open-source license like MIT if you want others to formally reuse it.)
 
 ---
-
 > Created by **Sridharan P**
