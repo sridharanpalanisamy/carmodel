@@ -6,7 +6,7 @@ A simple, responsive static website showcasing legendary vintage Ford cars with 
 
 ## 🔍 Live Demo
 
-Explore the live : [Click here](https://sridharanpalanisamy.github.io/carmodel/)
+Explore the live : [Classic Ford Car Models](https://sridharanpalanisamy.github.io/carmodel/)
 
 ---
 
@@ -27,6 +27,7 @@ Featured Models Include:
 ---
 
 ## 🛠️ Features
+
 ✅ Fully responsive — adapts smoothly across all devices (mobile, tablet, desktop).
 
 ✅ Clean and minimal design — focus on car imagery and brief technical info.
@@ -52,23 +53,26 @@ Featured Models Include:
 ## 🎯 Tech Stack
 
    🧱 HTML5 — Structure and layout
+   
    🎨 CSS3 — Styling and responsiveness
+   
    ⚙️ JavaScript (optional) — For future interactivity
+   
    🌐 GitHub Pages — Free and reliable hosting platform
 
 ---
 
 ## 💡 Project Highlights
 ---
-Designed with simplicity and elegance for automotive enthusiasts.
+ 1. Designed with simplicity and elegance for automotive enthusiasts.
 
-SEO-friendly layout for better discoverability.
+ 2. SEO-friendly layout for better discoverability.
 
-Optimized images for faster page loading.
+ 3. Optimized images for faster page loading.
 
-Perfect for portfolio demonstration or frontend practice.
+ 4. Perfect for portfolio demonstration or frontend practice.
 
-Can be expanded into a dynamic website with backend integration in the future.
+ 5. Can be expanded into a dynamic website with backend integration in the future.
 
 ---
 ## ⚙️ How to Use / Extend
@@ -85,8 +89,11 @@ If you want to contribute or extend this project:
 ## 👨‍💻 Who is This For
 
   🚀 Web development students learning static site design.
+  
   📸 Automobile photographers showcasing classic collections.
+  
   🧠 Auto enthusiasts researching Ford’s historical models.
+  
   💼 Portfolio builders demonstrating HTML/CSS/hosting skills.
   
 ---
