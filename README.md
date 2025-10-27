@@ -32,7 +32,6 @@ This site features:
 - CSS3  
 - Optional JS for interactivity (if extended)  
 - GitHub Pages for hosting
-
 ---
 
 ## ⚙️ How to Use / Extend
