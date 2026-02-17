@@ -15,6 +15,7 @@ Explore the live version here :
 
 ## 📖 About
 This project highlights iconic Ford vehicles that shaped automobile history, presented through an elegant static web layout.
+
 Each model section is designed to balance visual appeal and technical detail, giving users a museum-like experience online.
 
 Featured Models Include:
