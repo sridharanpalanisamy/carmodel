@@ -27,7 +27,6 @@ Featured Models Include:
 🏎️ Deluxe Coupe (1940) – Powerful V8 engine with timeless design.
 
 🛻 Additional sections ready for expansion with other Ford classics.
-
 ---
 
 ## 🛠️ Features
