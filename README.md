@@ -50,7 +50,6 @@ Featured Models Include:
           4. Top Speed
 
           5. Mileage
-
 ---
 
 ## 🎯 Tech Stack
