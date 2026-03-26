@@ -75,7 +75,7 @@ Featured Models Include:
  4. Perfect for portfolio demonstration or frontend practice.
 
  5. Can be expanded into a dynamic website with backend integration in the future.
- 6. 
+
 ---
 ## ⚙️ How to Use / Extend
 If you want to contribute or extend this project:
