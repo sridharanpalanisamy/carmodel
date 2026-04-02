@@ -84,9 +84,10 @@ If you want to contribute or extend this project:
    
 3. Add further car models by copying the structure of existing sections.
 
-4. Fill in the placeholders under “Model Year / Fuel Type / Engine / Top Speed / Mileage” for each model.  
-5. Add meaningful content to the “View Details” pages or modals.  
-6. Ensure images are optimized for web and properly referenced.
+4. Fill in the placeholders under “Model Year / Fuel Type / Engine / Top Speed / Mileage” for each model.
+
+6. Add meaningful content to the “View Details” pages or modals.  
+7. Ensure images are optimized for web and properly referenced.
 
 ---
 
