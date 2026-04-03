@@ -116,6 +116,5 @@ If you notice any errors, want to suggest a model, or want to help improve the w
 ## 📝 License
 
 *This project is for educational / portfolio use. Feel free to use its layout and structure for your own content.*  
-
 ---
 > Created by **Sridharan P**
