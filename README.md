@@ -1,6 +1,7 @@
 # 🚗 Classic Ford Car Models
 
 A simple, responsive static website showcasing legendary vintage Ford cars with captivating visuals, historical details, and a timeless design.
+
 ---
 
 ## 🔍 Live Demo
