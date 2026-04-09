@@ -89,7 +89,7 @@ If you want to contribute or extend this project:
 
 6. Add meaningful content to the “View Details” pages or modals.
    
-8. Ensure images are optimized for web and properly referenced.
+7. Ensure images are optimized for web and properly referenced.
 
 ---
 
