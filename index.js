@@ -9,3 +9,23 @@ document.addEventListener("DOMContentLoaded",()=>{
   else{viewer.setAttribute("auto-rotate","");toggle.textContent="Pause rotation Ⅱ";toggle.setAttribute("aria-pressed","true")}
  });
 });
+
+document.addEventListener("DOMContentLoaded",()=>{
+ const viewer=document.getElementById("classicCarViewer");
+ const reset=document.getElementById("resetCarView");
+ const fullscreen=document.getElementById("fullscreenCar");
+ if(!viewer)return;
+ if(reset)reset.addEventListener("click",()=>{
+  viewer.cameraOrbit="0deg 75deg 105%";
+  viewer.cameraTarget="auto";
+  viewer.fieldOfView="auto";
+  viewer.jumpCameraToGoal();
+ });
+ if(fullscreen)fullscreen.addEventListener("click",async()=>{
+  try{
+   if(document.fullscreenElement)await document.exitFullscreen();
+   else if(viewer.requestFullscreen)await viewer.requestFullscreen();
+   else if(viewer.webkitRequestFullscreen)viewer.webkitRequestFullscreen();
+  }catch(error){fullscreen.textContent="Full screen unavailable"}
+ });
+});
