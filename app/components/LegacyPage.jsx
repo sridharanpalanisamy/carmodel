@@ -1,23 +1,12 @@
 "use client";
+
 import { useEffect } from "react";
+import SiteHeader from "./SiteHeader";
 
 export default function LegacyPage({ markup, scripts = [] }) {
   useEffect(() => {
     let cancelled = false;
     const loaded = [];
-    const menu = document.getElementById("menuToggle");
-    const nav = document.getElementById("mainNav");
-    const toggleMenu = () => {
-      if (!menu || !nav) return;
-      const open = nav.classList.toggle("open");
-      menu.setAttribute("aria-expanded", String(open));
-    };
-    menu?.addEventListener("click", toggleMenu);
-    nav?.querySelectorAll("a").forEach(link => link.addEventListener("click", () => {
-      nav.classList.remove("open");
-      menu?.setAttribute("aria-expanded", "false");
-    }));
-
     const load = async () => {
       for (const src of scripts) {
         if (cancelled) return;
@@ -34,9 +23,11 @@ export default function LegacyPage({ markup, scripts = [] }) {
     load().catch(error => console.error("Classic Ford page script failed:", error));
     return () => {
       cancelled = true;
-      menu?.removeEventListener("click", toggleMenu);
       loaded.forEach(script => script.remove());
     };
   }, [scripts]);
-  return <div className="legacy-page" dangerouslySetInnerHTML={{ __html: markup }} />;
+
+  // The original header is now rendered by the shared React component.
+  const pageMarkup = markup.replace(/<header class="site-header">[\s\S]*?<\/header>/, "");
+  return <><SiteHeader /><div className="legacy-page" dangerouslySetInnerHTML={{ __html: pageMarkup }} /></>;
 }
