@@ -135,7 +135,7 @@ export default function ModelDirectory() {
               <span className="az-years">{years}</span>
               <p>{description}</p>
             </div>
-            <button type="button" className="az-view-button" data-local3d={name} onClick={event => event.stopPropagation()}>View 3D ↗</button>
+            <button type="button" className="az-view-button" data-local3d={name} >View 3D ↗</button>
           </article>
         ))}
       </div>
@@ -167,7 +167,7 @@ export default function ModelDirectory() {
                 <div><span>Drive type</span><strong>{featuredSpecs[selectedModel.name]?.[3] || "Varies by model, generation and configuration"}</strong></div>
               </div>
               <p className="az-detail-note">Specifications are representative where a reference configuration is available. For other nameplates, exact engine capacity, fuel, transmission and drivetrain depend on model year, generation, trim and country.</p>
-              <button type="button" className="az-detail-3d" data-local3d={selectedModel.name} onClick={event => event.stopPropagation()}>Open local 3D view ↗</button>
+              <button type="button" className="az-detail-3d" data-local3d={selectedModel.name} >Open local 3D view ↗</button>
             </div>
           </section>
         </div>
