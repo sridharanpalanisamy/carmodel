@@ -27,22 +27,22 @@ document.addEventListener("DOMContentLoaded", () => {
     "model-t": {
       id: "3f601062f25f4987abf18a089e66fbb7",
       title: "Ford Model T",
-      video: "assets/360/ford-model-t.mp4",
-      credit: "Local 360° video pending · 3D fallback by diegor_12 · CC BY",
+      video: null,
+      credit: "Interactive 3D model by diegor_12 · CC BY",
       url: "https://sketchfab.com/3d-models/ford-t-3f601062f25f4987abf18a089e66fbb7"
     },
     "model-a": {
       id: "7c5b1727026b407baa67a10ba9e2be23",
       title: "Ford Model A",
-      video: "assets/360/ford-model-a.mp4",
-      credit: "Local 360° video pending · 3D fallback by Libau Media · CC BY",
+      video: null,
+      credit: "Interactive 3D model by Libau Media · CC BY",
       url: "https://sketchfab.com/3d-models/ford-model-a-v2-downloadable-7c5b1727026b407baa67a10ba9e2be23"
     },
     "mustang-1965": {
       id: "46e5bb2562f2423faedfe3f5ea0444f3",
       title: "1965 Ford Mustang",
-      video: "assets/360/ford-mustang-1965.mp4",
-      credit: "Local 360° video pending · 3D fallback by mertuzulmez · CC BY",
+      video: null,
+      credit: "Interactive 3D model by mertuzulmez · CC BY",
       url: "https://sketchfab.com/3d-models/1965-ford-mustang-46e5bb2562f2423faedfe3f5ea0444f3"
     },
   };
@@ -102,7 +102,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const model = models[selectedModel];
     if (!model) return;
     viewerStarted = true;
-    if (video) {
+    // No licensed, model-specific MP4 turntable files are currently present.
+    // Load the matching 3D model immediately instead of waiting for a 404.
+    if (video && model.video) {
       video.onerror = () => {
         if (selectedModel === selector.value) showExternalFallback(model);
       };
