@@ -110,3 +110,11 @@
 .az-detail-3d:hover{background:var(--orange)}
 @media(max-width:700px){.az-card{padding-right:100px}.az-view-button{top:12px;right:10px;padding:7px 8px}.az-detail-dialog{grid-template-columns:1fr;max-height:90vh}.az-detail-media{min-height:220px;padding:14px}.az-detail-media img{max-height:240px}.az-image-pending{min-height:180px}.az-detail-content{padding:22px 18px}.az-detail-content h2{font-size:25px}}
 @media(max-width:380px){.az-card{padding-right:0;padding-bottom:50px}.az-view-button{top:auto;bottom:10px;left:16px;right:auto}}
+
+
+/* Locally hosted Ford Model T GLB viewer */
+.ford-glb-viewer{width:100%;min-width:0}
+.ford-glb-stage{width:100%;height:clamp(260px,38vw,440px);min-height:260px;overflow:hidden;background:#e7e6e3;touch-action:pan-y}
+.ford-glb-status{padding:9px 12px;background:#f3f1ef;color:#555;font:600 10px/1.5 var(--sans);letter-spacing:.15px}
+.ford-glb-help{padding:8px 12px;color:#8b4a35;font:10px/1.6 var(--sans);background:#f7efeb}
+@media(max-width:700px){.ford-glb-stage{height:280px;min-height:240px}}
