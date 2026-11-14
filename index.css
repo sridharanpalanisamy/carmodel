@@ -51,3 +51,16 @@
 .image-credits-list p{line-height:1.7}
 .image-credits-list a{color:var(--orange);font-weight:700}
 @media(max-width:600px){.mustang-3d-preview{grid-template-columns:1fr}.mustang-3d-preview img{height:180px}}
+
+/* Embedded interactive 3D showroom */
+.turntable-panel{padding:24px 0 28px;border-bottom:1px solid var(--line)}
+.viewer-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0 10px}
+.viewer-toolbar label{font-size:8px;letter-spacing:1.2px;font-weight:700;color:var(--muted)}
+.viewer-toolbar select{min-width:190px;padding:10px 12px;border:1px solid var(--line);background:var(--white);color:var(--ink);font:600 11px var(--sans)}
+.viewer-toolbar span{font-size:9px;color:var(--muted)}
+.viewer-frame{width:100%;aspect-ratio:16/9;min-height:260px;background:#171719;overflow:hidden}
+.viewer-frame iframe{display:block;width:100%;height:100%;border:0}
+.viewer-credit{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 0;font-size:9px;color:var(--muted)}
+.viewer-credit a{color:var(--orange);font-weight:700}
+.model-disclaimer{font-size:9px;line-height:1.7;color:var(--muted);margin:6px 0 0}
+@media(max-width:600px){.viewer-frame{aspect-ratio:4/3;min-height:240px}.viewer-toolbar{align-items:flex-start;flex-direction:column}.viewer-toolbar select{width:100%}.viewer-credit{flex-direction:column}}
