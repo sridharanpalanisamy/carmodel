@@ -27,3 +27,15 @@
 .model-disclaimer{font-size:7px;color:var(--muted);line-height:1.6;margin:8px 0 0}
 @media(max-width:900px){.turntable-panel{padding:22px 0}.turntable-stage model-viewer{height:310px}}
 @media(max-width:600px){.turntable-heading h2{font-size:27px}.turntable-stage model-viewer{height:260px}.turntable-controls{gap:9px}.turntable-controls button{margin-left:0}}
+
+/* Finish the split edge-to-edge desktop composition */
+@media(min-width:901px){
+ .home-layout{column-gap:0}
+ .left-column,.right-column{min-width:0}
+ .hero-panel,.process-panel{padding-right:0}
+ .right-column{padding-left:0}
+ .turntable-controls button{white-space:nowrap}
+ .model-disclaimer a{color:var(--orange);text-decoration:underline;text-underline-offset:2px}
+}
+.turntable-controls button:focus-visible,.gallery-arrow:focus-visible,.dialog-close:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
+@media(max-width:600px){.turntable-controls button{margin-left:0}}
