@@ -6,7 +6,7 @@
 <title>Classic Ford — A Heritage in Motion</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="index.css"><script src="index.js" defer></script>
+<link rel="stylesheet" href="index.css"><script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script><script src="index.js" defer></script>
 </head>
 <body>
 <header class="site-header">
@@ -49,7 +49,16 @@
 <div><span class="eyebrow">THE COLLECTION</span><h2>One name.<br>Many legends.</h2><p>Meet the cars that defined eras, inspired drivers and made history.</p><a href="home.html">Browse all models ↗</a></div>
 <div class="orange-art" aria-hidden="true"><span>F</span><span>FORD</span></div>
 </section>
-<section class="latest-panel">
+<section class="turntable-panel" aria-labelledby="turntableTitle">
+<div class="turntable-heading"><div><span class="eyebrow">INTERACTIVE SHOWROOM</span><h2 id="turntableTitle">See it from<br><em>every angle.</em></h2><p>Drag to rotate. Scroll or pinch to zoom. The model also turns automatically.</p></div><span class="turntable-mark">360°</span></div>
+<div class="turntable-stage">
+<model-viewer id="classicCarViewer" src="https://grab3d.com/dl/muscle-car/muscle-car.glb" alt="Interactive 3D retro muscle car model, an unbranded concept model" camera-controls auto-rotate rotation-per-second="18deg" shadow-intensity="1" exposure="1" environment-image="neutral" interaction-prompt="auto" loading="lazy" reveal="auto">
+<div slot="poster" class="viewer-poster"><img src="assets/images/ford-mustang.png" alt=""><span>Loading 3D showroom…</span></div>
+</model-viewer>
+<div class="turntable-controls"><span><i></i> DRAG TO ROTATE</span><span>SCROLL TO ZOOM</span><button id="toggleAutoRotate" type="button" aria-pressed="true">Pause rotation Ⅱ</button></div>
+</div>
+<p class="model-disclaimer">3D demonstration model: an unbranded retro muscle car, not an official Ford vehicle. Model source: Grab3D · CC0 1.0.</p>
+</section>\n<section class="latest-panel">
 <div class="latest-heading"><div><span class="eyebrow">SELECTED ICONS</span><h2>Explore the classics.</h2></div><a href="home.html">All models ↗</a></div>
 <div class="latest-feature"><img src="assets/images/ford-gt40.png" alt="Ford GT40" loading="lazy"><div><span>1964 — 1969 / MOTORSPORT</span><strong>Ford GT40</strong><a href="home.html">Discover ↗</a></div></div>
 <div class="mini-cars">
