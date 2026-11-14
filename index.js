@@ -1,54 +1,65 @@
-const fordCars = [
-    {
-        model: "Ford Model T",
-        year: "1908",
-        fuelType: "Petrol",
-        engine: "2.9L I4",
-        topSpeed: "72 km/h",
-        mileage: "18 km/l",
-        description: "The Ford Model T revolutionized the automobile industry with its affordability and mass production.",
-        image: "ford-model-t.png"
-    },
-    {
-        model: "Ford Model A",
-        year: "1927",
-        fuelType: "Petrol",
-        engine: "3.3L L-Head I4",
-        topSpeed: "104 km/h",
-        mileage: "15 km/l",
-        description: "A successor to the Model T, the Ford Model A introduced new styling and technical advancements.",
-        image: "ford_model_a.png"
-    },
-    {
-        model: "Ford Deluxe Coupe",
-        year: "1940",
-        fuelType: "Petrol",
-        engine: "3.6L V8",
-        topSpeed: "140 km/h",
-        mileage: "10 km/l",
-        description: "A stylish and powerful coupe, the Ford Deluxe was popular for its V8 engine and elegant design.",
-        image: "ford_deluxe.png"
-    }
-];
+document.addEventListener("DOMContentLoaded", () => {
+  const search = document.getElementById("carSearch");
+  const cards = [...document.querySelectorAll(".car-card")];
+  const filters = [...document.querySelectorAll(".filter-button")];
+  const noResults = document.getElementById("noResults");
+  const modal = document.getElementById("carModal");
+  const menuToggle = document.getElementById("menuToggle");
+  const mainNav = document.getElementById("mainNav");
+  let activeFilter = "all";
 
-            document.addEventListener("DOMContentLoaded", function () {
-    const images = document.querySelectorAll(".sliderImage"); // Use class instead of id
-    let index = 0;
-
-    function showNextImage() {
-        images.forEach((img, i) => {
-            img.style.opacity = i === index ? "1" : "0"; // Show one image at a time
-        });
-        index = (index + 1) % images.length; // Move to the next image
-    }
-
-    // Initialize styles for images
-    images.forEach((img, i) => {
-        img.style.position = "absolute";
-        img.style.opacity = i === 0 ? "1" : "0";
-        img.style.transition = "opacity 1s ease-in-out"; // Smooth transition
+  function filterCards() {
+    const query = (search?.value || "").trim().toLowerCase();
+    let visible = 0;
+    cards.forEach(card => {
+      const matchesName = card.dataset.name.toLowerCase().includes(query);
+      const matchesFilter = activeFilter === "all" || card.dataset.category === activeFilter;
+      const show = matchesName && matchesFilter;
+      card.hidden = !show;
+      if (show) visible++;
     });
+    if (noResults) noResults.hidden = visible !== 0;
+  }
 
-    // Change image every 3 seconds
-    setInterval(showNextImage, 2000);
+  search?.addEventListener("input", filterCards);
+  filters.forEach(button => button.addEventListener("click", () => {
+    activeFilter = button.dataset.filter;
+    filters.forEach(item => item.classList.toggle("active", item === button));
+    filterCards();
+  }));
+
+  function closeModal() {
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  document.querySelectorAll(".details-button").forEach(button => button.addEventListener("click", () => {
+    const data = button.dataset;
+    document.getElementById("modalTitle").textContent = data.model;
+    document.getElementById("modalYear").textContent = data.year;
+    document.getElementById("modalEngine").textContent = data.engine;
+    document.getElementById("modalFuel").textContent = data.fuel;
+    document.getElementById("modalDescription").textContent = data.description;
+    const image = document.getElementById("modalImage");
+    image.src = data.image;
+    image.alt = data.model;
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    document.getElementById("modalClose").focus();
+  }));
+
+  document.getElementById("modalClose").addEventListener("click", closeModal);
+  modal.addEventListener("click", event => {
+    if (event.target.hasAttribute("data-close-modal")) closeModal();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && modal.classList.contains("open")) closeModal();
+  });
+
+  menuToggle?.addEventListener("click", () => {
+    const open = mainNav.classList.toggle("open");
+    menuToggle.setAttribute("aria-expanded", String(open));
+  });
 });
