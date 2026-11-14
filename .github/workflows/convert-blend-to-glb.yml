@@ -30,8 +30,9 @@ jobs:
       - name: Install Blender
         run: |
           sudo apt-get update
-          sudo apt-get install --yes blender
+          sudo apt-get install --yes blender python3-numpy
           blender --version
+          blender --background --python-expr "import numpy; print('NumPy available:', numpy.__version__)"
 
       - name: Convert Ford Model T to GLB
         run: |
@@ -39,6 +40,14 @@ jobs:
           blender --background assets/360/model_t.blend --python-expr "import bpy; bpy.ops.export_scene.gltf(filepath='public/models/ford-model-t.glb', export_format='GLB')"
           test -s public/models/ford-model-t.glb
           ls -lh public/models/ford-model-t.glb
+
+      - name: Upload GLB as a workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ford-model-t-glb
+          path: public/models/ford-model-t.glb
+          if-no-files-found: error
+          retention-days: 30
 
       - name: Commit converted model
         run: |
