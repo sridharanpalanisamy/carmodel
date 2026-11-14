@@ -45,13 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
       credit: "Local 360° video pending · 3D fallback by mertuzulmez · CC BY",
       url: "https://sketchfab.com/3d-models/1965-ford-mustang-46e5bb2562f2423faedfe3f5ea0444f3"
     },
-    "gt40": {
-      id: "e99a77c50aa74318ac755571a9f67119",
-      title: "1964 Ford GT40",
-      video: "assets/360/ford-gt40-1964.mp4",
-      credit: "Local 360° video pending · 3D fallback by VeCarz; review creator terms",
-      url: "https://sketchfab.com/3d-models/ford-gt40-1964-wwwvecarzcom-e99a77c50aa74318ac755571a9f67119"
-    }
   };
 
   let viewerStarted = false;
