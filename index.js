@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const status = document.getElementById("viewerStatus");
   const credit = document.getElementById("viewerCredit");
   const source = document.getElementById("viewerSource");
+  const placeholder = document.getElementById("viewerPlaceholder");
   if (!viewer || !selector) return;
 
   const models = {
@@ -40,17 +41,52 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  function loadModel(key) {
+  let viewerStarted = false;
+  let selectedModel = selector.value;
+
+  function updateModelDetails(key) {
     const model = models[key];
     if (!model) return;
-    viewer.src = "https://sketchfab.com/models/" + model.id + "/embed?autostart=1&ui_theme=dark";
+    selectedModel = key;
     viewer.title = model.title + " interactive 3D model";
     credit.textContent = "3D model: " + model.credit;
     source.href = model.url;
     source.setAttribute("aria-label", "View " + model.title + " model and license on Sketchfab");
+    status.textContent = viewerStarted
+      ? model.title + " · drag to rotate · scroll or pinch to zoom"
+      : model.title + " selected · preview loads when you reach this section";
+    if (viewerStarted) {
+      viewer.src = "https://sketchfab.com/models/" + model.id + "/embed?autostart=1&ui_theme=dark";
+      if (placeholder) placeholder.hidden = true;
+    }
+  }
+
+  function startViewer() {
+    if (viewerStarted) return;
+    const model = models[selectedModel];
+    if (!model) return;
+    viewerStarted = true;
+    viewer.src = "https://sketchfab.com/models/" + model.id + "/embed?autostart=1&ui_theme=dark";
+    if (placeholder) placeholder.hidden = true;
     status.textContent = model.title + " · drag to rotate · scroll or pinch to zoom";
   }
 
-  selector.addEventListener("change", () => loadModel(selector.value));
-  loadModel(selector.value);
+  selector.addEventListener("change", () => updateModelDetails(selector.value));
+  updateModelDetails(selector.value);
+
+  if ("IntersectionObserver" in window) {
+    const viewerObserver = new IntersectionObserver((entries) => {
+      if (entries.some(entry => entry.isIntersecting)) {
+        startViewer();
+        viewerObserver.disconnect();
+      }
+    }, { rootMargin: "240px 0px", threshold: 0.01 });
+    viewerObserver.observe(viewer);
+  } else {
+    startViewer();
+  }
+
+  viewer.addEventListener("load", () => {
+    if (placeholder) placeholder.hidden = true;
+  });
 });
