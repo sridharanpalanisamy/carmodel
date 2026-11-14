@@ -1,6 +1,6 @@
 # Self-hosted 360° vehicle videos
 
-The showroom checks local MP4s first and uses the matching interactive 3D model as a fallback.
+The showroom currently presents matching interactive 3D models. Its local MP4 player is prepared for future exact-model turntable footage; it should only be used when the video and reuse rights are verified.
 **No MP4 video files have been added yet.** Do not mark a vehicle as having a self-hosted
 360° video until its actual file is present and tested.
 
@@ -37,3 +37,14 @@ displayed CC BY label. The GT40 is held back until rights are clarified.
 The Model T, Model A and 1965 Mustang Sketchfab pages display CC BY attribution licenses for
 their 3D models. This does **not** grant rights to unrelated video footage or prove that any
 video has been created.
+
+
+## Footage search log (14 November 2026)
+Searches covered public-domain archives, Wikimedia Commons, and stock-footage catalogues.
+
+- Wikimedia Commons has public-domain Ford Model T assembly footage, but it is low-resolution archival production footage, not a full exterior turntable. Not suitable for the showroom.
+- National Archives-derived Model T assembly clips and 1929 Model A factory footage show manufacturing or vehicles moving/driving, not a continuous 360° spin. Not suitable.
+- Commercial stock catalogues contain generic rotating-car animations and modern Ford Puma rotation footage, but these are not the exact Ford classics in this collection and are not cleared as free redistributable assets.
+- No suitable free-to-reuse, exact-model 360° video was verified for Model T, Model A, or 1965 Mustang in this search.
+
+Do not download watermarked previews, use editorial-only footage for a promotional website, or substitute a different vehicle. Keep the interactive 3D model available until a matching video is sourced or rendered from an asset whose license permits that use.
