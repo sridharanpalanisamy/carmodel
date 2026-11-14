@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const links = [
-  { href: "/carmodel/", label: "Home", page: "home" },
-  { href: "/carmodel/models/", label: "Models", page: "models" },
-  { href: "/carmodel/heritage/", label: "Heritage", page: "heritage" },
-  { href: "/carmodel/contact/", label: "Contact", page: "contact" },
+  { href: "/", label: "Home", page: "home" },
+  { href: "/models/", label: "Models", page: "models" },
+  { href: "/heritage/", label: "Heritage", page: "heritage" },
+  { href: "/contact/", label: "Contact", page: "contact" },
 ];
 
 export default function SiteHeader() {
@@ -20,7 +20,7 @@ export default function SiteHeader() {
 
   return (
     <header className="site-header">
-      <Link className="brand" href="/carmodel/" aria-label="Classic Ford home">
+      <Link className="brand" href="/" aria-label="Classic Ford home">
         <span className="brand-mark">F</span>
         <span>CLASSIC FORD<small>THE HERITAGE COLLECTION</small></span>
       </Link>
@@ -34,7 +34,7 @@ export default function SiteHeader() {
             href={link.href} onClick={() => setOpen(false)}>{link.label}</Link>
         ))}
       </nav>
-      <Link className="header-cta" href={activePage === "home" ? "/carmodel/models/" : "/carmodel/"}>
+      <Link className="header-cta" href={activePage === "home" ? "/models/" : "/"}>
         {activePage === "home" ? "Explore models" : "Back home"} <span>↗</span>
       </Link>
     </header>
