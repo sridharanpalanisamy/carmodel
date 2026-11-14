@@ -1,3 +1,1 @@
-@import url("/carmodel/index.css");
-@import url("/carmodel/pages.css");
-@import url("/carmodel/assets/css/local-3d-viewer.css");
+/* Legacy design styles are linked from the public asset directory in app/layout.jsx. */
