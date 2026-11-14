@@ -110,5 +110,6 @@
     controls.addEventListener("click",e=>{const b=e.target.closest("button");if(!b||!active)return;if(b.dataset.action==="reset")active.reset();if(b.dataset.action==="auto"){const on=active.toggle();b.textContent=on?"Pause rotation":"Resume rotation";}});
     [grid,modelGrid].filter(Boolean).forEach(root=>root.addEventListener("click",e=>{const b=e.target.closest("[data-local3d]");if(!b)return;e.preventDefault();open(b.dataset.local3d);}));
   }
+  window.FordLocal3D = { mount(canvas, name) { return createViewer(canvas, "Ford " + safeName(name)); } };
   document.addEventListener("DOMContentLoaded",()=>{mountHome();mountDirectory();});
 })();
