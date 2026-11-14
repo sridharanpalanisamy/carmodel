@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 const models = [
@@ -83,6 +83,13 @@ export default function ModelDirectory() {
   const [query, setQuery] = useState("");
   const [activeLetter, setActiveLetter] = useState("all");
   const [selectedModel, setSelectedModel] = useState(null);
+  const inlineViewerRef = useRef(null);
+
+  useEffect(() => {
+    if (!selectedModel || !inlineViewerRef.current || !window.FordLocal3D) return;
+    const viewer = window.FordLocal3D.mount(inlineViewerRef.current, selectedModel.name);
+    return () => viewer?.destroy();
+  }, [selectedModel]);
 
   useEffect(() => {
     setMount(document.getElementById("azArchiveMount"));
@@ -136,7 +143,7 @@ export default function ModelDirectory() {
               <span className="az-years">{years}</span>
               <p>{description}</p>
             </div>
-            <button type="button" className="az-view-button" aria-label={"View " + name + " picture and specifications"} onClick={event => { event.stopPropagation(); setSelectedModel({ name, years, description }); }}>View 3D ↗</button>
+            <button type="button" className="az-view-button" aria-label={"View " + name + " picture and specifications"} onClick={event => { event.stopPropagation(); setSelectedModel({ name, years, description }); }}>View</button>
           </article>
         ))}
       </div>
@@ -168,7 +175,11 @@ export default function ModelDirectory() {
                 <div><span>Drive type</span><strong>{featuredSpecs[selectedModel.name]?.[3] || "Varies by model, generation and configuration"}</strong></div>
               </div>
               <p className="az-detail-note">Specifications are representative where a reference configuration is available. For other nameplates, exact engine capacity, fuel, transmission and drivetrain depend on model year, generation, trim and country.</p>
-              <button type="button" className="az-detail-3d" data-local3d={selectedModel.name} >Open local 3D view ↗</button>
+              <div className="az-inline3d-wrap">
+                <div className="az-inline3d-heading"><strong>Interactive 3D view</strong><span>Drag to rotate · scroll to zoom</span></div>
+                <canvas ref={inlineViewerRef} className="az-inline3d-canvas" aria-label={"Interactive illustrative 3D view of Ford " + selectedModel.name} />
+                <p className="az-inline3d-caption">Locally rendered illustrative concept — not a factory-accurate scan.</p>
+              </div>
             </div>
           </section>
         </div>
