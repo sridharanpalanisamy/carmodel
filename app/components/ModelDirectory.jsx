@@ -83,13 +83,14 @@ export default function ModelDirectory() {
   const [query, setQuery] = useState("");
   const [activeLetter, setActiveLetter] = useState("all");
   const [selectedModel, setSelectedModel] = useState(null);
+  const [show3D, setShow3D] = useState(false);
   const inlineViewerRef = useRef(null);
 
   useEffect(() => {
-    if (!selectedModel || !inlineViewerRef.current || !window.FordLocal3D) return;
+    if (!selectedModel || !show3D || !inlineViewerRef.current || !window.FordLocal3D) return;
     const viewer = window.FordLocal3D.mount(inlineViewerRef.current, selectedModel.name);
     return () => viewer?.destroy();
-  }, [selectedModel]);
+  }, [selectedModel, show3D]);
 
   useEffect(() => {
     setMount(document.getElementById("azArchiveMount"));
@@ -134,7 +135,7 @@ export default function ModelDirectory() {
             role="button"
             tabIndex={0}
             aria-label={"View Ford " + name + " picture and specifications"}
-            onClick={event => { if (!event.target.closest("[data-local3d]")) setSelectedModel({ name, years, description }); }}
+            onClick={event => { if (!event.target.closest("[data-local3d]")) setShow3D(false); setSelectedModel({ name, years, description }); }}
             onKeyDown={event => { if ((event.key === "Enter" || event.key === " ") && event.target === event.currentTarget) { event.preventDefault(); setSelectedModel({ name, years, description }); } }}
           >
             <span className="az-initial">{name[0].toUpperCase()}</span>
@@ -175,11 +176,18 @@ export default function ModelDirectory() {
                 <div><span>Drive type</span><strong>{featuredSpecs[selectedModel.name]?.[3] || "Varies by model, generation and configuration"}</strong></div>
               </div>
               <p className="az-detail-note">Specifications are representative where a reference configuration is available. For other nameplates, exact engine capacity, fuel, transmission and drivetrain depend on model year, generation, trim and country.</p>
-              <div className="az-inline3d-wrap">
-                <div className="az-inline3d-heading"><strong>Interactive 3D view</strong><span>Drag to rotate · scroll to zoom</span></div>
-                <canvas ref={inlineViewerRef} className="az-inline3d-canvas" aria-label={"Interactive illustrative 3D view of Ford " + selectedModel.name} />
-                <p className="az-inline3d-caption">Locally rendered illustrative concept — not a factory-accurate scan.</p>
+              <div className="az-detail-actions">
+                <button type="button" className="model-3d-button" aria-expanded={show3D} onClick={() => setShow3D(value => !value)}>
+                  {show3D ? "Hide 3D View" : "3D View"}
+                </button>
               </div>
+              {show3D && (
+                <div className="az-inline3d-wrap">
+                  <div className="az-inline3d-heading"><strong>Interactive 3D view · Ford {selectedModel.name}</strong><span>Drag to rotate · scroll to zoom</span></div>
+                  <canvas ref={inlineViewerRef} className="az-inline3d-canvas" aria-label={"Interactive illustrative 3D view of Ford " + selectedModel.name} />
+                  <p className="az-inline3d-caption">Locally rendered illustrative concept — not a factory-accurate scan.</p>
+                </div>
+              )}
             </div>
           </section>
         </div>
