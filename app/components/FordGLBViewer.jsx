@@ -80,6 +80,8 @@ export default function FordGLBViewer() {
                   const materials = Array.isArray(object.material) ? object.material : [object.material];
                   materials.forEach((material) => {
                     if (material.map) material.map.colorSpace = THREE.SRGBColorSpace;
+                    // Some source-model surfaces have reversed winding; render both sides so panels remain visible.
+                    material.side = THREE.DoubleSide;
                     material.needsUpdate = true;
                   });
                 }
@@ -92,8 +94,14 @@ export default function FordGLBViewer() {
             scene.add(modelRoot);
 
             const maxDimension = Math.max(size.x, size.y, size.z) || 1;
-            const distance = maxDimension * 2.15;
-            camera.position.set(distance * 1.25, distance * 0.72, distance * 1.45);
+            const sphere = new THREE.Sphere();
+            bounds.getBoundingSphere(sphere);
+            const verticalFov = THREE.MathUtils.degToRad(camera.fov);
+            const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * Math.max(camera.aspect, 0.5));
+            const limitingFov = Math.min(verticalFov, horizontalFov);
+            const distance = Math.max(sphere.radius / Math.sin(limitingFov / 2) * 1.25, maxDimension * 1.8);
+            const viewDirection = new THREE.Vector3(1.25, 0.72, 1.45).normalize();
+            camera.position.copy(viewDirection.multiplyScalar(distance));
             camera.near = Math.max(maxDimension / 1000, 0.001);
             camera.far = maxDimension * 100;
             camera.updateProjectionMatrix();
@@ -102,7 +110,7 @@ export default function FordGLBViewer() {
             controls.maxDistance = maxDimension * 7;
             controls.update();
             resetView = () => {
-              camera.position.set(distance * 1.25, distance * 0.72, distance * 1.45);
+              camera.position.copy(new THREE.Vector3(1.25, 0.72, 1.45).normalize().multiplyScalar(distance));
               controls.target.set(0, 0, 0);
               controls.update();
             };
