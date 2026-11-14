@@ -81,7 +81,8 @@ const letters = ["all", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 export default function ModelDirectory() {
   const [mount, setMount] = useState(null);
   const [query, setQuery] = useState("");
-  const [activeLetter, setActiveLetter] = useState("all");\n  const [selectedModel, setSelectedModel] = useState(null);
+  const [activeLetter, setActiveLetter] = useState("all");
+  const [selectedModel, setSelectedModel] = useState(null);
 
   useEffect(() => {
     setMount(document.getElementById("azArchiveMount"));
