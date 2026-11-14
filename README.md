@@ -1,123 +1,59 @@
-# 🚗 Classic Ford Car Models
+# Classic Ford — The Heritage Collection
 
-A simple, responsive static website showcasing legendary vintage Ford cars with captivating visuals, historical details, and a timeless design.
+A responsive editorial-style showcase of Ford automotive heritage, built with HTML, CSS and vanilla JavaScript.
 
----
+## Live website
+https://sridharanpalanisamy.github.io/carmodel/
 
-## 🔍 Live Demo
+## Design direction
+The interface uses an editorial automotive layout inspired by the supplied visual reference:
+- Soft lavender-grey canvas and thin modular grid lines.
+- High-contrast black typography with a vivid orange accent.
+- Large vehicle photography and asymmetric two-column composition.
+- Compact innovation tiles, featured vehicle panels and curated model cards.
+- Responsive navigation and stacked mobile layouts.
 
-Explore the live version here :
+## Features
+- Image-led homepage with curated Ford highlights.
+- Searchable model collection with eleven vehicle profiles.
+- Heritage timeline and motorsport feature.
+- Responsive layouts for desktop, tablet and mobile.
+- Centralized image assets in `assets/images/`.
 
-👉 [Classic Ford Car Models](https://sridharanpalanisamy.github.io/carmodel/)
+## Project structure
+```
+carmodel/
+├── assets/
+│   └── images/       # All project photographs and vehicle images
+├── index.html        # Editorial homepage
+├── index.css         # Homepage design system
+├── index.js          # Homepage navigation behavior
+├── home.html         # Searchable vehicle collection
+├── pages.css         # Shared inner-page design system
+├── about.html        # Ford heritage and timeline
+├── contact.html      # Feedback/contact information
+├── styles.css        # Legacy stylesheet (retained)
+├── about.css         # Legacy stylesheet (retained)
+├── contact.css       # Legacy stylesheet (retained)
+├── car.js            # Legacy script (retained)
+└── README.md
+```
 
----
+## Image management
+All vehicle images are stored in `assets/images/`. Reference them from root-level HTML and CSS files using relative paths, for example:
 
-## 📖 About
+```html
+<img src="assets/images/ford-mustang.png" alt="Ford Mustang">
+```
 
-This project highlights iconic Ford vehicles that shaped automobile history, presented through an elegant static web layout.
+When adding a photograph, place it in that folder and follow the same path convention.
 
-Each model section is designed to balance visual appeal and technical detail, giving users a museum-like experience online.
+## Run locally
+Open `index.html` in a browser, or use the VS Code Live Server extension.
 
-Featured Models Include:
-
-🚘 Model T (1908) – The car that revolutionized the automobile industry.
-
-🚗 Model A (1927) – Stylish and reliable with improved engine performance.
-
-🏎️ Deluxe Coupe (1940) – Powerful V8 engine with timeless design.
-
-🛻 Additional sections ready for expansion with other Ford classics.
-
----
-
-## 🛠️ Features
-
-✅ Fully responsive — adapts smoothly across all devices (mobile, tablet, desktop).
-
-✅ Clean and minimal design — focus on car imagery and brief technical info.
-
-✅ Easy navigation menu — includes Home, About Us, Ford Brand Cars, and Contact Us.
-
-✅ "View Details" buttons — placeholders ready for future pages or modals.
-
-✅ Expandable sections for car specs like:
-
-          1. Model Year
-
-          2. Fuel Type
-
-          3. Engine Details
-
-          4. Top Speed
-
-          5. Mileage
----
-
-## 🎯 Tech Stack
-
-   🧱 HTML5 — Structure and layout
-   
-   🎨 CSS3 — Styling and responsiveness
-   
-   ⚙️ JavaScript (optional) — For future interactivity
-   
-   🌐 GitHub Pages — Free and reliable hosting platform
-
----
-
-## 💡 Project Highlights
----
- 1. Designed with simplicity and elegance for automotive enthusiasts.
-
- 2. SEO-friendly layout for better discoverability.
-
- 3. Optimized images for faster page loading.
-
- 4. Perfect for portfolio demonstration or frontend practice.
-
- 5. Can be expanded into a dynamic website with backend integration in the future.
-
-
----
-## ⚙️ How to Use / Extend
-
-If you want to contribute or extend this project:
-1. Clone the repo:  
-          git clone https://github.com/sridharanpalanisamy/carmodel.git
-   
-3. Add further car models by copying the structure of existing sections.
-
-4. Fill in the placeholders under “Model Year / Fuel Type / Engine / Top Speed / Mileage” for each model.
-
-6. Add meaningful content to the “View Details” pages or modals.
-   
-7. Ensure images are optimized for web and properly referenced.
-
----
-
-## 👨‍💻 Who is This For
-
-  🚀 Web development students learning static site design.
-  
-  📸 Automobile photographers showcasing classic collections.
-  
-  🧠 Auto enthusiasts researching Ford’s historical models.
-  
-  💼 Portfolio builders demonstrating HTML/CSS/hosting skills.
-  
----
-
-## 📬 Contact & Feedback
-
-If you notice any errors, want to suggest a model, or want to help improve the website, feel free to reach out!
-
-- GitHub: [sridharanpalanisamy](https://github.com/sridharanpalanisamy)  
-- Email: sridharanpalanisamy96@gmail.com  
-
----
-
-## 📝 License
-
-*This project is for educational / portfolio use. Feel free to use its layout and structure for your own content.*  
----
-> Created by **Sridharan P**
+## Technology
+- HTML5
+- CSS3
+- Vanilla JavaScript
+- Google Fonts (Manrope and DM Sans)
+- GitHub Pages
