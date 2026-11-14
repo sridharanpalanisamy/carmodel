@@ -8,6 +8,7 @@ on:
     paths:
       - "assets/360/**/*.blend"
       - "assets/360/*.blend"
+      - ".github/workflows/convert-blend-to-glb.yml"
 
 permissions:
   contents: write
