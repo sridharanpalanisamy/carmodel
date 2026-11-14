@@ -13,6 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const viewer = document.getElementById("classicCarViewer");
+  const video = document.getElementById("classicCar360Video");
   const selector = document.getElementById("carModelSelect");
   const status = document.getElementById("viewerStatus");
   const credit = document.getElementById("viewerCredit");
@@ -20,80 +21,131 @@ document.addEventListener("DOMContentLoaded", () => {
   const placeholder = document.getElementById("viewerPlaceholder");
   if (!viewer || !selector) return;
 
-  // Only use vehicle-specific Sketchfab models with a matching model name.
+  // Local MP4s take priority. The matching Sketchfab model is only a fallback
+  // until a licensed, model-specific turntable video is added to assets/360/.
   const models = {
     "model-t": {
       id: "3f601062f25f4987abf18a089e66fbb7",
       title: "Ford Model T",
-      credit: "Ford T by diegor_12 · CC BY",
+      video: "assets/360/ford-model-t.mp4",
+      credit: "Local 360° video pending · 3D fallback by diegor_12 · CC BY",
       url: "https://sketchfab.com/3d-models/ford-t-3f601062f25f4987abf18a089e66fbb7"
     },
     "model-a": {
       id: "7c5b1727026b407baa67a10ba9e2be23",
       title: "Ford Model A",
-      credit: "Ford Model A V2 Downloadable by Libau Media · CC BY",
+      video: "assets/360/ford-model-a.mp4",
+      credit: "Local 360° video pending · 3D fallback by Libau Media · CC BY",
       url: "https://sketchfab.com/3d-models/ford-model-a-v2-downloadable-7c5b1727026b407baa67a10ba9e2be23"
     },
     "mustang-1965": {
       id: "46e5bb2562f2423faedfe3f5ea0444f3",
       title: "1965 Ford Mustang",
-      credit: "1965 Ford Mustang by mertuzulmez · CC BY",
+      video: "assets/360/ford-mustang-1965.mp4",
+      credit: "Local 360° video pending · 3D fallback by mertuzulmez · CC BY",
       url: "https://sketchfab.com/3d-models/1965-ford-mustang-46e5bb2562f2423faedfe3f5ea0444f3"
     },
     "gt40": {
       id: "e99a77c50aa74318ac755571a9f67119",
       title: "1964 Ford GT40",
-      credit: "Ford GT40 1964 by VeCarz · Sketchfab CC BY listing; review creator terms before commercial reuse",
+      video: "assets/360/ford-gt40-1964.mp4",
+      credit: "Local 360° video pending · 3D fallback by VeCarz; review creator terms",
       url: "https://sketchfab.com/3d-models/ford-gt40-1964-wwwvecarzcom-e99a77c50aa74318ac755571a9f67119"
     }
   };
 
   let viewerStarted = false;
   let selectedModel = selector.value;
+  let activeMode = "idle";
+
+  function showPlaceholder(message) {
+    if (!placeholder) return;
+    placeholder.hidden = false;
+    const small = placeholder.querySelector("small");
+    if (small) small.textContent = message;
+  }
+
+  function showLocalVideo(model) {
+    if (!video) return false;
+    video.pause();
+    video.removeAttribute("src");
+    video.load();
+    video.src = model.video;
+    video.hidden = false;
+    viewer.hidden = true;
+    video.load();
+    activeMode = "video";
+    status.textContent = model.title + " · loading self-hosted 360° video";
+    return true;
+  }
+
+  function showExternalFallback(model) {
+    if (!viewer) return;
+    if (video) {
+      video.pause();
+      video.hidden = true;
+    }
+    viewer.hidden = false;
+    viewer.src = "https://sketchfab.com/models/" + model.id + "/embed?autostart=1&ui_theme=dark";
+    activeMode = "embed";
+    status.textContent = model.title + " · interactive 3D fallback · drag to rotate";
+    if (placeholder) placeholder.hidden = true;
+  }
 
   function updateModelDetails(key) {
     const model = models[key];
     if (!model) return;
     selectedModel = key;
     viewer.title = model.title + " interactive 3D model";
-    credit.textContent = "3D model: " + model.credit;
+    credit.textContent = model.credit;
     source.href = model.url;
-    source.setAttribute("aria-label", "View " + model.title + " model and license on Sketchfab");
-    status.textContent = viewerStarted
-      ? model.title + " · drag to rotate · scroll or pinch to zoom"
-      : model.title + " selected · preview loads when you reach this section";
-    if (viewerStarted) {
-      viewer.src = "https://sketchfab.com/models/" + model.id + "/embed?autostart=1&ui_theme=dark";
-      if (placeholder) placeholder.hidden = true;
-    }
+    source.textContent = "Model details & license ↗";
+    source.setAttribute("aria-label", "View " + model.title + " model and license");
+    if (viewerStarted) startSelectedModel();
+    else status.textContent = model.title + " selected · loads when the showroom enters your screen";
   }
 
-  function startViewer() {
-    if (viewerStarted) return;
+  function startSelectedModel() {
     const model = models[selectedModel];
     if (!model) return;
     viewerStarted = true;
-    viewer.src = "https://sketchfab.com/models/" + model.id + "/embed?autostart=1&ui_theme=dark";
-    if (placeholder) placeholder.hidden = true;
-    status.textContent = model.title + " · drag to rotate · scroll or pinch to zoom";
+    if (video) {
+      video.onerror = () => {
+        if (selectedModel === selector.value) showExternalFallback(model);
+      };
+      video.oncanplay = () => {
+        if (selectedModel !== selector.value) return;
+        activeMode = "video";
+        status.textContent = model.title + " · self-hosted 360° turntable video";
+        if (placeholder) placeholder.hidden = true;
+        video.play().catch(() => {
+          status.textContent = model.title + " · press play to view the 360° video";
+        });
+      };
+      showLocalVideo(model);
+    } else {
+      showExternalFallback(model);
+    }
   }
 
   selector.addEventListener("change", () => updateModelDetails(selector.value));
   updateModelDetails(selector.value);
 
   if ("IntersectionObserver" in window) {
-    const viewerObserver = new IntersectionObserver((entries) => {
+    const observer = new IntersectionObserver(entries => {
       if (entries.some(entry => entry.isIntersecting)) {
-        startViewer();
-        viewerObserver.disconnect();
+        startSelectedModel();
+        observer.disconnect();
       }
     }, { rootMargin: "240px 0px", threshold: 0.01 });
-    viewerObserver.observe(viewer);
+    observer.observe(document.querySelector(".viewer-frame") || viewer);
   } else {
-    startViewer();
+    startSelectedModel();
   }
 
-  viewer.addEventListener("load", () => {
-    if (placeholder) placeholder.hidden = true;
-  });
+  if (video) {
+    video.addEventListener("play", () => {
+      if (activeMode === "video" && placeholder) placeholder.hidden = true;
+    });
+  }
 });
