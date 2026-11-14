@@ -2,6 +2,62 @@ document.addEventListener("DOMContentLoaded", () => {
  const grid=document.getElementById("modelGrid"); if(!grid)return;
  const cards=[...grid.querySelectorAll(".model-card")],search=document.getElementById("modelSearch"),type=document.getElementById("typeFilter"),era=document.getElementById("eraFilter"),sort=document.getElementById("sortFilter"),empty=document.getElementById("emptyState"),count=document.getElementById("resultCount"),favoritesOnly=document.getElementById("favoritesOnly"),savedCount=document.getElementById("savedCount");
  const cars=cards.map(card=>({card,name:card.querySelector("h3").textContent,year:card.dataset.year,type:card.dataset.type,era:card.dataset.era,image:card.querySelector("img").getAttribute("src"),description:card.querySelector(".model-copy p").textContent,period:card.querySelector(".model-image span").textContent}));
+ const azModels=[
+ ["Anglia","1939–1967","Small family car sold in several generations."],
+ ["Aspire","1994–1997","Subcompact car sold in North America."],
+ ["B-Max","2012–2017","Small multi-purpose vehicle for the European market."],
+ ["Bronco","1966–present","Off-road SUV nameplate; generation and market specifications vary."],
+ ["C-Max","2003–2019","Compact multi-purpose vehicle family."],
+ ["Capri","1969–1986; 2024–present","Sporty coupe nameplate revived as an electric crossover in Europe."],
+ ["Consul","1951–1975","British-market family and executive car range."],
+ ["Contour","1995–2000","North American compact sedan related to the European Mondeo."],
+ ["Cortina","1962–1982","Popular British family car."],
+ ["Crown Victoria","1992–2012","Full-size body-on-frame sedan."],
+ ["Custom","1949–1981 (various series)","Ford Custom was used on several full-size car lines and trim ranges."],
+ ["Econoline / E-Series","1961–present (E-Series)","Full-size van and cutaway commercial vehicle family."],
+ ["Escort","1968–2003 (Europe); 1981–2003 (North America)","Compact car nameplate with distinct regional generations."],
+ ["Escape","2000–present","Compact crossover SUV; hybrid and plug-in hybrid versions in selected markets."],
+ ["Excursion","2000–2005","Heavy-duty full-size SUV."],
+ ["Expedition","1997–present","Full-size three-row SUV."],
+ ["Explorer","1990–present","Mid-size SUV nameplate."],
+ ["F-Series","1948–present","Ford's full-size pickup family, including F-150 and Super Duty."],
+ ["Fairlane","1955–1970; Australia through 2007","Full-size and later mid-size car nameplate; regional histories differ."],
+ ["Falcon","1960–2016 (market dependent)","Compact US car that became a long-running Australian large-car family."],
+ ["Fiesta","1976–2023","Global supermini / subcompact hatchback."],
+ ["Five Hundred","2004–2007","North American full-size sedan."],
+ ["Flex","2009–2019","Three-row crossover with distinctive boxy styling."],
+ ["Focus","1998–present (global production varies)","Compact car offered as hatchback, sedan and wagon."],
+ ["Freestar","2004–2007","North American minivan."],
+ ["Fusion","2002–2012 (Europe); 2006–2020 (North America)","Name used for different vehicles in different regions."],
+ ["Galaxie / Galaxie 500","1959–1974","Full-size American car range."],
+ ["Granada","1972–1982 (North America); 1972–1994 (Europe)","Mid-size / executive car nameplate with regional differences."],
+ ["GT","2004–2006; 2016–2022","Mid-engine Ford supercar in two modern generations."],
+ ["GT40","1964–1969","Mid-engine endurance racing car developed for international competition."],
+ ["Ka","1996–2021","Small city car sold mainly in Europe and Latin America."],
+ ["LTD","1965–1986 (North America)","Full-size Ford car range."],
+ ["Maverick","1970–1977; 2021–present","Name used first for a compact car and later for a compact pickup."],
+ ["Model A","1927–1931","Successor to the Model T, offered in numerous body styles."],
+ ["Model T","1908–1927","Mass-produced early automobile that transformed personal mobility."],
+ ["Mondeo","1993–2022 (Europe)","Global mid-size family car; related to some generations of the North American Fusion."],
+ ["Mustang","1964–present","Long-running American pony car and performance-car family."],
+ ["Pinto","1971–1980","Subcompact car sold in North America."],
+ ["Probe","1988–1997","Front-wheel-drive sporty coupe."],
+ ["Ranger","1983–present (global production varies)","Mid-size pickup nameplate with different regional generations."],
+ ["S-Max","2006–2023","Sporty seven-seat multi-purpose vehicle sold in Europe."],
+ ["Scorpio","1985–1998","European executive car."],
+ ["Sierra","1982–1993","European mid-size family car."],
+ ["Taurus","1986–2019 (North America); later regional versions","Mid-size / full-size sedan nameplate with multiple generations."],
+ ["Tempo","1984–1994","Compact front-wheel-drive sedan and coupe."],
+ ["Thunderbird","1955–2005","Personal luxury and grand-touring car across eleven generations."],
+ ["Transit","1965–present","Global light commercial van and passenger-van family."],
+ ["Windstar","1995–2003","North American minivan, later replaced by the Freestar."]
+ ];
+ const azGrid=document.getElementById("azGrid"),azSearch=document.getElementById("azSearch"),azLetters=document.getElementById("azLetters"),azCount=document.getElementById("azCount");
+ if(azGrid&&azSearch&&azLetters&&azCount){
+ let activeLetter="all";
+ const renderAZ=()=>{const q=azSearch.value.trim().toLowerCase();const list=azModels.filter(([name,years,desc])=>(activeLetter==="all"||name[0].toUpperCase()===activeLetter)&&(name+" "+years+" "+desc).toLowerCase().includes(q)).sort((a,b)=>a[0].localeCompare(b[0]));azGrid.innerHTML=list.map(([name,years,desc])=>'<article class="az-card"><span class="az-initial">'+name[0].toUpperCase()+'</span><div><h3>Ford '+name+'</h3><span class="az-years">'+years+'</span><p>'+desc+'</p></div></article>').join("");azCount.textContent=list.length+" Ford nameplate"+(list.length===1?"":"s")+" shown";};
+ azSearch.addEventListener("input",renderAZ);azLetters.addEventListener("click",e=>{const b=e.target.closest("button[data-letter]");if(!b)return;activeLetter=b.dataset.letter;azLetters.querySelectorAll("button").forEach(x=>x.classList.toggle("active",x===b));renderAZ();});renderAZ();
+ }
  const specs={
  "Ford Model T":{year:"1908 representative",body:"Touring / runabout / sedan (varied)",engine:"Inline-4, side-valve (L-head)",capacity:"2.9 L (177 cu in)",fuel:"Petrol (gasoline)",power:"About 20 hp",torque:"About 83 lb-ft (112 Nm)",transmission:"2-speed planetary transmission",drive:"Rear-wheel drive",cylinders:"4",fuelSystem:"Carburettor; gravity feed on early versions",brakes:"Transmission band and rear-wheel mechanical brakes",seats:"Body-style dependent",note:"Specifications changed during the 1908–1927 production run."},
  "Ford Model A":{year:"1928–1931 representative",body:"Roadster / coupe / Tudor / Fordor and others",engine:"Inline-4, L-head",capacity:"3.3 L (200.5 cu in)",fuel:"Petrol (gasoline)",power:"About 40 hp",torque:"About 128 lb-ft (173 Nm)",transmission:"3-speed manual",drive:"Rear-wheel drive",cylinders:"4",fuelSystem:"Carburettor; gravity feed",brakes:"Four-wheel mechanical drum",seats:"2–5 depending on body",note:"Body styles and equipment varied; figures describe a typical late Model A."},

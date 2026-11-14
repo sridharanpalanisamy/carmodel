@@ -66,3 +66,20 @@
 .spec-item>strong{font:600 11px/1.5 var(--sans);overflow-wrap:anywhere}
 .spec-footnote{font-size:9px;line-height:1.7;color:var(--muted);margin:15px 0 0}
 @media(max-width:600px){.spec-grid{grid-template-columns:1fr}.specs-button{width:100%;text-align:center}}
+
+/* A–Z Ford model directory */
+.az-archive{padding:64px 0 70px;border-top:1px solid var(--line);margin-top:24px}
+.az-archive .models-heading{margin-bottom:22px}
+.az-letters{display:flex;flex-wrap:wrap;gap:6px;margin:22px 0 12px}
+.az-letters button{min-width:34px;height:34px;padding:0 9px;border:1px solid var(--line);background:transparent;color:var(--ink);font:700 10px var(--sans);cursor:pointer}
+.az-letters button.active,.az-letters button:hover{background:var(--ink);border-color:var(--ink);color:#fff}
+.az-count{font-size:10px;color:var(--muted);margin:12px 0}
+.az-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.az-card{display:flex;gap:12px;align-items:flex-start;padding:16px;border:1px solid var(--line);background:rgba(255,255,255,.32);min-width:0}
+.az-initial{display:grid;place-items:center;flex:0 0 30px;height:30px;background:#e9e5e8;color:var(--ink);font:800 13px var(--sans)}
+.az-card h3{font:700 13px var(--sans);margin:0 0 4px}
+.az-years{font-size:9px;letter-spacing:.5px;color:var(--muted);text-transform:uppercase}
+.az-card p{font-size:10px;line-height:1.6;color:var(--muted);margin:7px 0 0}
+.az-note{max-width:850px;font-size:10px;line-height:1.8;color:var(--muted);margin:22px 0 0}
+@media(max-width:900px){.az-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.az-archive{padding:42px 0}.az-grid{grid-template-columns:1fr}.az-letters{gap:4px}.az-letters button{min-width:30px;height:30px;padding:0 7px}}
