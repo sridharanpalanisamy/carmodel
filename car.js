@@ -7,7 +7,7 @@ const fordCars = [
         topSpeed: "72 km/h",
         mileage: "18 km/l",
         description: "The first mass-produced car that revolutionized the automobile industry.",
-        image: "ford-model-t.png"
+        image: "assets/images/ford-model-t.png"
     },
     {
         model: "Ford Model A",
@@ -17,7 +17,7 @@ const fordCars = [
         topSpeed: "104 km/h",
         mileage: "15 km/l",
         description: "Successor to the Model T, featuring better performance and styling.",
-        image: "ford-model-a.png"
+        image: "assets/images/ford-model-a.png"
     },
     {
         model: "Ford Mustang",
@@ -27,7 +27,7 @@ const fordCars = [
         topSpeed: "250 km/h",
         mileage: "9 km/l",
         description: "An iconic pony car known for its performance and style.",
-        image: "ford-mustang.png"
+        image: "assets/images/ford-mustang.png"
     },
     {
         model: "Ford GT40",
@@ -37,7 +37,7 @@ const fordCars = [
         topSpeed: "330 km/h",
         mileage: "7 km/l",
         description: "Defeated Ferrari at Le Mans, becoming a racing legend.",
-        image: "ford-gt40.png"
+        image: "assets/images/ford-gt40.png"
     },
 
     {

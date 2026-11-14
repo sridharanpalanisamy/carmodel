@@ -1,123 +1,51 @@
-# 🚗 Classic Ford Car Models
+# Classic Ford — The Heritage Collection
 
-A simple, responsive static website showcasing legendary vintage Ford cars with captivating visuals, historical details, and a timeless design.
+A responsive, image-led showcase of Ford automotive heritage, built with HTML, CSS and vanilla JavaScript.
 
----
+## Live website
+https://sridharanpalanisamy.github.io/carmodel/
 
-## 🔍 Live Demo
+## Features
+- Editorial-style hero and heritage introduction.
+- Searchable and filterable model collection.
+- Interactive model detail profiles.
+- Responsive layout for desktop, tablet and mobile.
+- Seven-image archive gallery.
+- Centralized image assets in `assets/images/`.
 
-Explore the live version here :
+## Project structure
+```
+carmodel/
+├── assets/
+│   └── images/       # All project photographs and vehicle images
+├── index.html        # Main showcase homepage
+├── index.css
+├── index.js
+├── home.html         # Full model collection page
+├── styles.css
+├── about.html
+├── about.css
+├── contact.html
+├── contact.css
+├── car.js
+└── README.md
+```
 
-👉 [Classic Ford Car Models](https://sridharanpalanisamy.github.io/carmodel/)
+## Image management
+All image files are stored in `assets/images/`. Reference them from root-level HTML and JavaScript files using paths such as:
 
----
+```html
+<img src="assets/images/ford-mustang.png" alt="Ford Mustang">
+```
 
-## 📖 About
+When adding a new image, place it in that folder and use the same relative path convention.
 
-This project highlights iconic Ford vehicles that shaped automobile history, presented through an elegant static web layout.
+## Run locally
+Open `index.html` in a browser, or use the VS Code Live Server extension for a local development server.
 
-Each model section is designed to balance visual appeal and technical detail, giving users a museum-like experience online.
-
-Featured Models Include:
-
-🚘 Model T (1908) – The car that revolutionized the automobile industry.
-
-🚗 Model A (1927) – Stylish and reliable with improved engine performance.
-
-🏎️ Deluxe Coupe (1940) – Powerful V8 engine with timeless design.
-
-🛻 Additional sections ready for expansion with other Ford classics.
-
----
-
-## 🛠️ Features
-
-✅ Fully responsive — adapts smoothly across all devices (mobile, tablet, desktop).
-
-✅ Clean and minimal design — focus on car imagery and brief technical info.
-
-✅ Easy navigation menu — includes Home, About Us, Ford Brand Cars, and Contact Us.
-
-✅ "View Details" buttons — placeholders ready for future pages or modals.
-
-✅ Expandable sections for car specs like:
-
-          1. Model Year
-
-          2. Fuel Type
-
-          3. Engine Details
-
-          4. Top Speed
-
-          5. Mileage
----
-
-## 🎯 Tech Stack
-
-   🧱 HTML5 — Structure and layout
-   
-   🎨 CSS3 — Styling and responsiveness
-   
-   ⚙️ JavaScript (optional) — For future interactivity
-   
-   🌐 GitHub Pages — Free and reliable hosting platform
-
----
-
-## 💡 Project Highlights
----
- 1. Designed with simplicity and elegance for automotive enthusiasts.
-
- 2. SEO-friendly layout for better discoverability.
-
- 3. Optimized images for faster page loading.
-
- 4. Perfect for portfolio demonstration or frontend practice.
-
- 5. Can be expanded into a dynamic website with backend integration in the future.
-
-
----
-## ⚙️ How to Use / Extend
-
-If you want to contribute or extend this project:
-1. Clone the repo:  
-          git clone https://github.com/sridharanpalanisamy/carmodel.git
-   
-3. Add further car models by copying the structure of existing sections.
-
-4. Fill in the placeholders under “Model Year / Fuel Type / Engine / Top Speed / Mileage” for each model.
-
-6. Add meaningful content to the “View Details” pages or modals.
-   
-7. Ensure images are optimized for web and properly referenced.
-
----
-
-## 👨‍💻 Who is This For
-
-  🚀 Web development students learning static site design.
-  
-  📸 Automobile photographers showcasing classic collections.
-  
-  🧠 Auto enthusiasts researching Ford’s historical models.
-  
-  💼 Portfolio builders demonstrating HTML/CSS/hosting skills.
-  
----
-
-## 📬 Contact & Feedback
-
-If you notice any errors, want to suggest a model, or want to help improve the website, feel free to reach out!
-
-- GitHub: [sridharanpalanisamy](https://github.com/sridharanpalanisamy)  
-- Email: sridharanpalanisamy96@gmail.com  
-
----
-
-## 📝 License
-
-*This project is for educational / portfolio use. Feel free to use its layout and structure for your own content.*  
----
-> Created by **Sridharan P**
+## Technology
+- HTML5
+- CSS3
+- Vanilla JavaScript
+- Google Fonts (Playfair Display and DM Sans)
+- GitHub Pages hosting
