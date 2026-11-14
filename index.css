@@ -64,3 +64,12 @@
 .viewer-credit a{color:var(--orange);font-weight:700}
 .model-disclaimer{font-size:9px;line-height:1.7;color:var(--muted);margin:6px 0 0}
 @media(max-width:600px){.viewer-frame{aspect-ratio:4/3;min-height:240px}.viewer-toolbar{align-items:flex-start;flex-direction:column}.viewer-toolbar select{width:100%}.viewer-credit{flex-direction:column}}
+
+/* Keep the heavy 3D embed unloaded until the visitor reaches the showroom. */
+.viewer-frame{position:relative;isolation:isolate}
+.viewer-placeholder{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:9px;background:radial-gradient(circle at 50% 40%,#343438,#171719 72%);color:#f5f3f3;text-align:center;padding:24px}
+.viewer-placeholder[hidden]{display:none}
+.viewer-placeholder-mark{font:800 clamp(38px,7vw,68px)/1 var(--display);color:var(--orange);letter-spacing:-3px}
+.viewer-placeholder strong{font:700 16px var(--display)}
+.viewer-placeholder small{font-size:10px;color:#c7c3c7}
+.viewer-frame iframe{position:relative;z-index:2}
