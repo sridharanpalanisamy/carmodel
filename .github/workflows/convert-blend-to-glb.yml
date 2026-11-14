@@ -1,0 +1,52 @@
+name: Convert Blender models to GLB
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "assets/360/**/*.blend"
+      - "assets/360/*.blend"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: blender-to-glb
+  cancel-in-progress: false
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Install Blender
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes blender
+          blender --version
+
+      - name: Convert Ford Model T to GLB
+        run: |
+          mkdir -p public/models
+          blender --background assets/360/model_t.blend --python-expr "import bpy; bpy.ops.export_scene.gltf(filepath='public/models/ford-model-t.glb', export_format='GLB')"
+          test -s public/models/ford-model-t.glb
+          ls -lh public/models/ford-model-t.glb
+
+      - name: Commit converted model
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/models/ford-model-t.glb
+          if git diff --cached --quiet; then
+            echo "The GLB is already up to date."
+            exit 0
+          fi
+          git commit -m "Add converted Ford Model T GLB"
+          git push origin HEAD:${{ github.ref_name }}
