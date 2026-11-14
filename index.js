@@ -22,7 +22,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const models = {
     "model-t": { title: "Ford Model T", video: null },
     "model-a": { title: "Ford Model A", video: null },
-    "mustang-1965": { title: "1965 Ford Mustang", video: null }
+    "ford-v8": { title: "Ford V8", video: null },
+    "deluxe-coupe": { title: "Ford Deluxe Coupe", video: null },
+    "thunderbird": { title: "Ford Thunderbird", video: null },
+    "f100": { title: "Ford F-100", video: null },
+    "mustang-1965": { title: "1965 Ford Mustang", video: null },
+    "gt40": { title: "Ford GT40", video: null },
+    "bronco": { title: "Ford Bronco", video: null },
+    "falcon": { title: "Ford Falcon", video: null },
+    "pinto": { title: "Ford Pinto", video: null }
   };
 
   function showPlaceholder(message) {
