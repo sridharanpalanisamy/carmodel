@@ -4,11 +4,12 @@
   const palette = { ink:"#202126", orange:"#e95a2b", body:"#b8c0c4", glass:"#263d4b", rubber:"#17191c", metal:"#d5d7d8" };
   const familyFor = name => {
     const n=name.toLowerCase();
-    if(/bronco|explorer|escape|expedition|excursion|ranger|maverick|suv/.test(n)) return "suv";
-    if(/f-100|f-series|transit|econoline|e-series|pickup/.test(n)) return "pickup";
-    if(/gt40|^gt$|mustang|capri|thunderbird|probe|sports/.test(n)) return "sports";
-    if(/model t|model a|v8|deluxe|anglia|consul|cortina|fairlane|galaxie|granada|falcon|crown victoria|ltd|taurus|tempo|sierra|scorpio|mondeo|contour|five hundred/.test(n)) return "classic";
-    if(/van|windstar|freestar|c-max|s-max|b-max/.test(n)) return "van";
+    // Classify vans before pickups so Econoline, E-Series and Transit keep van proportions.
+    if(/transit|econoline|e-series|windstar|freestar|c-max|s-max|b-max|van/.test(n)) return "van";
+    if(/bronco|explorer|escape|expedition|excursion|flex|suv/.test(n)) return "suv";
+    if(/f-100|f-series|ranger|pickup/.test(n)) return "pickup";
+    if(/gt40|\bgt\b|mustang|capri|thunderbird|probe|sports/.test(n)) return "sports";
+    if(/model t|model a|v8|deluxe|anglia|consul|cortina|fairlane|galaxie|granada|falcon|crown victoria|ltd|taurus|tempo|sierra|scorpio|mondeo|contour|five hundred|escort|fiesta|focus|fusion|aspire|ka|pinto|maverick|custom|granada|scorpio|sierra/.test(n)) return "classic";
     return "compact";
   };
   const safeName = s => String(s || "Ford concept").replace(/[<>]/g,"");
