@@ -136,7 +136,7 @@ export default function ModelDirectory() {
               <span className="az-years">{years}</span>
               <p>{description}</p>
             </div>
-            <button type="button" className="az-view-button" data-local3d={name} >View 3D ↗</button>
+            <button type="button" className="az-view-button" aria-label={"View " + name + " picture and specifications"} onClick={event => { event.stopPropagation(); setSelectedModel({ name, years, description }); }}>View 3D ↗</button>
           </article>
         ))}
       </div>
