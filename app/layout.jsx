@@ -7,7 +7,6 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <head>
         <link rel="stylesheet" href="/carmodel/index.css" />
-        <link rel="stylesheet" href="/carmodel/pages.css" />
         <link rel="stylesheet" href="/carmodel/assets/css/local-3d-viewer.css" />
       </head>
       <body>{children}</body>
