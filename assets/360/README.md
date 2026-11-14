@@ -1,29 +1,30 @@
 # Self-hosted 360° vehicle showroom
 
-The 360° viewer runs from this repository only. It does not embed Sketchfab or any other third-party 3D platform, and it does not load remote model viewers.
+The local showroom selector now lists all 11 vehicles in the Classic Ford collection. It never embeds Sketchfab or another third-party viewer.
 
-**No 360° MP4 files have been added yet.** Until exact-model footage exists, the showroom intentionally displays an honest placeholder rather than a remote embed or unrelated video.
+**Important: no actual 360° media files have been added yet.** All eleven entries currently show a clear placeholder until their matching, locally hosted turntable assets are produced and added. A selector entry is not a claim that a working 360° model exists.
 
 | Vehicle | Required local filename | Current status |
 |---|---|---|
-| Ford Model T | `ford-model-t.mp4` | Local footage not added |
-| Ford Model A | `ford-model-a.mp4` | Local footage not added |
-| 1965 Ford Mustang | `ford-mustang-1965.mp4` | Local footage not added |
-| 1964 Ford GT40 | `ford-gt40-1964.mp4` | Needs exact-model footage and rights review |
-| Ford V8 | `ford-v8.mp4` | Needs exact-model footage |
-| Ford Deluxe Coupe | `ford-deluxe-coupe.mp4` | Needs exact-model footage |
-| Ford Thunderbird | `ford-thunderbird.mp4` | Needs exact-model footage |
-| Ford F-100 | `ford-f100.mp4` | Needs exact-model footage |
-| Ford Bronco | `ford-bronco.mp4` | Needs exact-model footage |
-| Ford Falcon | `ford-falcon.mp4` | Needs exact-model footage |
-| Ford Pinto | `ford-pinto.mp4` | Needs exact-model footage |
+| Ford Model T | `ford-model-t.mp4` | Footage pending |
+| Ford Model A | `ford-model-a.mp4` | Footage pending |
+| Ford V8 | `ford-v8.mp4` | Footage pending |
+| Ford Deluxe Coupe | `ford-deluxe-coupe.mp4` | Footage pending |
+| Ford Thunderbird | `ford-thunderbird.mp4` | Footage pending |
+| Ford F-100 | `ford-f100.mp4` | Footage pending |
+| Ford Mustang (1965 reference) | `ford-mustang-1965.mp4` | Footage pending |
+| Ford GT40 | `ford-gt40-1964.mp4` | Footage pending; exact variant and rights need confirmation |
+| Ford Bronco | `ford-bronco.mp4` | Footage pending |
+| Ford Falcon | `ford-falcon.mp4` | Footage pending |
+| Ford Pinto | `ford-pinto.mp4` | Footage pending |
 
-## Footage requirements
-- Full exterior 360° rotation of the exact vehicle/model year.
-- MP4, H.264, 1920x1080 or 1440x1080, 24–30 fps.
-- 6–15 seconds, stable camera, consistent lighting, vehicle centered.
-- Aim for 8–20 MB per clip; optimize without making details blurry.
-- Add files to this folder and update the local model path in `index.js`.
-- Record creator, source, permission/license and attribution in `CREDITS.md`.
+## Asset requirements
 
-A single photograph is not a genuine 360° view. If turntable footage is rendered from a 3D asset, the asset must accurately match the vehicle and its license must permit rendering and website use. Do not use generic cars, unrelated model years, driving footage or factory footage as substitutes.
+- Full exterior 360° rotation of the exact vehicle and stated model year.
+- MP4/H.264, preferably 1920×1080 or 1440×1080, 24–30 fps.
+- 6–15 seconds, stable camera, consistent lighting and centered vehicle.
+- Keep the image sharp while optimizing file size for GitHub Pages.
+- Store each file in this folder and connect its relative path in `index.js`.
+- Record creator, source, license/permission and attribution in `CREDITS.md`.
+
+A single photograph, a cropped image, or a generic vehicle is not a genuine 360° view. If footage is rendered from a 3D asset, that asset must match the vehicle and its license must permit modification, rendering and website use. Do not use third-party embedded viewers or remote viewer fallbacks.
