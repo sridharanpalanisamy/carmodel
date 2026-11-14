@@ -20,12 +20,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const placeholder = document.getElementById("viewerPlaceholder");
   if (!viewer || !selector) return;
 
+  // Only use vehicle-specific Sketchfab models with a matching model name.
   const models = {
     "model-t": {
-      id: "8cb1c1243c394144837a15f4722a2867",
+      id: "3f601062f25f4987abf18a089e66fbb7",
       title: "Ford Model T",
-      credit: "Ford Model T Downloadable by Libau Media · CC BY",
-      url: "https://sketchfab.com/3d-models/ford-model-t-downloadable-8cb1c1243c394144837a15f4722a2867"
+      credit: "Ford T by diegor_12 · CC BY",
+      url: "https://sketchfab.com/3d-models/ford-t-3f601062f25f4987abf18a089e66fbb7"
     },
     "model-a": {
       id: "7c5b1727026b407baa67a10ba9e2be23",
@@ -38,6 +39,12 @@ document.addEventListener("DOMContentLoaded", () => {
       title: "1965 Ford Mustang",
       credit: "1965 Ford Mustang by mertuzulmez · CC BY",
       url: "https://sketchfab.com/3d-models/1965-ford-mustang-46e5bb2562f2423faedfe3f5ea0444f3"
+    },
+    "gt40": {
+      id: "e99a77c50aa74318ac755571a9f67119",
+      title: "1964 Ford GT40",
+      credit: "Ford GT40 1964 by VeCarz · Sketchfab CC BY listing; review creator terms before commercial reuse",
+      url: "https://sketchfab.com/3d-models/ford-gt40-1964-wwwvecarzcom-e99a77c50aa74318ac755571a9f67119"
     }
   };
 
