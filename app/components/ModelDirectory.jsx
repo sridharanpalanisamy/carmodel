@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import FordGLBViewer from "./FordGLBViewer";
 
 const models = [
   ["Anglia","1939–1967","Small family car sold in several generations."],
@@ -87,7 +88,7 @@ export default function ModelDirectory() {
   const inlineViewerRef = useRef(null);
 
   useEffect(() => {
-    if (!selectedModel || !show3D || !inlineViewerRef.current || !window.FordLocal3D) return;
+    if (!selectedModel || selectedModel.name === "Model T" || !show3D || !inlineViewerRef.current || !window.FordLocal3D) return;
     const viewer = window.FordLocal3D.mount(inlineViewerRef.current, selectedModel.name);
     return () => viewer?.destroy();
   }, [selectedModel, show3D]);
@@ -184,8 +185,14 @@ export default function ModelDirectory() {
               {show3D && (
                 <div className="az-inline3d-wrap">
                   <div className="az-inline3d-heading"><strong>Interactive 3D view · Ford {selectedModel.name}</strong><span>Drag to rotate · scroll to zoom</span></div>
-                  <canvas ref={inlineViewerRef} className="az-inline3d-canvas" aria-label={"Interactive illustrative 3D view of Ford " + selectedModel.name} />
-                  <p className="az-inline3d-caption">Locally rendered illustrative concept — not a factory-accurate scan.</p>
+                  {selectedModel.name === "Model T" ? (
+                    <FordGLBViewer />
+                  ) : (
+                    <>
+                      <canvas ref={inlineViewerRef} className="az-inline3d-canvas" aria-label={"Interactive illustrative 3D view of Ford " + selectedModel.name} />
+                      <p className="az-inline3d-caption">Locally rendered illustrative concept — not a factory-accurate scan.</p>
+                    </>
+                  )}
                 </div>
               )}
             </div>
