@@ -21,7 +21,8 @@ export default function FactoryProcessExplorer() {
   const progress = useMemo(() => ((active + 1) / stages.length) * 100, [active]);
   const move = (step) => setActive(value => Math.min(stages.length - 1, Math.max(0, value + step)));
 
-  return (
+  if (!mount) return null;
+  return createPortal(
     <section className="factory-explorer" aria-labelledby="factoryExplorerTitle">
       <div className="factory-explorer-heading">
         <div><span className="eyebrow">INTERACTIVE PRODUCTION GUIDE</span><h2 id="factoryExplorerTitle">From raw material<br/>to <em>road-ready.</em></h2><p>Choose a production stage to see what happens, what comes out of the process and which quality checks matter.</p></div>
@@ -41,6 +42,7 @@ export default function FactoryProcessExplorer() {
         </div>
       </article>
       <p className="factory-disclaimer">Educational overview only. This is a typical automotive manufacturing flow, not a verified map of one specific Ford factory or vehicle. Operations, sequence, automation and inspection standards differ by plant, model, material and powertrain.</p>
-    </section>
+    </section>,
+    mount
   );
 }
