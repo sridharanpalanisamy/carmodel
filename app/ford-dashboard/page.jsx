@@ -24,7 +24,7 @@ const markup = `
 const scripts = ["/carmodel/scripts/local-3d-viewer.js"];
 export default function FordDashboardPage() {
   return <>
-    <link rel="stylesheet" href="/carmodel/pages.css?v=20261115-ford-dashboard" />
+    <link rel="stylesheet" href="/carmodel/pages.css?v=20261115-ford-dashboard-charts-v2" />
     <LegacyPage markup={markup} scripts={scripts} />
     <ModelDialogs />
     <ModelDirectory />
