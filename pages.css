@@ -1704,3 +1704,20 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .ford-command-feature-copy>b{margin-top:4px}
 @media(max-width:700px){.ford-command-feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.ford-command-feature-card{min-height:140px}}
 @media(max-width:440px){.ford-command-feature-grid{grid-template-columns:1fr}}
+
+
+/* Dashboard chart system: category doughnut + decade columns */
+.ford-command-category-chart{display:grid;grid-template-columns:minmax(145px,.85fr) minmax(0,1.35fr);align-items:center;gap:20px;padding:12px 0 4px}
+.ford-command-donut{width:min(100%,190px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;margin:auto;position:relative}
+.ford-command-donut:before{content:"";position:absolute;inset:19%;background:#f8f9f8;border-radius:50%}
+.ford-command-donut>div{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px}
+.ford-command-donut strong{font:800 29px/1 var(--display);color:#17374a}
+.ford-command-donut span{font-size:8px;color:#64747a;letter-spacing:.7px;text-transform:uppercase}
+.ford-command-legend{display:flex;flex-direction:column;gap:3px}
+.ford-command-legend-row{display:grid;grid-template-columns:9px minmax(0,1fr) 28px 35px;align-items:center;gap:8px;padding:7px 6px;border-bottom:1px solid #e3e8e8;font-size:9px;color:#53646a}
+.ford-command-legend-row:hover{background:#edf2f1;color:#17374a}
+.ford-command-legend-row>i{width:8px;height:8px;border-radius:2px}
+.ford-command-legend-row>b{font-size:10px;color:#17374a;text-align:right}
+.ford-command-legend-row>small{font-size:8px;color:#829094;text-align:right}
+.ford-command-chart-link:focus-visible,.ford-command-legend-row:focus-visible,.ford-command-decade-link:focus-visible{outline:2px solid #315e68;outline-offset:3px}
+@media(max-width:600px){.ford-command-category-chart{grid-template-columns:1fr;gap:12px}.ford-command-donut{width:150px}.ford-command-legend{width:100%}}
