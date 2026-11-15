@@ -48,9 +48,21 @@ export default function FactoryProcessExplorer() {
   const [mount, setMount] = useState(null);
   useEffect(() => { setMount(document.getElementById("factoryExplorerMount")); }, []);
   const [active, setActive] = useState(0);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const stage = stages[active];
   const progress = useMemo(() => ((active + 1) / stages.length) * 100, [active]);
   const move = (step) => setActive(value => Math.min(stages.length - 1, Math.max(0, value + step)));
+  useEffect(() => {
+    if (!detailsOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    const onKeyDown = (event) => { if (event.key === "Escape") setDetailsOpen(false); };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [detailsOpen]);
 
   if (!mount) return null;
   return createPortal(
@@ -63,7 +75,7 @@ export default function FactoryProcessExplorer() {
       <div className="factory-flow-scroll">
         <div className="factory-flow-track" role="group" aria-label="Choose a vehicle manufacturing stage">
           {stages.map((item,index)=><div className="factory-flow-step" key={item.id}>
-            <button type="button" className={active===index?"factory-flow-node active":"factory-flow-node"} aria-pressed={active===index} aria-label={`Show ${item.name} details`} onClick={()=>setActive(index)}>
+            <button type="button" className={active===index?"factory-flow-node active":"factory-flow-node"} aria-pressed={active===index} aria-label={`Show ${item.name} details`} onClick={()=>{setActive(index);setDetailsOpen(true);}}>
               <span className="factory-flow-node-number">{item.id}</span>
               <span className="factory-flow-node-icon"><StageSymbol type={item.icon} /></span>
               <strong>{item.name}</strong>
@@ -74,15 +86,18 @@ export default function FactoryProcessExplorer() {
         </div>
       </div>
       <div className="factory-progress" aria-label={`Stage ${active + 1} of ${stages.length}`}><span style={{width:progress+"%"}} /></div>
-      <article className="factory-stage-detail" role="tabpanel">
-        <div className="factory-stage-visual"><FactoryUnitVisual stage={stage} /></div>
-        <div className="factory-stage-copy">
-          <span className="eyebrow">STAGE {stage.id} / 07</span><h3>{stage.title}</h3><p className="factory-stage-summary">{stage.summary}</p>
-          <h4>What happens</h4><ol>{stage.steps.map((step,index)=><li key={index}>{step}</li>)}</ol>
-          <div className="factory-facts"><div><span>PROCESS OUTPUT</span><strong>{stage.outputs}</strong></div><div><span>KEY QUALITY CHECKS</span><strong>{stage.checks}</strong></div></div>
-          <div className="factory-stage-controls"><button type="button" onClick={()=>move(-1)} disabled={active===0}>← Previous</button><span>{active+1} / {stages.length}</span><button type="button" onClick={()=>move(1)} disabled={active===stages.length-1}>Next stage →</button></div>
-        </div>
-      </article>
+      {detailsOpen && <div className="factory-detail-overlay">
+        <article className="factory-stage-detail factory-stage-dialog" role="dialog" aria-modal="true" aria-labelledby="factoryStageDialogTitle">
+          <button type="button" className="factory-detail-close" onClick={()=>setDetailsOpen(false)} aria-label="Close stage details">× <span>Close</span></button>
+          <div className="factory-stage-visual"><FactoryUnitVisual stage={stage} /></div>
+          <div className="factory-stage-copy">
+            <span className="eyebrow">STAGE {stage.id} / 07</span><h3 id="factoryStageDialogTitle">{stage.title}</h3><p className="factory-stage-summary">{stage.summary}</p>
+            <h4>What happens</h4><ol>{stage.steps.map((step,index)=><li key={index}>{step}</li>)}</ol>
+            <div className="factory-facts"><div><span>PROCESS OUTPUT</span><strong>{stage.outputs}</strong></div><div><span>KEY QUALITY CHECKS</span><strong>{stage.checks}</strong></div></div>
+            <div className="factory-stage-controls"><button type="button" onClick={()=>move(-1)} disabled={active===0}>← Previous</button><span>{active+1} / {stages.length}</span><button type="button" onClick={()=>move(1)} disabled={active===stages.length-1}>Next stage →</button></div>
+          </div>
+        </article>
+      </div>}
       <p className="factory-disclaimer">Educational overview only. This is a typical automotive manufacturing flow, not a verified map of one specific Ford factory or vehicle. Operations, sequence, automation and inspection standards differ by plant, model, material and powertrain.</p>
     </section>,
     mount
