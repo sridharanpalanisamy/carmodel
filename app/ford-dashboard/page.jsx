@@ -3,6 +3,7 @@ import ModelDialogs from "../components/ModelDialogs";
 import ModelDirectory from "../components/ModelDirectory";
 import VehicleSpecificationDashboard from "../components/VehicleSpecificationDashboard";
 import VehicleSystemsExplorer from "../components/VehicleSystemsExplorer";
+import FordAnalyticsDashboard from "../components/FordAnalyticsDashboard";
 
 const markup = `
 <main class="page-shell inner-page ford-insight-dashboard">
@@ -17,7 +18,7 @@ const markup = `
   </section>
   <nav class="ford-dashboard-nav" aria-label="Dashboard sections"><a href="#az-archive">A–Z Directory <b>↘</b></a><a href="#spec-dashboard">Specification Comparison <b>↘</b></a><a href="#vehicle-systems">Engineering Reference <b>↘</b></a></nav>
   <section class="ford-dashboard-section directory-dashboard-section"><div class="ford-dashboard-section-heading"><span>01 / MODEL INDEX</span><h2>Ford nameplates, <em>A to Z.</em></h2><p>Search by name or filter alphabetically. Open a model to see its available details and local 3D view.</p></div><div id="azArchiveMount"></div></section>
-  <section class="ford-dashboard-section comparison-dashboard-section"><div class="ford-dashboard-section-heading"><span>02 / VEHICLE DATA</span><h2>Compare vehicle <em>specifications.</em></h2><p>Compare two reference configurations with separate visualisations for displacement, power and torque.</p></div><div id="specDashboardMount"></div></section>
+  <section class="ford-dashboard-section comparison-dashboard-section"><div class="ford-dashboard-section-heading"><span>02 / VEHICLE DATA</span><h2>Compare vehicle <em>specifications.</em></h2><p>Compare two reference configurations with separate visualisations for displacement, power and torque.</p></div><div id="specDashboardMount"></div><div id="specAnalyticsMount"></div></section>
   <section class="ford-dashboard-section engineering-dashboard-section"><div class="ford-dashboard-section-heading"><span>03 / TECHNICAL LIBRARY</span><h2>Engineering <em>systems reference.</em></h2><p>Explore how the major systems work, their key components, power flow and inspection points.</p></div><div id="vehicleSystemsMount"></div></section>
 </main>`;
 const scripts = ["/carmodel/scripts/local-3d-viewer.js"];
@@ -28,6 +29,7 @@ export default function FordDashboardPage() {
     <ModelDialogs />
     <ModelDirectory />
     <VehicleSpecificationDashboard />
+    <FordAnalyticsDashboard />
     <VehicleSystemsExplorer />
   </>;
 }
