@@ -20,7 +20,8 @@ const models = [
 
 export const fordNameplates = models.map(([name, years]) => ({ name, years }));
 
-const imageByName = {\n  "F-100": "ford-f100.png",
+const imageByName = {
+  "F-100": "ford-f100.png",
   "Bronco": "ford-bronco.png", "Falcon": "ford-falcon.png", "GT40": "Ford_GT-40.jpg",
   "Model A": "ford-model-a.png", "Model T": "ford_model_t.png", "Mustang": "ford-mustang.png",
   "Pinto": "ford-pinto.png", "Thunderbird": "ford-thunderbird.png",
