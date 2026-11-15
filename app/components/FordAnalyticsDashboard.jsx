@@ -18,7 +18,7 @@ function DonutChart({ data }) {
     return segment;
   });
   return <div className="ford-donut-layout">
-    <div className="ford-donut-graphic"><div className="ford-donut-ring" style={{background:segments.reduceRight((background,item)=>`conic-gradient(${item.color} ${item.offset}% ${item.offset+item.length}%, ${background})`,"#eee8e3")}}/><div className="ford-donut-centre"><b>{data.reduce((s,x)=>s+x.value,0)}</b><small>VEHICLES</small></div></div>
+    <div className="ford-donut-graphic"><div className="ford-donut-ring" style={{background:`conic-gradient(${segments.map(item=>item.color+" "+item.offset+"% "+(item.offset+item.length)+"%").join(",")})`}}/><div className="ford-donut-centre"><b>{data.reduce((s,x)=>s+x.value,0)}</b><small>VEHICLES</small></div></div>
     <div className="ford-chart-legend">{segments.map(item=><div key={item.label}><i style={{background:item.color}}/><span>{item.label}</span><b>{item.value}</b></div>)}</div>
   </div>;
 }
