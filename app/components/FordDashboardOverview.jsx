@@ -46,6 +46,15 @@ export default function FordDashboardOverview() {
   const filteredFeatured = featured.filter(model => (model.name + " " + model.note + " " + model.year).toLowerCase().includes(search.trim().toLowerCase()));
   const maxCategory = Math.max(...directoryStats.counts.map(item => item.count), 1);
   const maxDecade = Math.max(...directoryStats.decades.map(item => item.count), 1);
+  const categoryTotal = directoryStats.counts.reduce((sum, item) => sum + item.count, 0);
+  const categoryDonut = directoryStats.counts.reduce((parts, item, index) => {
+    const start = parts.total;
+    const end = start + (categoryTotal ? item.count / categoryTotal * 100 : 0);
+    parts.stops.push(categoryColors[index] + " " + start + "% " + end + "%");
+    parts.total = end;
+    return parts;
+  }, { total: 0, stops: [] });
+  const categoryGradient = "conic-gradient(" + categoryDonut.stops.join(", ") + ")";
 
   return (
     <main className="page-shell ford-command-dashboard">
@@ -73,7 +82,7 @@ export default function FordDashboardOverview() {
         <div className="ford-command-analytics">
           <article className="ford-command-panel">
             <div className="ford-command-panel-head"><div><span>01 / CATEGORY BREAKDOWN</span><h3>Models by vehicle type</h3></div><small>{fordNameplates.length} nameplates</small></div>
-            <div className="ford-command-bars">{directoryStats.counts.map((item,index) => <Link href={"/models/?category="+encodeURIComponent(item.category)} className="ford-command-bar-row ford-command-chart-link" key={item.category} aria-label={"View "+item.count+" nameplates in "+item.category}><div><span>{item.category} ↗</span><b>{item.count}</b></div><div className="ford-command-track"><i style={{width:(item.count/maxCategory*100)+"%",background:categoryColors[index]}}/></div></Link>)}</div>
+            <div className="ford-command-category-chart"><div className="ford-command-donut" role="img" aria-label="Doughnut chart showing the share of nameplates by vehicle category" style={{background:categoryGradient}}><div><strong>{categoryTotal}</strong><span>nameplates</span></div></div><div className="ford-command-legend">{directoryStats.counts.map((item,index) => <Link href={"/models/?category="+encodeURIComponent(item.category)} className="ford-command-legend-row" key={item.category}><i style={{background:categoryColors[index]}}/><span>{item.category}</span><b>{item.count}</b><small>{categoryTotal ? Math.round(item.count/categoryTotal*100) : 0}%</small></Link>)}</div></div>
             <p className="ford-command-chart-note">Categories follow the directory's current nameplate classification. Some models and regional nameplates may fit more than one vehicle segment.</p>
           </article>
           <article className="ford-command-panel">
