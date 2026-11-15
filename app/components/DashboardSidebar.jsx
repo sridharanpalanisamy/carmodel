@@ -8,7 +8,8 @@ const items = [
   { href: "/models/", label: "Ford Models", code: "02", icon: "▤", match: ["/models"] },
   { href: "/specifications/", label: "Comparison", code: "03", icon: "⇄", match: ["/specifications"] },
   { href: "/engineering/", label: "Engineering", code: "04", icon: "⚙", match: ["/engineering"] },
-  { href: "/factory/", label: "Factory Process", code: "05", icon: "⌁", match: ["/factory"] }
+  { href: "/factory/", label: "Factory Process", code: "05", icon: "⌁", match: ["/factory"] },
+  { href: "/heritage/", label: "Heritage", code: "06", icon: "◷", match: ["/heritage"] }
 ];
 
 export default function DashboardSidebar() {
