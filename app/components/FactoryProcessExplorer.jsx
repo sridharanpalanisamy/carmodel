@@ -14,6 +14,20 @@ const stages = [
 ];
 
 
+function StageSymbol({ type }) {
+  const common = { fill: "none", stroke: "currentColor", strokeWidth: 2.2, strokeLinecap: "round", strokeLinejoin: "round" };
+  const paths = {
+    PRESS: <><path d="M7 21h10M9 17h6M10 17V9h4v8M6 9h12M8 5h8M12 2v3M4 21h16" /><path d="M8 9l-2 3h12l-2-3" /></>,
+    WELD: <><path d="M4 20l5-5 3 3 8-9M16 5l3-2 2 3-3 2z" /><path d="M5 5l1.5 2M3 9l3 1M10 3l-.5 2M19 14l2 1M17 18l2 2" /></>,
+    COAT: <><path d="M5 4h14l-1 5H6L5 4zM7 9v11h10V9M10 13h4M10 16h4" /><path d="M3 2l2 2M21 2l-2 2" /></>,
+    PAINT: <><path d="M4 8h10l3 3-3 3H4zM14 8l3-3h3v6h-3M8 14v5M5 19h6" /><path d="M20 14l1 2M18 16l1 2M22 18l1 2" /></>,
+    DRIVE: <><circle cx="12" cy="12" r="8" /><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" /></>,
+    BUILD: <><path d="M3 14l2-5h14l2 5v5H3zM5 14h14M7 19v2M17 19v2" /><path d="M7 9l2-4h6l2 4M8 14v2M16 14v2" /></>,
+    CHECK: <><path d="M12 2l8 3v6c0 5-3.5 9-8 11-4.5-2-8-6-8-11V5z" /><path d="M8 12l3 3 5-6" /></>
+  };
+  return <svg viewBox="0 0 24 24" aria-hidden="true" {...common}>{paths[type] || paths.CHECK}</svg>;
+}
+
 function FactoryUnitVisual({ stage }) {
   const shared = <><path className="unit-floor" d="M18 224H382"/><path className="unit-rail" d="M28 205H372M28 214H372"/><circle className="unit-wheel" cx="72" cy="210" r="7"/><circle className="unit-wheel" cx="328" cy="210" r="7"/></>;
   let machine;
@@ -47,11 +61,11 @@ export default function FactoryProcessExplorer() {
       </div>
       <div className="factory-flow-header"><span>PRODUCTION FLOW MAP</span><small>Select any node to inspect that manufacturing unit</small></div>
       <div className="factory-flow-scroll">
-        <div className="factory-flow-track" role="group" aria-label="Interactive vehicle manufacturing process flow">
+        <div className="factory-flow-track" role="group" aria-label="Choose a vehicle manufacturing stage">
           {stages.map((item,index)=><div className="factory-flow-step" key={item.id}>
-            <button type="button" className={active===index?"factory-flow-node active":"factory-flow-node"} aria-pressed={active===index} onClick={()=>setActive(index)}>
+            <button type="button" className={active===index?"factory-flow-node active":"factory-flow-node"} aria-pressed={active===index} aria-label={`Show ${item.name} details`} onClick={()=>setActive(index)}>
               <span className="factory-flow-node-number">{item.id}</span>
-              <span className="factory-flow-node-icon" aria-hidden="true">{["ST","BW","SP","PF","PT","FA","QC"][index]}</span>
+              <span className="factory-flow-node-icon"><StageSymbol type={item.icon} /></span>
               <strong>{item.name}</strong>
               <small>{item.area.split(" · ")[0]}</small>
             </button>
