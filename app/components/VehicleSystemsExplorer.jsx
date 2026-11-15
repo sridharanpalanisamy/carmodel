@@ -45,9 +45,9 @@ export default function VehicleSystemsExplorer() {
   const active = systems.find(item => item.id === activeId) || systems[0];
   if (!mount) return null;
   return createPortal(
-    <section className="vehicle-systems" aria-labelledby="vehicleSystemsTitle">
+    <section className="vehicle-systems" id="vehicle-systems" aria-labelledby="vehicleSystemsTitle">
       <div className="vehicle-systems-heading">
-        <div><span className="eyebrow">PROJECT 10 / INTERACTIVE ENGINEERING</span><h2 id="vehicleSystemsTitle">Explore the vehicle <em>systems.</em></h2><p>Select a system to understand its purpose, main components and basic inspection points.</p></div>
+        <div><span className="eyebrow">ENGINEERING REFERENCE</span><h2 id="vehicleSystemsTitle">Explore the vehicle <em>systems.</em></h2><p>Select a system to understand its purpose, main components and basic inspection points.</p></div>
         <span className="vehicle-systems-index">SYSTEMS / 06</span>
       </div>
       <div className="vehicle-systems-layout">
