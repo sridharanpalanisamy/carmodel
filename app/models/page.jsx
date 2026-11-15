@@ -16,8 +16,8 @@ const markup = `
 <main class="page-shell inner-page models-directory-page">
   <section class="az-page-heading">
     <span class="eyebrow">THE FORD HERITAGE COLLECTION</span>
-    <h1>Ford models, <em>A to Z.</em></h1>
-    <p>Browse the nameplate directory, select a model to view its details, and explore further only when you need to.</p>
+    <h1>11 selected Ford <em>models.</em></h1>
+    <p>Browse 11 selected historic Ford models, open a model to view its details, and compare their reference specifications from the dashboard.</p>
   </section>
   <div id="azArchiveMount"></div>
   <nav class="directory-more-links" aria-label="More Ford information">
@@ -34,7 +34,7 @@ const markup = `
 const scripts = ["/carmodel/scripts/local-3d-viewer.js"];
 export default function Page() {
   return <>
-    <link rel="stylesheet" href="/carmodel/pages.css?v=20261115-az-first-layout-fix" />
+    <link rel="stylesheet" href="/carmodel/pages.css?v=20261115-models-11-only" />
     <LegacyPage markup={markup} scripts={scripts} />
     <ModelDialogs />
     <ModelDirectory />
