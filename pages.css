@@ -198,11 +198,27 @@
 .factory-stage-nav button.active{background:var(--ink);border-color:var(--ink);color:white}
 .factory-stage-nav button:focus-visible,.factory-stage-controls button:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
 .factory-stage-detail{display:grid;grid-template-columns:minmax(220px,.78fr) minmax(0,1.5fr);background:#f1eff0;border:1px solid var(--line)}
-.factory-stage-visual{min-height:350px;position:relative;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;padding:25px;background:#e3dfe1;overflow:hidden}
-.factory-stage-number{font:700 clamp(70px,10vw,112px)/.9 var(--display);color:#c9c1c5;letter-spacing:-5px}
-.factory-stage-symbol{font:800 clamp(24px,3vw,38px) var(--display);letter-spacing:3px;color:var(--orange);border:1px solid #b9aeb4;padding:16px 18px;position:relative}
-.factory-stage-symbol:after{content:"";position:absolute;width:95px;height:95px;border:1px solid #c7bec2;border-radius:50%;right:-54px;top:-52px}
-.factory-stage-area{font:700 8px var(--sans);letter-spacing:1.3px;color:var(--muted);text-transform:uppercase}
+.factory-stage-visual{min-height:350px;position:relative;display:flex;align-items:stretch;justify-content:stretch;padding:18px;background:linear-gradient(145deg,#e9e5e6,#d9d2d5);overflow:hidden}
+.factory-unit-illustration{width:100%;display:flex;flex-direction:column;justify-content:space-between;min-width:0}
+.factory-unit-topline{display:flex;justify-content:space-between;gap:8px;font:700 7px var(--sans);letter-spacing:1.2px;color:#746b70}
+.factory-unit-illustration svg{width:100%;height:auto;max-height:245px;overflow:visible}
+.factory-unit-caption{display:flex;align-items:center;gap:8px;font:700 8px var(--sans);letter-spacing:.7px;text-transform:uppercase;color:#746b70}
+.factory-unit-dot{width:7px;height:7px;border-radius:50%;background:var(--orange);flex:0 0 auto}
+.factory-unit-illustration svg path,.factory-unit-illustration svg rect,.factory-unit-illustration svg circle{vector-effect:non-scaling-stroke}
+.unit-floor{stroke:#b9afb4;stroke-width:1.2;fill:none}
+.unit-rail{stroke:#8d8389;stroke-width:2;fill:none}
+.unit-wheel{fill:#4c4549;stroke:#f0edef;stroke-width:2}
+.unit-frame{fill:none;stroke:#625a60;stroke-width:5;stroke-linejoin:round}
+.unit-machine{fill:#51494e;stroke:#393338;stroke-width:1.5}
+.unit-arm{fill:none;stroke:#d56b38;stroke-width:8;stroke-linecap:round;stroke-linejoin:round}
+.unit-joint{fill:#d56b38;stroke:#6f4635;stroke-width:1.5}
+.unit-part{fill:#aab2b5;stroke:#5b6265;stroke-width:2;stroke-linejoin:round}
+.unit-detail{fill:none;stroke:#777077;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.unit-spark,.unit-spray{fill:none;stroke:#e38a4d;stroke-width:3;stroke-linecap:round}
+.unit-liquid{fill:#9fb7b8;stroke:#587b7e;stroke-width:1.5}
+.unit-bubble{fill:#e9f0ed;stroke:#6e9998;stroke-width:1.5}
+.unit-scan{fill:none;stroke:#d56b38;stroke-width:3;stroke-dasharray:5 4}
+.unit-check{fill:none;stroke:#588c70;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
 .factory-stage-copy{padding:27px 30px;min-width:0}
 .factory-stage-copy h3{font:700 clamp(24px,3vw,34px)/1.1 var(--display);margin:8px 0 10px}
 .factory-stage-summary{font-size:11px;line-height:1.75;color:var(--muted);max-width:660px}
@@ -221,7 +237,7 @@
 .factory-disclaimer{font-size:9px;line-height:1.7;color:var(--muted);margin:14px 0 0}
 .factory-learning-note{padding:35px 0;border-top:1px solid var(--line);margin-top:28px}
 .factory-learning-note p{max-width:650px;color:var(--muted);font-size:11px;line-height:1.8}
-@media(max-width:760px){.factory-stage-nav{grid-template-columns:repeat(4,minmax(0,1fr))}.factory-stage-detail{grid-template-columns:1fr}.factory-stage-visual{min-height:170px;padding:18px}.factory-stage-number{font-size:64px}.factory-stage-symbol{font-size:24px;padding:10px 14px}.factory-stage-copy{padding:22px 18px}}
+@media(max-width:760px){.factory-stage-nav{grid-template-columns:repeat(4,minmax(0,1fr))}.factory-stage-detail{grid-template-columns:1fr}.factory-stage-visual{min-height:240px;padding:16px}.factory-unit-illustration svg{max-height:170px}.factory-stage-copy{padding:22px 18px}}
 @media(max-width:460px){.factory-explorer-heading{align-items:flex-start}.factory-index{display:none}.factory-stage-nav{grid-template-columns:repeat(2,minmax(0,1fr))}.factory-facts{grid-template-columns:1fr}.factory-stage-controls button{padding:9px 10px}}
 
 /* Interactive Ford heritage timeline */
