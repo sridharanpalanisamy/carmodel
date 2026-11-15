@@ -1,5 +1,6 @@
 import LegacyPage from "../components/LegacyPage";
 import ModelDirectory from "../components/ModelDirectory";
+import DashboardSidebar from "../components/DashboardSidebar";
 
 const markup = `
 <header class="site-header">
@@ -13,4 +14,4 @@ const markup = `
   <div id="azArchiveMount"></div>
 </main>
 <footer class="site-footer inner-footer"><a class="brand" href="/carmodel/"><span class="brand-mark">F</span><span>CLASSIC FORD<small>THE HERITAGE COLLECTION</small></span></a><p>A visual tribute to the vehicles that moved generations.</p><div class="footer-bottom"><span>© 2026 Classic Ford Collection</span><span>Built for automotive enthusiasts</span></div></footer>`;
-export default function Page() { return <><link rel="stylesheet" href="/carmodel/pages.css?v=20261115-category-gallery-1" /><LegacyPage markup={markup} /><ModelDirectory /></>; }
+export default function Page() { return <><link rel="stylesheet" href="/carmodel/pages.css?v=20261115-sidebar-workspace-1" /><LegacyPage markup={markup} /><DashboardSidebar /><ModelDirectory /></>; }
