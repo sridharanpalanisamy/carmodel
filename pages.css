@@ -1526,3 +1526,11 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
     padding-right:12px!important;
   }
 }
+
+
+/* Clear keyboard focus for the fixed icon-only workspace navigation. */
+.dashboard-sidebar-icon-rail .dashboard-sidebar-link:focus-visible{
+  outline:3px solid #e6a17e!important;
+  outline-offset:3px;
+  z-index:2;
+}
