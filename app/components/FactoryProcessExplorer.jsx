@@ -13,7 +13,24 @@ const stages = [
   { id:"07", name:"Quality validation", area:"End of line · Inspection", title:"Verify before release", summary:"Completed vehicles pass checks intended to confirm that safety-related systems, functions, fit and finish meet the plant's release criteria.", steps:["Diagnostic tools check electronic control units and fault codes.","Brake, alignment, lighting, water-leak and functional tests are performed as applicable.","Defects are recorded, corrected and rechecked before release."], outputs:"Inspected vehicle ready for dispatch", checks:"Functional tests, diagnostics, alignment, leaks and final audit", icon:"CHECK" }
 ];
 
-export default function FactoryProcessExplorer() {
+
+function FactoryUnitVisual({ stage }) {
+  const shared = <><path className="unit-floor" d="M18 224H382"/><path className="unit-rail" d="M28 205H372M28 214H372"/><circle className="unit-wheel" cx="72" cy="210" r="7"/><circle className="unit-wheel" cx="328" cy="210" r="7"/></>;
+  let machine;
+  if (stage.id === "01") machine = <><path className="unit-frame" d="M104 42V188M296 42V188M104 48H296M104 188H296"/><rect className="unit-machine" x="126" y="48" width="148" height="24" rx="3"/><path className="unit-arm" d="M200 72V116"/><rect className="unit-machine" x="164" y="112" width="72" height="16" rx="2"/><path className="unit-part" d="M140 160Q200 132 260 160L248 178H152Z"/><path className="unit-detail" d="M88 188H312M112 42H288"/></>;
+  else if (stage.id === "02") machine = <><path className="unit-frame" d="M44 176V78H92V176M308 176V78H356V176"/><path className="unit-arm" d="M68 112L108 88L137 115L158 130M332 112L292 88L263 115L242 130"/><circle className="unit-joint" cx="108" cy="88" r="7"/><circle className="unit-joint" cx="292" cy="88" r="7"/><path className="unit-part" d="M132 144L151 116H249L268 144L254 165H146Z"/><path className="unit-detail" d="M152 116L160 144M248 116L240 144M200 116V164"/><path className="unit-spark" d="M126 126l-8 -8m10 3l-1 -12m-8 18l-12 2M274 126l8 -8m-10 3l1 -12m8 18l12 2"/></>;
+  else if (stage.id === "03") machine = <><path className="unit-frame" d="M48 66H352V184H48Z"/><path className="unit-detail" d="M48 92H352M48 176H352"/><path className="unit-liquid" d="M56 128H126V176H56ZM165 128H235V176H165ZM274 128H344V176H274Z"/><path className="unit-part" d="M112 82L130 68H270L288 82L278 106H122Z"/><path className="unit-arm" d="M200 40V68M188 52L200 40L212 52"/><circle className="unit-bubble" cx="90" cy="150" r="4"/><circle className="unit-bubble" cx="198" cy="150" r="5"/><circle className="unit-bubble" cx="310" cy="150" r="4"/></>;
+  else if (stage.id === "04") machine = <><path className="unit-frame" d="M46 54H354V188H46Z"/><path className="unit-detail" d="M72 54V188M328 54V188M46 82H354"/><path className="unit-part" d="M122 132L144 104H256L278 132L266 157H134Z"/><path className="unit-arm" d="M82 104L108 94L128 112L142 120M318 104L292 94L272 112L258 120"/><path className="unit-spray" d="M144 92l-8 -14m18 14l-2 -17m10 17l4 -14M238 92l8 -14m-18 14l2 -17m-10 17l-4 -14"/><path className="unit-detail" d="M144 164H256"/></>;
+  else if (stage.id === "05") machine = <><path className="unit-frame" d="M74 64H326V184H74Z"/><rect className="unit-machine" x="132" y="82" width="136" height="76" rx="8"/><path className="unit-detail" d="M146 96H254M146 144H254M168 82V158M232 82V158"/><circle className="unit-wheel" cx="151" cy="120" r="13"/><circle className="unit-wheel" cx="249" cy="120" r="13"/><path className="unit-part" d="M180 94H220L232 120L220 146H180L168 120Z"/><path className="unit-arm" d="M200 38V78M188 50L200 38L212 50"/><path className="unit-detail" d="M94 184V196M306 184V196"/></>;
+  else if (stage.id === "06") machine = <><path className="unit-frame" d="M42 52H358V184H42Z"/><path className="unit-detail" d="M70 52V184M330 52V184M42 76H358"/><path className="unit-part" d="M104 130L128 96H272L296 130L282 158H118Z"/><path className="unit-detail" d="M150 98L160 130H240L250 98M126 158V174M274 158V174"/><circle className="unit-wheel" cx="138" cy="158" r="13"/><circle className="unit-wheel" cx="262" cy="158" r="13"/><path className="unit-arm" d="M82 72L108 86L130 108M318 72L292 86L270 108"/></>;
+  else machine = <><path className="unit-frame" d="M88 46H312V188H88Z"/><path className="unit-detail" d="M108 46V188M292 46V188M88 78H312"/><path className="unit-part" d="M124 132L144 102H256L276 132L264 158H136Z"/><circle className="unit-wheel" cx="150" cy="158" r="12"/><circle className="unit-wheel" cx="250" cy="158" r="12"/><path className="unit-scan" d="M108 96V66H292V96M124 66V52M276 66V52"/><path className="unit-detail" d="M200 50V90M188 80L200 92L212 80"/><path className="unit-check" d="M310 104l10 10l20 -24"/></>;
+  return <div className="factory-unit-illustration">
+    <div className="factory-unit-topline"><span>MANUFACTURING UNIT</span><span>{stage.id} / 07</span></div>
+    <svg viewBox="0 0 400 250" role="img" aria-label={stage.name + " manufacturing unit illustration"}>{shared}{machine}</svg>
+    <div className="factory-unit-caption"><span className="factory-unit-dot"/>{stage.area}</div>
+  </div>;
+}
+\nexport default function FactoryProcessExplorer() {
   const [mount, setMount] = useState(null);
   useEffect(() => { setMount(document.getElementById("factoryExplorerMount")); }, []);
   const [active, setActive] = useState(0);
@@ -33,7 +50,7 @@ export default function FactoryProcessExplorer() {
         {stages.map((item,index)=><button key={item.id} type="button" role="tab" aria-selected={active===index} className={active===index?"active":""} onClick={()=>setActive(index)}><span>{item.id}</span><strong>{item.name}</strong></button>)}
       </div>
       <article className="factory-stage-detail" role="tabpanel">
-        <div className="factory-stage-visual"><span className="factory-stage-number">{stage.id}</span><div className="factory-stage-symbol" aria-hidden="true">{stage.icon}</div><span className="factory-stage-area">{stage.area}</span></div>
+        <div className="factory-stage-visual"><FactoryUnitVisual stage={stage} /></div>
         <div className="factory-stage-copy">
           <span className="eyebrow">STAGE {stage.id} / 07</span><h3>{stage.title}</h3><p className="factory-stage-summary">{stage.summary}</p>
           <h4>What happens</h4><ol>{stage.steps.map((step,index)=><li key={index}>{step}</li>)}</ol>
