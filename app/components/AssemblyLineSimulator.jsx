@@ -16,6 +16,8 @@ const initialStations = [
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
 export default function AssemblyLineSimulator() {
+  const [mount, setMount] = useState(null);
+  useEffect(() => { setMount(document.getElementById("lineSimulatorMount")); }, []);
   const [stations, setStations] = useState(initialStations);
   const [shiftHours, setShiftHours] = useState(8);
   const [breakMinutes, setBreakMinutes] = useState(40);
@@ -56,7 +58,8 @@ export default function AssemblyLineSimulator() {
     setTarget(350);
   }
 
-  return (
+  if (!mount) return null;
+  return createPortal(
     <section className="line-simulator" aria-labelledby="lineSimulatorTitle">
       <div className="line-simulator-heading">
         <div>
@@ -116,6 +119,7 @@ export default function AssemblyLineSimulator() {
         </aside>
       </div>
       <p className="line-sim-disclaimer">Simplified educational model. It assumes a serial line whose throughput is limited by the slowest station. Real factories also account for buffers, parallel workstations, changeovers, downtime patterns, material shortages, rework, staffing and product mix. Results are estimates, not Ford plant data or production guarantees.</p>
-    </section>
+    </section>,
+    mount
   );
 }
