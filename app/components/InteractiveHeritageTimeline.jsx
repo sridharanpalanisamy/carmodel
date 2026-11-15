@@ -18,7 +18,8 @@ const categories=["All","Company","Vehicle","Innovation","Motorsport"];
 export default function InteractiveHeritageTimeline(){
  const [category,setCategory]=useState("All");
  const [year,setYear]=useState(1903);
- const [search,setSearch]=useState("");\n useEffect(()=>{const requested=Number(new URLSearchParams(window.location.search).get("year"));if(Number.isFinite(requested)&&requested>0){const nearest=milestones.reduce((best,item)=>Math.abs(item.year-requested)<Math.abs(best.year-requested)?item:best,milestones[0]);setYear(nearest.year);}},[]);
+ const [search,setSearch]=useState("");
+ useEffect(()=>{const requested=Number(new URLSearchParams(window.location.search).get("year"));if(Number.isFinite(requested)&&requested>0){const nearest=milestones.reduce((best,item)=>Math.abs(item.year-requested)<Math.abs(best.year-requested)?item:best,milestones[0]);setYear(nearest.year);}},[]);
  const items=useMemo(()=>milestones.filter(m=>(category==="All"||m.type===category)&&(!search||(m.title+" "+m.year+" "+m.summary).toLowerCase().includes(search.toLowerCase()))),[category,search]);
  const active=items.find(m=>m.year===year)||items[0];
  const index=active?items.findIndex(m=>m.year===active.year):-1;
