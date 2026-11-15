@@ -7,6 +7,7 @@ import { useState } from "react";
 const links = [
   { href: "/", label: "Home", page: "home" },
   { href: "/models/", label: "Models", page: "models" },
+  { href: "/directory/", label: "A–Z Directory", page: "directory" },
   { href: "/heritage/", label: "Heritage", page: "heritage" },
   { href: "/contact/", label: "Contact", page: "contact" },
 ];
@@ -14,7 +15,8 @@ const links = [
 export default function SiteHeader() {
   const pathname = usePathname() || "/";
   const [open, setOpen] = useState(false);
-  const activePage = pathname.endsWith("/models/") ? "models"
+  const activePage = pathname.endsWith("/directory/") ? "directory"
+    : pathname.endsWith("/models/") ? "models"
     : pathname.endsWith("/heritage/") ? "heritage"
     : pathname.endsWith("/contact/") ? "contact" : "home";
 
