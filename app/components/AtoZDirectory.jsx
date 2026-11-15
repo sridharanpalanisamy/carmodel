@@ -78,7 +78,7 @@ const featuredSpecs = {
   "V8": ["3.6 L flathead V8 (1932 reference)", "Petrol", "3-speed manual", "Rear-wheel drive"],
   "Deluxe Coupe": ["3.6 L flathead V8 (1940 reference)", "Petrol", "3-speed manual", "Rear-wheel drive"]
 };
-const categoryFor = name => /bronco|escape|explorer|expedition|excursion|maverick/i.test(name) ? "SUV / off-road" : /f-series|f-100|ranger/i.test(name) ? "Pickup / utility" : /transit|econoline|e-series|windstar|freestar/i.test(name) ? "Van / commercial" : /gt40|^gt$|mustang|capri|probe|thunderbird/i.test(name) ? "Performance / sports" : "Passenger car";
+const categoryFor = name => /f-series|f-100|ranger|maverick/i.test(name) ? "Pickup / utility" : /bronco|escape|explorer|expedition|excursion|flex/i.test(name) ? "SUV / off-road" : /transit|econoline|e-series|windstar|freestar/i.test(name) ? "Van / commercial" : /gt40|^gt$|mustang|capri|probe|thunderbird/i.test(name) ? "Performance / sports" : "Passenger car";
 const letters = ["all", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 
 export default function ModelDirectory() {
