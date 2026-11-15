@@ -352,3 +352,62 @@
 .factory-flow-edge.passed i{width:100%}
 .factory-flow-edge.passed:after{border-color:var(--orange)}
 @media(max-width:700px){.factory-flow-header{align-items:flex-start;flex-direction:column;gap:5px}.factory-flow-track{min-width:980px}.factory-flow-node{min-height:116px;padding:10px}.factory-flow-edge{flex-basis:18px}}
+
+
+/* Factory process explorer — refined industrial control-room layout */
+.factory-explorer{padding:56px 0 60px;margin-top:38px}
+.factory-explorer-heading{align-items:center;margin-bottom:30px}
+.factory-explorer-heading>div:first-child{max-width:720px}
+.factory-index{padding:13px 18px;border:1px solid var(--line);background:#f4f1f0;min-width:116px;justify-content:center}
+.factory-index strong{font-size:48px}
+.factory-flow-header{margin:24px 0 12px;padding:13px 16px;background:#252328;color:#fff}
+.factory-flow-header>span{color:#fff;letter-spacing:1.6px}
+.factory-flow-header small{color:#c7c0c2}
+.factory-flow-scroll{padding:16px;background:#e9e5e4;border:1px solid #d3ccca}
+.factory-flow-track{min-width:1150px;align-items:stretch}
+.factory-flow-step{align-items:center}
+.factory-flow-node{min-height:154px;padding:15px 13px;border-radius:2px;background:#fbfaf9;border:1px solid #c9c2c0;box-shadow:0 3px 0 #d1c9c7;gap:9px}
+.factory-flow-node.active{background:#29262a;border:1px solid #d56b38;box-shadow:0 4px 0 #b9522b,0 12px 22px #28232825}
+.factory-flow-node-number{font-size:9px;letter-spacing:1.5px}
+.factory-flow-node-icon{width:39px;height:32px;border-radius:2px;background:#e8e1de;color:#4c4545;font:800 10px var(--sans);letter-spacing:1px}
+.factory-flow-node.active .factory-flow-node-icon{background:#49352f;color:#ffad83}
+.factory-flow-node strong{font-size:11px;line-height:1.25;min-height:27px}
+.factory-flow-node small{font-size:8px;letter-spacing:.4px;text-transform:uppercase}
+.factory-flow-edge{flex-basis:26px;height:3px;background:#bcb3b0;margin:0 4px}
+.factory-flow-edge:after{top:-4px;border-color:#8b7d79}
+.factory-flow-edge.passed{background:#d56b38}
+.factory-progress{height:5px;background:#ddd6d3;margin:0 0 18px}
+.factory-progress span{background:linear-gradient(90deg,#b94f2d,#f08a55)}
+.factory-stage-detail{grid-template-columns:minmax(300px,.9fr) minmax(0,1.35fr);background:#f6f3f1;border:1px solid #d7cfcc;box-shadow:0 12px 34px #2823280d}
+.factory-stage-visual{min-height:420px;padding:22px;background-color:#ded9d6;background-image:linear-gradient(#b8aeaa22 1px,transparent 1px),linear-gradient(90deg,#b8aeaa22 1px,transparent 1px);background-size:22px 22px}
+.factory-unit-topline{font-size:8px;color:#5e5552}
+.factory-unit-illustration svg{max-height:290px}
+.factory-unit-caption{font-size:8px;color:#5e5552}
+.factory-stage-copy{padding:32px 34px}
+.factory-stage-copy>.eyebrow{display:inline-block;padding:6px 8px;background:#eee2dc;color:#b64e2d;font-weight:800;letter-spacing:1.3px}
+.factory-stage-copy h3{font-size:clamp(26px,3vw,38px);letter-spacing:-.8px}
+.factory-stage-summary{font-size:12px;line-height:1.85;color:#655d5b}
+.factory-stage-copy h4{font-size:14px;margin-top:24px}
+.factory-stage-copy ol{font-size:11px;line-height:1.9;color:#625a58}
+.factory-facts{margin-top:24px;background:#d9d1ce;border-color:#d9d1ce}
+.factory-facts>div{background:#fffdfc;padding:16px}
+.factory-facts span{font-size:8px;letter-spacing:1.1px;color:#8a7770}
+.factory-facts strong{font-size:11px;line-height:1.6}
+.factory-stage-controls{margin-top:22px;padding-top:16px;border-top:1px solid #ded7d4}
+.factory-stage-controls button{padding:12px 16px;border-radius:2px;background:#29262a;border-color:#29262a}
+.factory-stage-controls button:hover:not(:disabled){background:#bd552f;border-color:#bd552f}
+.factory-stage-controls span{font-size:10px;letter-spacing:1px}
+.factory-disclaimer{padding:12px 14px;background:#f0edeb;border-left:3px solid #bd552f;color:#766c68}
+@media(max-width:760px){
+ .factory-explorer{padding:38px 0 44px}
+ .factory-stage-detail{grid-template-columns:1fr}
+ .factory-stage-visual{min-height:290px}
+ .factory-unit-illustration svg{max-height:205px}
+ .factory-stage-copy{padding:24px 20px}
+}
+@media(max-width:460px){
+ .factory-explorer-heading{gap:12px}
+ .factory-index{display:none}
+ .factory-facts{grid-template-columns:1fr}
+ .factory-stage-controls button{padding:10px 11px}
+}
