@@ -5,12 +5,12 @@ import Link from "next/link";
 import { fordNameplates } from "./AtoZDirectory";
 
 const featured = [
-  { name: "Mustang", year: "1964–present", image: "/carmodel/assets/images/ford-mustang.png", note: "Pony-car icon" },
-  { name: "Model T", year: "1908–1927", image: "/carmodel/assets/images/ford_model_t.png", note: "Mass-mobility milestone" },
-  { name: "GT40", year: "1964–1969", image: "/carmodel/assets/images/Ford_GT-40.jpg", note: "Endurance racing legend" },
-  { name: "Bronco", year: "1966–present", image: "/carmodel/assets/images/ford-bronco.png", note: "Off-road heritage" },
-  { name: "F-Series", year: "1948–present", image: "/carmodel/assets/images/ford-f100.png", note: "Pickup truck family" },
-  { name: "Thunderbird", year: "1955–2005", image: "/carmodel/assets/images/ford-thunderbird.png", note: "Personal luxury" }
+  { name: "Mustang", year: "1964–present", note: "Pony-car icon" },
+  { name: "Model T", year: "1908–1927", note: "Mass-mobility milestone" },
+  { name: "GT40", year: "1964–1969", note: "Endurance racing legend" },
+  { name: "Bronco", year: "1966–present", note: "Off-road heritage" },
+  { name: "F-Series", year: "1948–present", note: "Pickup truck family" },
+  { name: "Thunderbird", year: "1955–2005", note: "Personal luxury" }
 ];
 const milestones = [
   { year: 1903, label: "Ford Motor Company founded" },
@@ -59,10 +59,6 @@ export default function FordDashboardOverview() {
             <Link href="/heritage/" className="ford-command-secondary">Discover the heritage</Link>
           </div>
         </div>
-        <div className="ford-command-hero-art" aria-label="Ford Mustang vehicle image">
-          <img src="/carmodel/assets/images/ford-mustang.png" alt="Ford Mustang" />
-          <span className="ford-command-hero-index">FORD ARCHIVE / 1903—TODAY</span>
-        </div>
       </section>
 
       <section className="ford-command-kpis" aria-label="Ford archive summary">
@@ -90,7 +86,7 @@ export default function FordDashboardOverview() {
 
       <section className="ford-command-section ford-command-featured">
         <div className="ford-command-section-heading"><div><span className="eyebrow">CURATED MODEL SPOTLIGHT</span><h2>Explore iconic <em>nameplates.</em></h2><p>A quick route into a selection of Ford vehicles from different eras and segments.</p></div><label className="ford-command-search"><span>⌕</span><input value={search} onChange={event=>setSearch(event.target.value)} placeholder="Find a featured model" aria-label="Search featured models"/></label></div>
-        <div className="ford-command-feature-grid">{filteredFeatured.map(model=><Link href="/models/" className="ford-command-feature-card" key={model.name}><div className="ford-command-feature-image"><img src={model.image} alt={"Ford "+model.name} loading="lazy"/></div><div className="ford-command-feature-copy"><span>{model.year}</span><h3>Ford {model.name}</h3><p>{model.note}</p><b>Explore model <i>↗</i></b></div></Link>)}</div>
+        <div className="ford-command-feature-grid">{filteredFeatured.map(model=><Link href="/models/" className="ford-command-feature-card" key={model.name}><div className="ford-command-feature-copy"><span>{model.year}</span><h3>Ford {model.name}</h3><p>{model.note}</p><b>Explore model <i>↗</i></b></div></Link>)}</div>
         {filteredFeatured.length===0 && <p className="ford-command-empty">No featured model matches that search. Try another name.</p>}
       </section>
 
