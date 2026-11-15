@@ -77,12 +77,12 @@ export default function FordDashboardOverview() {
         <div className="ford-command-analytics">
           <article className="ford-command-panel">
             <div className="ford-command-panel-head"><div><span>01 / CATEGORY BREAKDOWN</span><h3>Models by vehicle type</h3></div><small>{fordNameplates.length} nameplates</small></div>
-            <div className="ford-command-bars">{directoryStats.counts.map((item,index) => <div className="ford-command-bar-row" key={item.category}><div><span>{item.category}</span><b>{item.count}</b></div><div className="ford-command-track"><i style={{width:(item.count/maxCategory*100)+"%",background:categoryColors[index]}}/></div></div>)}</div>
+            <div className="ford-command-bars">{directoryStats.counts.map((item,index) => <Link href={"/models/?category="+encodeURIComponent(item.category)} className="ford-command-bar-row ford-command-chart-link" key={item.category} aria-label={"View "+item.count+" nameplates in "+item.category}><div><span>{item.category} ↗</span><b>{item.count}</b></div><div className="ford-command-track"><i style={{width:(item.count/maxCategory*100)+"%",background:categoryColors[index]}}/></div></Link>)}</div>
             <p className="ford-command-chart-note">Categories follow the directory's current nameplate classification. Some models and regional nameplates may fit more than one vehicle segment.</p>
           </article>
           <article className="ford-command-panel">
             <div className="ford-command-panel-head"><div><span>02 / HISTORICAL SPREAD</span><h3>First listed model year</h3></div><small>By decade</small></div>
-            <div className="ford-command-decade-chart" role="img" aria-label="Nameplates grouped by the decade of their first listed model year">{directoryStats.decades.map(item=><div className="ford-command-decade" key={item.label}><div className="ford-command-decade-bar"><i style={{height:(item.count/maxDecade*100)+"%"}}/></div><b>{item.count || ""}</b><span>{item.label.slice(0,2)}</span></div>)}</div>
+            <div className="ford-command-decade-chart" aria-label="Select a decade to explore the nearest heritage milestone">{directoryStats.decades.map(item=><Link href={"/heritage/?year="+item.label.slice(0,4)} className="ford-command-decade ford-command-decade-link" key={item.label} aria-label={"Explore heritage around "+item.label}><div className="ford-command-decade-bar"><i style={{height:(item.count/maxDecade*100)+"%"}}/></div><b>{item.count || ""}</b><span>{item.label.slice(0,2)}</span></Link>)}</div>
             <p className="ford-command-chart-note">Uses the first four-digit year shown in each directory entry; this is a directory overview, not a count of vehicles produced.</p>
           </article>
         </div>
@@ -96,7 +96,7 @@ export default function FordDashboardOverview() {
 
       <section className="ford-command-section ford-command-history">
         <div className="ford-command-section-heading"><div><span className="eyebrow">1903 — 2020 / SELECTED MOMENTS</span><h2>A century of <em>progress.</em></h2><p>Selected chapters from the interactive Heritage timeline.</p></div><Link href="/heritage/">Explore full heritage timeline ↗</Link></div>
-        <div className="ford-command-milestones">{milestones.map((item,index)=><Link href="/heritage/" className="ford-command-milestone" key={item.year}><span>{String(index+1).padStart(2,"0")}</span><strong>{item.year}</strong><p>{item.label}</p></Link>)}</div>
+        <div className="ford-command-milestones">{milestones.map((item,index)=><Link href={"/heritage/?year="+item.year} className="ford-command-milestone" key={item.year}><span>{String(index+1).padStart(2,"0")}</span><strong>{item.year}</strong><p>{item.label}</p></Link>)}</div>
       </section>
 
       <section className="ford-command-section">
