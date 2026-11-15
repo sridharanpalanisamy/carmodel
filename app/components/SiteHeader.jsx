@@ -18,6 +18,7 @@ export default function SiteHeader() {
   const [open, setOpen] = useState(false);
   const activePage = pathname.endsWith("/directory/") ? "directory"
     : pathname.endsWith("/models/") ? "models"
+    : pathname.endsWith("/factory/") ? "factory"
     : pathname.endsWith("/heritage/") ? "heritage"
     : pathname.endsWith("/contact/") ? "contact" : "home";
 
