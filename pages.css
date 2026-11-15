@@ -1761,3 +1761,16 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .ford-command-insight>strong{font:700 17px var(--display);color:#17374a;overflow-wrap:anywhere}
 .ford-command-insight>small{font-size:9px;color:#477b82}
 @media(max-width:620px){.ford-command-insight-grid{grid-template-columns:1fr}.ford-command-search-results{grid-template-columns:1fr}}
+
+
+/* Guided research paths: use the existing site palette outside chart areas. */
+.ford-command-path-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.ford-command-path-card{display:flex;flex-direction:column;align-items:flex-start;min-width:0;min-height:190px;padding:19px;background:#f8f9f8;border:1px solid #d6ddde;transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.ford-command-path-card:hover{background:#edf2f1;border-color:#8ba9a8;transform:translateY(-2px)}
+.ford-command-path-card>span{font-size:8px;letter-spacing:.9px;font-weight:800;color:#718087}
+.ford-command-path-card>strong{font:700 18px/1.2 var(--display);color:#17374a;margin:17px 0 7px}
+.ford-command-path-card>p{font-size:9px;line-height:1.7;color:#69797e;margin:0 0 18px}
+.ford-command-path-card>b{font-size:8px;color:#315e68;margin-top:auto}
+@media(max-width:900px){.ford-command-path-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:440px){.ford-command-path-grid{grid-template-columns:1fr}.ford-command-path-card{min-height:155px}}
+@media(prefers-reduced-motion:reduce){.ford-command-path-card{transition:none}}
