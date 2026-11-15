@@ -26,7 +26,7 @@ const milestones = [
 ];
 const categoryFor = name => /bronco|escape|explorer|expedition|excursion|maverick/i.test(name) ? "SUV / off-road" : /f-series|f-100|ranger/i.test(name) ? "Pickup / utility" : /transit|econoline|e-series|windstar|freestar/i.test(name) ? "Van / commercial" : /gt40|^gt$|mustang|capri|probe|thunderbird/i.test(name) ? "Performance / sports" : "Passenger car";
 const categories = ["Passenger car", "SUV / off-road", "Pickup / utility", "Van / commercial", "Performance / sports"];
-const categoryColors = ["#17374a", "#477b82", "#7f9d9f", "#a9c9c4", "#315e68"];
+const categoryColors = ["#3B82F6", "#14B8A6", "#F59E0B", "#8B5CF6", "#F97316"];
 const decadeFor = years => {
   const match = String(years).match(/(?:19|20)\d{2}/);
   return match ? Math.floor(Number(match[0]) / 10) * 10 : null;
