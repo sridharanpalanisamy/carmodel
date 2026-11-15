@@ -946,3 +946,11 @@
 .az-empty-state{padding:28px;text-align:center;background:#f4efeb;color:#766d68;font:12px var(--sans)}
 @media(max-width:900px){.az-photo-grid-upgraded{grid-template-columns:repeat(2,minmax(0,1fr))}.az-photo-card-upgraded .az-photo-frame{height:205px}}
 @media(max-width:620px){.models-heading-upgraded{display:grid;grid-template-columns:1fr;gap:15px}.models-heading-upgraded .search-wrap{width:100%}.model-collection-summary{align-items:flex-start;flex-direction:column;gap:7px}.az-photo-grid-upgraded{grid-template-columns:1fr;gap:14px}.az-photo-card-upgraded .az-photo-frame{height:225px}.az-photo-card-upgraded .az-card-copy p{min-height:0}.az-card-actions{padding-bottom:13px}}
+
+/* Category navigation for the visual Ford vehicle collection */
+.model-category-filter{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 10px}
+.model-category-filter button{padding:9px 13px;border:1px solid #d8cbc2;background:#fffdfa;color:#55463f;font:700 9px var(--sans);cursor:pointer}
+.model-category-filter button.is-active{background:#302b2b;border-color:#302b2b;color:#fff}
+.az-card-actions .az-compare-button{display:flex;align-items:center;justify-content:center;min-height:36px;padding:0 11px;border:1px solid #d8cbc2;background:#fffdfa;color:#493b35;font:700 9px var(--sans);text-decoration:none;white-space:nowrap}
+.az-card-actions .az-compare-button:hover{background:#eee4dd;border-color:#c9a18c}
+.az-note a{color:#a95f3e;font-weight:700;text-decoration:underline}
