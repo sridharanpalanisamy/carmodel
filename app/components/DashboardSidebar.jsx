@@ -15,7 +15,8 @@ const items = [
 const DEFAULT_POSITION = { x: 0, y: 70 };
 
 export default function DashboardSidebar() {
-  const pathname = (usePathname() || "/").replace(/\\/+$/, "");
+  const rawPathname = usePathname() || "/";
+  const pathname = rawPathname.endsWith("/") ? rawPathname.slice(0, -1) : rawPathname;
   const [position, setPosition] = useState(DEFAULT_POSITION);
   const dragOffset = useRef(null);
   const positionRef = useRef(DEFAULT_POSITION);
