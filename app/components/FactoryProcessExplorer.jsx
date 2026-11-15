@@ -74,7 +74,7 @@ export default function FactoryProcessExplorer() {
         </div>
       </div>
       <div className="factory-progress" aria-label={`Stage ${active + 1} of ${stages.length}`}><span style={{width:progress+"%"}} /></div>
-      {<article className="factory-stage-detail factory-stage-inline" aria-labelledby="factoryStageDialogTitle">
+      <article className="factory-stage-detail factory-stage-inline" aria-labelledby="factoryStageDialogTitle">
           <div className="factory-stage-visual"><FactoryUnitVisual stage={stage} /></div>
           <div className="factory-stage-copy">
             <span className="eyebrow">STAGE {stage.id} / 07</span><h3 id="factoryStageDialogTitle">{stage.title}</h3><p className="factory-stage-summary">{stage.summary}</p>
@@ -82,8 +82,7 @@ export default function FactoryProcessExplorer() {
             <div className="factory-facts"><div><span>PROCESS OUTPUT</span><strong>{stage.outputs}</strong></div><div><span>KEY QUALITY CHECKS</span><strong>{stage.checks}</strong></div></div>
             <div className="factory-stage-controls"><button type="button" onClick={()=>move(-1)} disabled={active===0}>← Previous</button><span>{active+1} / {stages.length}</span><button type="button" onClick={()=>move(1)} disabled={active===stages.length-1}>Next stage →</button></div>
           </div>
-        </article>
-      </article>}
+      </article>
       <p className="factory-disclaimer">Educational overview only. This is a typical automotive manufacturing flow, not a verified map of one specific Ford factory or vehicle. Operations, sequence, automation and inspection standards differ by plant, model, material and powertrain.</p>
     </section>
   );
