@@ -1,208 +1,68 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import FordGLBViewer from "./FordGLBViewer";
 
 const models = [
-  ["Anglia","1939–1967","Small family car sold in several generations."],
-  ["Aspire","1994–1997","Subcompact car sold in North America."],
-  ["B-Max","2012–2017","Small multi-purpose vehicle for the European market."],
-  ["Bronco","1966–present","Off-road SUV nameplate; generation and market specifications vary."],
-  ["C-Max","2003–2019","Compact multi-purpose vehicle family."],
-  ["Capri","1969–1986; 2024–present","Sporty coupe nameplate revived as an electric crossover in Europe."],
-  ["Consul","1951–1975","British-market family and executive car range."],
-  ["Contour","1995–2000","North American compact sedan related to the European Mondeo."],
-  ["Cortina","1962–1982","Popular British family car."],
-  ["Crown Victoria","1992–2012","Full-size body-on-frame sedan."],
-  ["Custom","1949–1981 (various series)","Ford Custom was used on several full-size car lines and trim ranges."],
-  ["Econoline / E-Series","1961–present (E-Series)","Full-size van and cutaway commercial vehicle family."],
-  ["Escort","1968–2003 (Europe); 1981–2003 (North America)","Compact car nameplate with distinct regional generations."],
-  ["Escape","2000–present","Compact crossover SUV; hybrid and plug-in hybrid versions in selected markets."],
-  ["Excursion","2000–2005","Heavy-duty full-size SUV."],
-  ["Expedition","1997–present","Full-size three-row SUV."],
-  ["Explorer","1990–present","Mid-size SUV nameplate."],
-  ["F-Series","1948–present","Ford's full-size pickup family, including F-150 and Super Duty."],
-  ["Fairlane","1955–1970; Australia through 2007","Full-size and later mid-size car nameplate; regional histories differ."],
-  ["Falcon","1960–2016 (market dependent)","Compact US car that became a long-running Australian large-car family."],
-  ["Fiesta","1976–2023","Global supermini / subcompact hatchback."],
-  ["Five Hundred","2004–2007","North American full-size sedan."],
-  ["Flex","2009–2019","Three-row crossover with distinctive boxy styling."],
-  ["Focus","1998–present (global production varies)","Compact car offered as hatchback, sedan and wagon."],
-  ["Freestar","2004–2007","North American minivan."],
-  ["Fusion","2002–2012 (Europe); 2006–2020 (North America)","Name used for different vehicles in different regions."],
-  ["Galaxie / Galaxie 500","1959–1974","Full-size American car range."],
-  ["Granada","1972–1982 (North America); 1972–1994 (Europe)","Mid-size / executive car nameplate with regional differences."],
-  ["GT","2004–2006; 2016–2022","Mid-engine Ford supercar in two modern generations."],
-  ["GT40","1964–1969","Mid-engine endurance racing car developed for international competition."],
-  ["Ka","1996–2021","Small city car sold mainly in Europe and Latin America."],
-  ["LTD","1965–1986 (North America)","Full-size Ford car range."],
-  ["Maverick","1970–1977; 2021–present","Name used first for a compact car and later for a compact pickup."],
-  ["Model A","1927–1931","Successor to the Model T, offered in numerous body styles."],
-  ["Model T","1908–1927","Mass-produced early automobile that transformed personal mobility."],
-  ["Mondeo","1993–2022 (Europe)","Global mid-size family car; related to some generations of the North American Fusion."],
-  ["Mustang","1964–present","Long-running American pony car and performance-car family."],
-  ["Pinto","1971–1980","Subcompact car sold in North America."],
-  ["Probe","1988–1997","Front-wheel-drive sporty coupe."],
-  ["Ranger","1983–present (global production varies)","Mid-size pickup nameplate with different regional generations."],
-  ["S-Max","2006–2023","Sporty seven-seat multi-purpose vehicle sold in Europe."],
-  ["Scorpio","1985–1998","European executive car."],
-  ["Sierra","1982–1993","European mid-size family car."],
-  ["Taurus","1986–2019 (North America); later regional versions","Mid-size / full-size sedan nameplate with multiple generations."],
-  ["Tempo","1984–1994","Compact front-wheel-drive sedan and coupe."],
-  ["Thunderbird","1955–2005","Personal luxury and grand-touring car across eleven generations."],
-  ["Transit","1965–present","Global light commercial van and passenger-van family."],
-  ["Windstar","1995–2003","North American minivan, later replaced by the Freestar."]
+  { name:"Bronco", years:"1966 reference", period:"1966–1977 · First generation", type:"4×4 utility", image:"ford-bronco.png", description:"Ford's compact four-wheel-drive utility vehicle opened a new chapter in off-road motoring.", detail:"Introduced for 1966, the first Bronco was engineered around a short wheelbase, simple mechanical layout and genuine four-wheel-drive capability.", highlights:["Compact 4×4 platform","Designed for trail use","Multiple body styles"] },
+  { name:"Deluxe Coupe", years:"1940 reference", period:"1940 · Pre-war era", type:"Classic coupe", image:"ford_deluxe.png", description:"A distinctive pre-war Ford coupe with streamlined styling and the character of the flathead era.", detail:"The 1940 Deluxe range brought refined body detailing and a broad choice of passenger-car styles. The coupe represents Ford's late-1930s and early-1940s design language.", highlights:["1940 model-year design","Flathead-era engineering","Two-door coupe body"] },
+  { name:"F-100", years:"1953 reference", period:"1953–1956 · Second generation", type:"Pickup truck", image:"ford-f100.png", description:"The 1953 F-100 marked a new generation of Ford's F-Series with a more modern cab and chassis.", detail:"For the 1953 model year, Ford renamed its half-ton F-1 as the F-100. The redesigned truck formed an important step in the evolution of the F-Series.", highlights:["New F-100 designation","Updated cab design","Part of the F-Series legacy"] },
+  { name:"Falcon", years:"1960 reference", period:"1960–1970 · First generation", type:"Compact car", image:"ford-falcon.png", description:"A practical, economical compact that helped Ford answer changing family-car needs.", detail:"Launched for 1960, the Falcon focused on straightforward packaging, accessible ownership and efficient use of space. Its platform also influenced later Ford models.", highlights:["Compact family-car layout","Economy-focused design","Important Mustang connection"] },
+  { name:"Ford V8", years:"1932 reference", period:"1932 · Flathead V8 debut", type:"Classic sedan", image:"ford-v8.png", description:"The 1932 Ford made V8 power available in an affordable mass-market automobile.", detail:"Ford's 1932 range introduced the famous flathead V8. Its combination of accessible pricing and eight-cylinder performance made it a landmark in American automotive history.", highlights:["221 cu in flathead V8 launch","Mass-market V8 milestone","Iconic 1932 styling"] },
+  { name:"GT40", years:"1966 Mk I reference", period:"1964–1969 · Racing programme", type:"Endurance racer", image:"ford-gt40.png", description:"A purpose-built mid-engine racer remembered for its success at the 24 Hours of Le Mans.", detail:"Developed for international endurance racing, the GT40 used a low-slung mid-engine layout. The Mk II and Mk I cars helped Ford secure four consecutive Le Mans overall wins from 1966 to 1969.", highlights:["Mid-engine layout","Le Mans winner in 1966","Endurance-racing icon"] },
+  { name:"Model A", years:"1928–1931 reference", period:"1928–1931 · Model T successor", type:"Vintage car", image:"ford-model-a.png", description:"A new generation of Ford design with improved controls, comfort and body-style choice.", detail:"The Model A replaced the Model T at the end of 1927. It offered updated styling, a conventional three-speed transmission and a wide range of body styles.", highlights:["Replaced the Model T","Three-speed manual","Multiple factory body styles"] },
+  { name:"Model T", years:"1908–1927 reference", period:"1908–1927 · Model T era", type:"Vintage car", image:"ford-model-t.png", description:"The car that helped make automobile ownership accessible to a much wider public.", detail:"The Model T became closely associated with moving assembly-line production and large-scale manufacturing. Its durability, simplicity and affordability reshaped personal transportation.", highlights:["Introduced in 1908","Moving-line production era","More than 15 million built"] },
+  { name:"Mustang", years:"1965 reference", period:"1964½–1966 · First generation", type:"Pony car", image:"ford-mustang.png", description:"A sporty, personal car whose launch created a lasting new chapter in American performance.", detail:"Introduced in April 1964, the Mustang combined compact proportions, long-hood styling and a wide range of options. It established the pony-car formula.", highlights:["Introduced in April 1964","Wide engine and trim choices","Pony-car segment pioneer"] },
+  { name:"Pinto", years:"1971 reference", period:"1971–1980 · Subcompact era", type:"Subcompact car", image:"ford-pinto.png", description:"Ford's small car for the 1970s, developed for buyers seeking compact dimensions and value.", detail:"The Pinto entered the US market for 1971 as a rear-wheel-drive subcompact. It reflected the growing demand for smaller, more economical cars.", highlights:["Introduced for 1971","Rear-wheel-drive layout","Subcompact market focus"] },
+  { name:"Thunderbird", years:"1955 reference", period:"1955–1957 · First generation", type:"Personal luxury", image:"ford-thunderbird.png", description:"A two-seat V8-powered personal car that helped define the American personal-luxury idea.", detail:"The original Thunderbird arrived for 1955 with two seats, V8 power and a focus on style and comfort. It offered a different character from the more hard-edged sports cars of its era.", highlights:["Two-seat launch configuration","V8-powered grand touring","Personal-luxury heritage"] },
+  { name:"Explorer", years:"1991–present", period:"1991–present · SUV", type:"Mid-size SUV", image:"https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http%3A%2F%2Ft1.daumcdn.net%2Fbrunch%2Fservice%2Fuser%2FfJFU%2Fimage%2F0qBYibUwHMJqhXGE7PzmwW92v2A.jpg", description:"A family-focused SUV that became one of Ford's best-known global nameplates.", detail:"Introduced for the 1991 model year, Explorer helped popularize the modern sport-utility vehicle in North America.", highlights:["Three-row and two-row generations","SUV platform evolution","Multiple global markets"] },
+  { name:"F-150", years:"1948–present", period:"1948–present · F-Series", type:"Full-size pickup", image:"https://di-uploads-pod47.dealerinspire.com/aldermanautomotive/uploads/2025/10/2024-ford-ranger-platinum-v-f150-lariat-022-1.jpg", description:"Ford's long-running light-duty pickup and a central part of the F-Series family.", detail:"The F-Series began in 1948. The F-150 name arrived in 1975 and became a defining model in the full-size pickup segment.", highlights:["F-Series introduced in 1948","F-150 name introduced in 1975","Work, fleet and lifestyle versions"] },
+  { name:"Ranger", years:"1983–present", period:"1983–present · Global pickup", type:"Mid-size pickup", image:"https://di-uploads-pod47.dealerinspire.com/aldermanautomotive/uploads/2025/10/2024-ford-ranger-platinum-v-f150-lariat-022-1.jpg", description:"A versatile mid-size pickup developed for work, utility and recreation in many markets.", detail:"Ford has used the Ranger name across multiple generations and markets, with regional specifications and body styles.", highlights:["Global mid-size pickup","Multiple cab and drivetrain options","Raptor performance variants"] },
+  { name:"Ford 8N", years:"1947–1952", period:"1947–1952 · N-series tractor", type:"Agricultural tractor", image:"https://heavyequipmentspecs.s3.amazonaws.com/tractors/ford-8n/ford-8n_1.jpg", description:"A landmark utility tractor associated with post-war mechanized farming.", detail:"The Ford 8N followed the 9N and 2N, with improvements to the operator controls and three-point hitch system.", highlights:["Three-point hitch system","Four-cylinder gasoline engine","Widely used farm utility tractor"] },
+  { name:"Mustang Mach-E", years:"2021–present", period:"2021–present · Electric era", type:"Electric SUV", image:"https://epic.uchicago.edu/wp-content/uploads/sites/5/2025/01/EVfamily.jpeg", description:"An all-electric SUV carrying the Mustang name into a new vehicle format.", detail:"Mustang Mach-E expanded the Mustang family into an all-electric crossover with rear-wheel-drive and all-wheel-drive configurations.", highlights:["Battery-electric powertrain","Introduced for 2021 model year","Performance GT variants"] },
+  { name:"E-Transit", years:"2022–present", period:"2022–present · Commercial EV", type:"Electric van", image:"https://epic.uchicago.edu/wp-content/uploads/sites/5/2025/01/EVfamily.jpeg", description:"An electric version of Ford's commercial Transit van platform.", detail:"E-Transit adapts the established Transit commercial-vehicle format for battery-electric fleet and delivery operations.", highlights:["Battery-electric commercial van","Fleet and cargo applications","Part of Ford Pro portfolio"] },
+  { name:"Everest", years:"2003–present", period:"2003–present · Global SUV", type:"Body-on-frame SUV", image:"https://www.ford.com.ph/content/dam/Ford/ph/about-ford/overview/billboards/banner-desktop.webp", description:"A three-row SUV developed from Ford's pickup-truck engineering for global markets.", detail:"Everest is a body-on-frame SUV related to the Ranger, designed for passenger capacity and varied road conditions.", highlights:["Ranger-related platform","Three-row seating","Asia-Pacific and other markets"] }
 ];
 
-
-export const fordNameplates = models.map(([name, years, description]) => ({ name, years, description }));
-
-const imageByName = {
-  "Bronco": "ford-bronco.png", "Falcon": "ford-falcon.png", "GT40": "Ford_GT-40.jpg",
-  "Model A": "ford-model-a.png", "Model T": "ford_model_t.png", "Mustang": "ford-mustang.png",
-  "Pinto": "ford-pinto.png", "Thunderbird": "ford-thunderbird.png",
-  "F-Series": "ford-f100.png", "F-100": "ford-f100.png"
-};
-const featuredSpecs = {
-  "Model T": ["2.9 L inline-4", "Petrol", "2-speed planetary", "Rear-wheel drive"],
-  "Model A": ["3.3 L inline-4", "Petrol", "3-speed manual", "Rear-wheel drive"],
-  "GT40": ["4.7 L V8 (Mk I reference)", "Petrol", "5-speed manual transaxle", "Mid-engine, rear-wheel drive"],
-  "Mustang": ["3.3 L inline-6 or 4.7 L V8 (1965 reference)", "Petrol", "Manual or automatic, depending on engine", "Rear-wheel drive"],
-  "Pinto": ["1.6 L or 2.0 L inline-4 (1971 reference)", "Petrol", "Manual or automatic, depending on trim", "Rear-wheel drive"],
-  "Bronco": ["2.8 L inline-6 or 4.7 L V8 (1966 reference)", "Petrol", "3-speed manual", "Four-wheel drive"],
-  "Falcon": ["2.4 L or 2.8 L inline-6 (1960 reference)", "Petrol", "Manual or automatic, depending on trim", "Rear-wheel drive"],
-  "Thunderbird": ["4.8 L Y-block V8 (1955 reference)", "Petrol", "Manual or Ford-O-Matic automatic", "Rear-wheel drive"],
-  "F-Series": ["Engine varies by F-Series generation and model", "Petrol or diesel, depending on year and market", "Manual or automatic", "Rear-wheel or four-wheel drive"],
-  "F-100": ["3.5 L inline-6 or 3.9 L V8 (1953 reference)", "Petrol", "Manual; options varied", "Rear-wheel drive"],
-  "V8": ["3.6 L flathead V8 (1932 reference)", "Petrol", "3-speed manual", "Rear-wheel drive"],
-  "Deluxe Coupe": ["3.6 L flathead V8 (1940 reference)", "Petrol", "3-speed manual", "Rear-wheel drive"]
-};
-const categoryFor = name => /bronco|escape|explorer|expedition|excursion|maverick/i.test(name) ? "SUV / off-road" : /f-series|f-100|ranger/i.test(name) ? "Pickup / utility" : /transit|econoline|e-series|windstar|freestar/i.test(name) ? "Van / commercial" : /gt40|^gt$|mustang|capri|probe|thunderbird/i.test(name) ? "Performance / sports" : "Passenger car";
-const letters = ["all", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
+const categoryFor = name => ["Bronco","Explorer","Everest"].includes(name) ? "SUVs & 4×4" : ["F-100","F-150","Ranger"].includes(name) ? "Trucks & Pickups" : ["GT40"].includes(name) ? "Motorsport" : ["Ford 8N"].includes(name) ? "Tractors" : ["Mustang Mach-E"].includes(name) ? "Electric" : ["E-Transit"].includes(name) ? "Commercial" : "Cars";
+const categorizedModels = models.map(model => ({...model, category: categoryFor(model.name)}));
+export const fordNameplates = models.map(({name,years}) => ({name,years}));
 
 export default function ModelDirectory() {
-  const [mount, setMount] = useState(null);
-  const [query, setQuery] = useState("");
-  const [activeLetter, setActiveLetter] = useState("all");
-  const [selectedModel, setSelectedModel] = useState(null);
-  const [show3D, setShow3D] = useState(false);
-  const inlineViewerRef = useRef(null);
-
-  useEffect(() => {
-    if (!selectedModel || selectedModel.name === "Model T" || !show3D || !inlineViewerRef.current || !window.FordLocal3D) return;
-    const viewer = window.FordLocal3D.mount(inlineViewerRef.current, selectedModel.name);
-    return () => viewer?.destroy();
-  }, [selectedModel, show3D]);
-
-  useEffect(() => {
-    setMount(document.getElementById("azArchiveMount"));
-  }, []);
-
+  const [mount,setMount] = useState(null);
+  const [query,setQuery] = useState("");
+  const [selected,setSelected] = useState("");
+  const [category,setCategory] = useState("All vehicles");
+  useEffect(() => { setMount(document.getElementById("azArchiveMount")); }, []);
   const filteredModels = useMemo(() => {
-    const term = query.trim().toLowerCase();
-    return models.filter(([name, years, description]) =>
-      (activeLetter === "all" || name[0].toUpperCase() === activeLetter) &&
-      (name + " " + years + " " + description).toLowerCase().includes(term)
-    ).sort((a, b) => a[0].localeCompare(b[0]));
-  }, [query, activeLetter]);
-
-  if (!mount) return null;
-
+    const term=query.trim().toLowerCase();
+    return categorizedModels.filter(model => (category === "All vehicles" || model.category === category) && (model.name+" "+model.years+" "+model.period+" "+model.type+" "+model.description).toLowerCase().includes(term));
+  },[query,category]);
+  if(!mount) return null;
   return createPortal(
-    <section className="az-archive" id="az-archive">
-      <div className="models-heading">
-        <div>
-          <span className="eyebrow">THE COMPLETE NAMEPLATE INDEX</span>
-          <h2>Ford models, A to Z.</h2>
-          <p className="collection-subtitle">Browse a wider alphabetical directory of Ford passenger cars, performance cars, SUVs, pickups and vans. Not every nameplate was sold in every country.</p>
-        </div>
-        <label className="search-wrap">
-          <span>⌕</span>
-          <input id="azSearch" type="search" placeholder="Search the A–Z directory..." aria-label="Search A to Z Ford models" value={query} onChange={event => setQuery(event.target.value)} />
-        </label>
+    <section className="az-archive az-photo-collection" id="az-archive">
+      <div className="models-heading models-heading-upgraded">
+        <div><span className="eyebrow">FORD VEHICLE COLLECTION</span><h2>Explore the <em>lineup.</em></h2><p className="collection-subtitle">Browse Ford cars, SUVs, pickups, tractors, commercial vehicles and performance models. This is the visual gallery; detailed engineering comparisons are on their own page.</p></div>
+        <label className="search-wrap"><span>⌕</span><input type="search" placeholder="Search Ford vehicles..." aria-label="Search Ford models" value={query} onChange={event=>setQuery(event.target.value)}/></label>
       </div>
-      <div className="az-letters" id="azLetters" aria-label="Filter by first letter">
-        {letters.map(letter => (
-          <button key={letter} type="button" className={activeLetter === letter ? "active" : ""} data-letter={letter} aria-pressed={activeLetter === letter} onClick={() => setActiveLetter(letter)}>
-            {letter === "all" ? "All" : letter}
-          </button>
-        ))}
-      </div>
-      <p className="az-count" id="azCount" aria-live="polite">{filteredModels.length} Ford nameplate{filteredModels.length === 1 ? "" : "s"} shown</p>
-      <div className="az-grid" id="azGrid">
-        {filteredModels.map(([name, years, description]) => (
-          <article
-            className="az-card"
-            key={name}
-            role="button"
-            tabIndex={0}
-            aria-label={"View Ford " + name + " picture and specifications"}
-            onClick={event => { if (!event.target.closest("[data-local3d]")) setShow3D(false); setSelectedModel({ name, years, description }); }}
-            onKeyDown={event => { if ((event.key === "Enter" || event.key === " ") && event.target === event.currentTarget) { event.preventDefault(); setSelectedModel({ name, years, description }); } }}
-          >
-            <span className="az-initial">{name[0].toUpperCase()}</span>
+      <div className="model-category-filter" role="group" aria-label="Filter vehicle category">{["All vehicles","Cars","SUVs & 4×4","Trucks & Pickups","Tractors","Commercial","Electric","Motorsport"].map(item=><button type="button" key={item} className={category===item?"is-active":""} aria-pressed={category===item} onClick={()=>setCategory(item)}>{item}</button>)}</div><div className="model-collection-summary"><span><b>{filteredModels.length.toString().padStart(2,"0")}</b> VEHICLES SHOWN</span><span>VISUAL COLLECTION <i>·</i> MODEL HISTORY</span></div>
+      <div className="az-grid az-photo-grid az-photo-grid-upgraded">
+        {filteredModels.map((model,index)=>(
+          <article className={"az-card az-photo-card az-photo-card-upgraded "+(selected===model.name?"is-selected":"")} key={model.name}>
+            <div className="az-photo-frame"><img src={model.image.startsWith("http")?model.image:"/carmodel/assets/images/"+model.image} alt={"Ford "+model.name+" — "+model.years} loading={index<3?"eager":"lazy"} onError={event=>{event.currentTarget.style.visibility="hidden";}}/><span className="az-photo-number">0{categorizedModels.indexOf(model)+1}</span><span className="az-photo-type">{model.category} · {model.type}</span></div>
             <div className="az-card-copy">
-              <h3>Ford {name}</h3>
-              <span className="az-years">{years}</span>
-              <p>{description}</p>
+              <div className="az-card-title-row"><div><div className="az-card-meta">{model.years}</div><h3>Ford {model.name}</h3></div>
+                <button type="button" className="az-view-button" aria-expanded={selected===model.name} onClick={()=>setSelected(selected===model.name?"":model.name)}>{selected===model.name?"Hide details":"View details"} <span>{selected===model.name?"−":"↗"}</span></button>
+              </div>
+              <p>{model.description}</p><div className="az-card-period">{model.period}</div>
             </div>
-            <button type="button" className="az-view-button" aria-label={"View " + name + " picture and specifications"} onClick={event => { event.stopPropagation(); setSelectedModel({ name, years, description }); }}>View</button>
+            <div className="az-card-actions"><a className="az-compare-button" href="/carmodel/specifications/">Explore specifications ↗</a></div>
+            {selected===model.name&&<div className="az-inline-detail"><span className="eyebrow">MODEL NOTES / {String(categorizedModels.indexOf(model)+1).padStart(2,"0")}</span><p>{model.detail}</p><div className="az-highlight-list">{model.highlights.map(item=><span key={item}>{item}</span>)}</div></div>}
           </article>
         ))}
       </div>
-      {selectedModel && (
-        <div className="az-detail-backdrop" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) setSelectedModel(null); }}>
-          <section className="az-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="azDetailTitle">
-            <button className="az-detail-close" type="button" aria-label="Close model details" onClick={() => setSelectedModel(null)}>×</button>
-            <div className="az-detail-media">
-              {imageByName[selectedModel.name] ? (
-                <img src={"/carmodel/assets/images/" + imageByName[selectedModel.name]} alt={"Ford " + selectedModel.name} />
-              ) : (
-                <div className="az-image-pending">
-                  <span>FORD MODEL ARCHIVE</span>
-                  <strong>{selectedModel.name}</strong>
-                  <p>No verified local photograph is available for this nameplate yet. Use the local 3D concept viewer for an illustrative view.</p>
-                </div>
-              )}
-            </div>
-            <div className="az-detail-content">
-              <span className="eyebrow">FORD MODEL DETAILS</span>
-              <h2 id="azDetailTitle">Ford {selectedModel.name}</h2>
-              <p className="az-detail-description">{selectedModel.description}</p>
-              <div className="az-detail-specs">
-                <div><span>Production period</span><strong>{selectedModel.years}</strong></div>
-                <div><span>Vehicle category</span><strong>{categoryFor(selectedModel.name)}</strong></div>
-                <div><span>Engine / capacity</span><strong>{featuredSpecs[selectedModel.name]?.[0] || "Varies by generation, trim and market"}</strong></div>
-                <div><span>Fuel type</span><strong>{featuredSpecs[selectedModel.name]?.[1] || "Varies by year and market"}</strong></div>
-                <div><span>Transmission</span><strong>{featuredSpecs[selectedModel.name]?.[2] || "Manual / automatic options vary by generation"}</strong></div>
-                <div><span>Drive type</span><strong>{featuredSpecs[selectedModel.name]?.[3] || "Varies by model, generation and configuration"}</strong></div>
-              </div>
-              <p className="az-detail-note">Specifications are representative where a reference configuration is available. For other nameplates, exact engine capacity, fuel, transmission and drivetrain depend on model year, generation, trim and country.</p>
-              <div className="az-detail-actions">
-                <button type="button" className="model-3d-button" aria-expanded={show3D} onClick={() => setShow3D(value => !value)}>
-                  {show3D ? "Hide 3D View" : "3D View"}
-                </button>
-              </div>
-              {show3D && (
-                <div className="az-inline3d-wrap">
-                  <div className="az-inline3d-heading"><strong>Interactive 3D view · Ford {selectedModel.name}</strong><span>Drag to rotate · scroll to zoom</span></div>
-                  {selectedModel.name === "Model T" ? (
-                    <FordGLBViewer />
-                  ) : (
-                    <>
-                      <canvas ref={inlineViewerRef} className="az-inline3d-canvas" aria-label={"Interactive illustrative 3D view of Ford " + selectedModel.name} />
-                      <p className="az-inline3d-caption">Locally rendered illustrative concept — not a factory-accurate scan.</p>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-          </section>
-        </div>
-      )}
-      <p className="az-note">Historical nameplates and model families are included across different markets and generations. Engine capacity, fuel type, performance and equipment vary by model year, trim and country; use the individual vehicle's specification sheet for verified year-specific details. This is an enthusiast reference directory, not a claim that every model was available in every market.</p>
-    </section>,
-    mount
+      {filteredModels.length===0&&<p className="az-empty-state">No models match that search. Try a model name or year.</p>}
+      <p className="az-note">Historical overview only. Specifications and equipment vary by model year, engine option, trim and market. For engineering data and side-by-side comparisons, visit the separate <a href="/carmodel/specifications/">Specification Dashboard</a>.</p>
+    </section>,mount
   );
 }
