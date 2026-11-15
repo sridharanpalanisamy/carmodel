@@ -24,7 +24,7 @@ const milestones = [
   { year: 1966, label: "GT40 wins Le Mans" },
   { year: 2020, label: "Mustang Mach-E enters production" }
 ];
-const categoryFor = name => /bronco|escape|explorer|expedition|excursion|maverick/i.test(name) ? "SUV / off-road" : /f-series|f-100|ranger/i.test(name) ? "Pickup / utility" : /transit|econoline|e-series|windstar|freestar/i.test(name) ? "Van / commercial" : /gt40|^gt$|mustang|capri|probe|thunderbird/i.test(name) ? "Performance / sports" : "Passenger car";
+const categoryFor = name => /f-series|f-100|ranger|maverick/i.test(name) ? "Pickup / utility" : /bronco|escape|explorer|expedition|excursion|flex/i.test(name) ? "SUV / off-road" : /transit|econoline|e-series|windstar|freestar/i.test(name) ? "Van / commercial" : /gt40|^gt$|mustang|capri|probe|thunderbird/i.test(name) ? "Performance / sports" : "Passenger car";
 const categories = ["Passenger car", "SUV / off-road", "Pickup / utility", "Van / commercial", "Performance / sports"];
 const categoryColors = ["#3B82F6", "#14B8A6", "#F59E0B", "#8B5CF6", "#F97316"];
 const decadeFor = years => {
