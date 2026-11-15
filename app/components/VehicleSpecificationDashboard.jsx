@@ -21,6 +21,8 @@ const metricMax = { capacity: 5, power: 350, torque: 350 };
 const formatMetric = (value, unit) => value == null ? "Not available" : `${value.toLocaleString("en-US")} ${unit}`;
 
 export default function VehicleSpecificationDashboard() {
+  const [mount, setMount] = useState(null);
+  useEffect(() => { setMount(document.getElementById("specDashboardMount")); }, []);
   const [leftName, setLeftName] = useState("Model T");
   const [rightName, setRightName] = useState("Mustang");
   const left = useMemo(() => references.find(item => item.name === leftName) || references[0], [leftName]);
@@ -33,7 +35,8 @@ export default function VehicleSpecificationDashboard() {
   const specs = [
     ["Reference year", "year"], ["Engine", "engine"], ["Transmission", "transmission"], ["Drivetrain", "drive"]
   ];
-  return (
+  if (!mount) return null;
+  return createPortal(
     <section className="spec-dashboard" id="spec-dashboard" aria-labelledby="specDashboardTitle">
       <div className="spec-dashboard-heading">
         <div><span className="eyebrow">INTERACTIVE VEHICLE DATA</span><h2 id="specDashboardTitle">Compare the <em>specifications.</em></h2><p>Put two Ford icons side by side and explore their reference engine and performance figures.</p></div>
@@ -60,6 +63,7 @@ export default function VehicleSpecificationDashboard() {
       </div>
       <div className="spec-table-wrap"><table className="spec-comparison-table"><thead><tr><th>SPECIFICATION</th><th>FORD {left.name.toUpperCase()}</th><th>FORD {right.name.toUpperCase()}</th></tr></thead><tbody>{specs.map(([label, key]) => <tr key={key}><th scope="row">{label}</th><td>{left[key]}</td><td>{right[key]}</td></tr>)}{metrics.map(metric => <tr key={metric.key}><th scope="row">{metric.label}</th><td>{metric.format(left[metric.key])}</td><td>{metric.format(right[metric.key])}</td></tr>)}</tbody></table></div>
       <div className="spec-data-notes"><strong>About these figures</strong><p>These are representative historical configurations, not universal specifications for every vehicle carrying the same name. Engine options, ratings, body styles and equipment varied by model year, market and trim. Torque is shown only where a reference value is available. Dimensions and top speed are intentionally excluded until matching year-specific data can be verified.</p><p>Currently includes 11 reference configurations. Other nameplates in the A–Z directory will be added as reliable year-specific specifications are verified.</p></div>
-    </section>
+    </section>,
+    mount
   );
 }
