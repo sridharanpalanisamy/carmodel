@@ -7,6 +7,7 @@ import { useState } from "react";
 const links = [
   { href: "/", label: "Home", page: "home" },
   { href: "/models/", label: "Models", page: "models" },
+  { href: "/ford-dashboard/", label: "Reference Dashboard", page: "dashboard" },
   { href: "/directory/", label: "A–Z Directory", page: "directory" },
   { href: "/factory/", label: "Factory Process", page: "factory" },
   { href: "/heritage/", label: "Heritage", page: "heritage" },
@@ -16,7 +17,8 @@ const links = [
 export default function SiteHeader() {
   const pathname = usePathname() || "/";
   const [open, setOpen] = useState(false);
-  const activePage = pathname.endsWith("/directory/") ? "directory"
+  const activePage = pathname.endsWith("/ford-dashboard/") ? "dashboard"
+    : pathname.endsWith("/directory/") ? "directory"
     : pathname.endsWith("/models/") ? "models"
     : pathname.endsWith("/factory/") ? "factory"
     : pathname.endsWith("/heritage/") ? "heritage"
@@ -38,8 +40,8 @@ export default function SiteHeader() {
             href={link.href} onClick={() => setOpen(false)}>{link.label}</Link>
         ))}
       </nav>
-      <Link className="header-cta" href={activePage === "home" ? "/models/" : "/"}>
-        {activePage === "home" ? "Explore models" : "Back home"} <span>↗</span>
+      <Link className="header-cta" href={activePage === "home" ? "/ford-dashboard/" : "/"}>
+        {activePage === "home" ? "Open dashboard" : "Back home"} <span>↗</span>
       </Link>
     </header>
   );
