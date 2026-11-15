@@ -30,7 +30,7 @@ function FactoryUnitVisual({ stage }) {
     <div className="factory-unit-caption"><span className="factory-unit-dot"/>{stage.area}</div>
   </div>;
 }
-\nexport default function FactoryProcessExplorer() {
+export default function FactoryProcessExplorer() {
   const [mount, setMount] = useState(null);
   useEffect(() => { setMount(document.getElementById("factoryExplorerMount")); }, []);
   const [active, setActive] = useState(0);
