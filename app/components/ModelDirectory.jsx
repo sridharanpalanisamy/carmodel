@@ -17,40 +17,43 @@ const models = [
   { name:"Thunderbird", years:"1955 reference", period:"1955–1957 · First generation", type:"Personal luxury", image:"ford-thunderbird.png", description:"A two-seat V8-powered personal car that helped define the American personal-luxury idea.", detail:"The original Thunderbird arrived for 1955 with two seats, V8 power and a focus on style and comfort. It offered a different character from the more hard-edged sports cars of its era.", highlights:["Two-seat launch configuration","V8-powered grand touring","Personal-luxury heritage"] }
 ];
 
+const categoryFor = name => ["Bronco"].includes(name) ? "SUVs & 4×4" : ["F-100"].includes(name) ? "Trucks & Pickups" : ["GT40"].includes(name) ? "Motorsport" : "Cars";
+const categorizedModels = models.map(model => ({...model, category: categoryFor(model.name)}));
 export const fordNameplates = models.map(({name,years}) => ({name,years}));
 
 export default function ModelDirectory() {
   const [mount,setMount] = useState(null);
   const [query,setQuery] = useState("");
-  const [selected,setSelected] = useState("Model T");
+  const [selected,setSelected] = useState("");
+  const [category,setCategory] = useState("All vehicles");
   useEffect(() => { setMount(document.getElementById("azArchiveMount")); }, []);
   const filteredModels = useMemo(() => {
     const term=query.trim().toLowerCase();
-    return models.filter(model => (model.name+" "+model.years+" "+model.period+" "+model.type+" "+model.description).toLowerCase().includes(term));
-  },[query]);
+    return categorizedModels.filter(model => (category === "All vehicles" || model.category === category) && (model.name+" "+model.years+" "+model.period+" "+model.type+" "+model.description).toLowerCase().includes(term));
+  },[query,category]);
   if(!mount) return null;
   return createPortal(
     <section className="az-archive az-photo-collection" id="az-archive">
       <div className="models-heading models-heading-upgraded">
-        <div><span className="eyebrow">THE 11 SELECTED FORD MODELS</span><h2>Explore the <em>icons.</em></h2><p className="collection-subtitle">A photo-led collection of landmark Ford vehicles. Open a model for its story or send it to the comparison dashboard.</p></div>
-        <label className="search-wrap"><span>⌕</span><input type="search" placeholder="Search all 11 models..." aria-label="Search Ford models" value={query} onChange={event=>setQuery(event.target.value)}/></label>
+        <div><span className="eyebrow">FORD VEHICLE COLLECTION</span><h2>Explore the <em>lineup.</em></h2><p className="collection-subtitle">A visual showcase of Ford vehicles organized by category. Engineering specifications and detailed comparisons are kept on a separate page.</p></div>
+        <label className="search-wrap"><span>⌕</span><input type="search" placeholder="Search Ford vehicles..." aria-label="Search Ford models" value={query} onChange={event=>setQuery(event.target.value)}/></label>
       </div>
-      <div className="model-collection-summary"><span><b>{filteredModels.length.toString().padStart(2,"0")}</b> / 11 MODELS SHOWN</span><span>PHOTO COLLECTION <i>·</i> MODEL HISTORY <i>·</i> SPEC COMPARISON</span></div>
+      <div className="model-category-filter" role="group" aria-label="Filter vehicle category">{["All vehicles","Cars","SUVs & 4×4","Trucks & Pickups","Motorsport"].map(item=><button type="button" key={item} className={category===item?"is-active":""} aria-pressed={category===item} onClick={()=>setCategory(item)}>{item}</button>)}</div><div className="model-collection-summary"><span><b>{filteredModels.length.toString().padStart(2,"0")}</b> VEHICLES SHOWN</span><span>VISUAL COLLECTION <i>·</i> MODEL HISTORY</span></div>
       <div className="az-grid az-photo-grid az-photo-grid-upgraded">
         {filteredModels.map((model,index)=>(
           <article className={"az-card az-photo-card az-photo-card-upgraded "+(selected===model.name?"is-selected":"")} key={model.name}>
-            <div className="az-photo-frame"><img src={"/carmodel/assets/images/"+model.image} alt={"Ford "+model.name+" — "+model.years} loading={index<3?"eager":"lazy"}/><span className="az-photo-number">0{models.indexOf(model)+1}</span><span className="az-photo-type">{model.type}</span></div>
+            <div className="az-photo-frame"><img src={"/carmodel/assets/images/"+model.image} alt={"Ford "+model.name+" — "+model.years} loading={index<3?"eager":"lazy"}/><span className="az-photo-number">0{models.indexOf(model)+1}</span><span className="az-photo-type">{model.category} · {model.type}</span></div>
             <div className="az-card-copy"><div className="az-card-meta">{model.years}</div><h3>Ford {model.name}</h3><p>{model.description}</p><div className="az-card-period">{model.period}</div></div>
             <div className="az-card-actions">
               <button type="button" className="az-view-button" aria-expanded={selected===model.name} onClick={()=>setSelected(selected===model.name?"":model.name)}>{selected===model.name?"Hide details":"View details"} <span>{selected===model.name?"−":"↗"}</span></button>
-              <button type="button" className="az-compare-button" onClick={()=>{window.dispatchEvent(new CustomEvent("ford:compare-model",{detail:{name:model.name}}));document.getElementById("spec-dashboard")?.scrollIntoView({behavior:"smooth",block:"start"});}}>Compare ↗</button>
+              <a className="az-compare-button" href="/carmodel/specifications/">Explore specifications ↗</a>
             </div>
             {selected===model.name&&<div className="az-inline-detail"><span className="eyebrow">MODEL NOTES / {String(models.indexOf(model)+1).padStart(2,"0")}</span><p>{model.detail}</p><div className="az-highlight-list">{model.highlights.map(item=><span key={item}>{item}</span>)}</div></div>}
           </article>
         ))}
       </div>
       {filteredModels.length===0&&<p className="az-empty-state">No models match that search. Try a model name or year.</p>}
-      <p className="az-note">Historical overview only. Specifications and equipment vary by model year, engine option, trim and market. The comparison dashboard uses clearly labelled representative reference configurations.</p>
+      <p className="az-note">Historical overview only. Specifications and equipment vary by model year, engine option, trim and market. For engineering data and side-by-side comparisons, visit the separate Specification Dashboard.</p>
     </section>,mount
   );
 }
