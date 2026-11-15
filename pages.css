@@ -890,3 +890,19 @@
 .ford-torque-track i{position:absolute;top:50%;width:12px;height:12px;transform:translate(-50%,-50%);border-radius:50%;border:2px solid #353135;box-shadow:0 0 0 1px currentColor}
 .ford-analytics-note{margin-top:14px;padding:10px 12px;background:#312d30;border-left:3px solid #cb7954;color:#c9bcb4;font:9px/1.6 var(--sans)}
 @media(max-width:720px){.ford-analytics-board{padding:16px}.ford-analytics-grid{grid-template-columns:1fr}.ford-analytics-wide{grid-column:auto}.ford-analytics-heading{display:block}.ford-analytics-count{display:inline-block;margin-top:12px}.ford-power-row{grid-template-columns:82px minmax(0,1fr) 28px}.ford-donut-layout{justify-content:center}.ford-torque-axis{margin-left:88px;margin-right:30px}.ford-torque-row{grid-template-columns:78px minmax(0,1fr) 32px;gap:7px}.ford-torque-row>span{font-size:9px}}
+
+/* Photo-led 11-model page: compact cards and clear comparison section */
+.models-photo-page .az-photo-collection{margin-top:24px}
+.az-photo-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.az-photo-card{display:flex;flex-direction:column;overflow:hidden;padding:0;background:#fff;border:1px solid #e5ddd6}
+.az-photo-frame{height:190px;overflow:hidden;background:#eee9e3}
+.az-photo-frame img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+.az-photo-card .az-card-copy{padding:16px 17px 8px;flex:1}
+.az-photo-card .az-card-copy h3{margin:0 0 5px}
+.az-photo-card .az-card-copy p{min-height:58px}
+.az-photo-card .az-view-button{align-self:flex-start;margin:0 17px 17px}
+.models-photo-page #specDashboardMount{display:block;margin-top:42px;scroll-margin-top:25px}
+.models-photo-page .spec-dashboard{margin-top:0}
+.models-photo-page .spec-dashboard-heading{margin-bottom:20px}
+@media(max-width:900px){.az-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.az-photo-grid{grid-template-columns:1fr}.az-photo-frame{height:210px}.az-photo-card .az-card-copy p{min-height:0}}
