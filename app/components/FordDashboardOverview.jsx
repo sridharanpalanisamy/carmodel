@@ -130,6 +130,16 @@ export default function FordDashboardOverview() {
         </div>
       </section>
 
+      <section className="ford-command-section ford-command-lifecycle">
+        <div className="ford-command-section-heading"><div><span className="eyebrow">FOLLOW THE VEHICLE JOURNEY</span><h2>From concept to <em>heritage.</em></h2><p>Move through the major stages that shape a vehicle, from its systems and production to the models people remember.</p></div></div>
+        <div className="ford-command-lifecycle-grid">
+          <Link href="/engineering/" className="ford-command-lifecycle-step"><span>01</span><div><strong>Engineering & design</strong><p>Explore powertrain, chassis, electrical and vehicle systems.</p></div><b>Explore systems ↗</b></Link>
+          <Link href="/factory/" className="ford-command-lifecycle-step"><span>02</span><div><strong>Manufacturing</strong><p>Follow production stages, processes and factory operations.</p></div><b>View processes ↗</b></Link>
+          <Link href="/models/" className="ford-command-lifecycle-step"><span>03</span><div><strong>Models & generations</strong><p>Browse nameplates, vehicle images and model histories.</p></div><b>Browse models ↗</b></Link>
+          <Link href="/heritage/" className="ford-command-lifecycle-step"><span>04</span><div><strong>Heritage & milestones</strong><p>Connect vehicles with the events and eras around them.</p></div><b>Explore timeline ↗</b></Link>
+        </div>
+      </section>
+
       <section className="ford-command-section ford-command-featured">
         <div className="ford-command-section-heading"><div><span className="eyebrow">CURATED MODEL SPOTLIGHT</span><h2>Explore iconic <em>nameplates.</em></h2><p>A quick route into a selection of Ford vehicles from different eras and segments.</p></div><label className="ford-command-search"><span>⌕</span><input value={search} onChange={event=>setSearch(event.target.value)} placeholder="Find a featured model" aria-label="Search featured models"/></label></div>
         <div className="ford-command-feature-grid">{filteredFeatured.map(model=><Link href={"/models/?search="+encodeURIComponent(model.name)} className="ford-command-feature-card" key={model.name}><div className="ford-command-feature-copy"><span>{model.year}</span><h3>Ford {model.name}</h3><p>{model.note}</p><b>Explore model <i>↗</i></b></div></Link>)}</div>
