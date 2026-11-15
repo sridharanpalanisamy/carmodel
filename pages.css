@@ -1721,3 +1721,12 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .ford-command-legend-row>small{font-size:8px;color:#829094;text-align:right}
 .ford-command-chart-link:focus-visible,.ford-command-legend-row:focus-visible,.ford-command-decade-link:focus-visible{outline:2px solid #315e68;outline-offset:3px}
 @media(max-width:600px){.ford-command-category-chart{grid-template-columns:1fr;gap:12px}.ford-command-donut{width:150px}.ford-command-legend{width:100%}}
+
+
+/* Ford dashboard chart colours follow the site navy + muted teal template. */
+.ford-command-donut{box-shadow:0 0 0 1px #d6ddde}
+.ford-command-decade-bar i{background:linear-gradient(180deg,#a9c9c4 0%,#477b82 58%,#17374a 100%)}
+.ford-command-decade-link:hover .ford-command-decade-bar{background:#dce7e5}
+.ford-command-decade-link:hover .ford-command-decade b,.ford-command-decade-link:hover .ford-command-decade>span{color:#17374a}
+.ford-command-legend-row:hover{background:#e8efed}
+.ford-command-legend-row:focus-visible{outline:2px solid #477b82;outline-offset:2px}
