@@ -8,7 +8,6 @@ const links = [
   { href: "/", label: "Home", page: "home" },
   { href: "/models/", label: "Models", page: "models" },
   { href: "/ford-dashboard/", label: "Reference Dashboard", page: "dashboard" },
-  { href: "/directory/", label: "A–Z Directory", page: "directory" },
   { href: "/factory/", label: "Factory Process", page: "factory" },
   { href: "/heritage/", label: "Heritage", page: "heritage" },
   { href: "/contact/", label: "Contact", page: "contact" },
@@ -18,7 +17,6 @@ export default function SiteHeader() {
   const pathname = usePathname() || "/";
   const [open, setOpen] = useState(false);
   const activePage = pathname.endsWith("/ford-dashboard/") ? "dashboard"
-    : pathname.endsWith("/directory/") ? "directory"
     : pathname.endsWith("/models/") ? "models"
     : pathname.endsWith("/factory/") ? "factory"
     : pathname.endsWith("/heritage/") ? "heritage"
