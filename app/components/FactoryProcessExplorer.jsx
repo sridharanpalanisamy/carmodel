@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 
 const stages = [
   { id:"01", name:"Stamping", area:"Body shop · Sheet metal", title:"Shape the body panels", summary:"Large presses form flat steel or aluminium blanks into doors, hoods, roofs, fenders and structural panels.", steps:["Coils or blanks are inspected and prepared.","Press tools draw, trim and pierce each panel.","Operators and sensors check dimensions and surface condition."], outputs:"Formed body panels", checks:"Panel dimensions, cracks, wrinkles and surface marks", icon:"PRESS" },
@@ -13,6 +14,7 @@ const stages = [
 ];
 
 export default function FactoryProcessExplorer() {
+  const [mount, setMount] = useState(null);
   const [active, setActive] = useState(0);
   const stage = stages[active];
   const progress = useMemo(() => ((active + 1) / stages.length) * 100, [active]);
