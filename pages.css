@@ -175,3 +175,8 @@
 .spec-data-notes p{font-size:9px;line-height:1.7;color:var(--muted);margin:6px 0 0}
 @media(max-width:760px){.spec-chart-grid{grid-template-columns:1fr}.spec-dashboard-selectors{grid-template-columns:1fr 34px 1fr}.spec-swap{grid-column:1/-1;width:100%}}
 @media(max-width:600px){.spec-dashboard{padding:34px 0 42px;margin-top:28px}.spec-dashboard-heading{align-items:start}.spec-dashboard-index{display:none}.spec-vehicle-heads{gap:8px}.spec-vehicle-head{padding:12px}.spec-vehicle-head h3{font-size:16px}.spec-dashboard-selectors{padding:12px;gap:7px}.spec-versus{font-size:8px}.spec-comparison-table th,.spec-comparison-table td{padding:10px}.spec-chart{padding:13px}}
+
+/* Navigation between the featured collection and the full A–Z archive */
+.directory-shortcut{display:inline-block;margin-top:9px;color:var(--orange);font:700 10px var(--sans);text-decoration:none}
+.directory-shortcut:hover{text-decoration:underline}
+.directory-page .az-archive{margin-top:0}
