@@ -51,7 +51,7 @@ export default function FactoryProcessExplorer() {
           {stages.map((item,index)=><div className="factory-flow-step" key={item.id}>
             <button type="button" className={active===index?"factory-flow-node active":"factory-flow-node"} aria-pressed={active===index} onClick={()=>setActive(index)}>
               <span className="factory-flow-node-number">{item.id}</span>
-              <span className="factory-flow-node-icon" aria-hidden="true">{["▤","⚙","≋","◈","⚙","▱","✓"][index]}</span>
+              <span className="factory-flow-node-icon" aria-hidden="true">{["ST","BW","SP","PF","PT","FA","QC"][index]}</span>
               <strong>{item.name}</strong>
               <small>{item.area.split(" · ")[0]}</small>
             </button>
