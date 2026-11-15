@@ -55,6 +55,7 @@ const models = [
   ["Windstar","1995–2003","North American minivan, later replaced by the Freestar."]
 ];
 
+export const fordNameplates = models.map(([name, years]) => ({ name, years }));
 
 const imageByName = {
   "Bronco": "ford-bronco.png", "Falcon": "ford-falcon.png", "GT40": "Ford_GT-40.jpg",
