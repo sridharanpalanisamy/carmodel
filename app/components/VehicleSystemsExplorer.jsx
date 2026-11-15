@@ -27,7 +27,21 @@ function SystemIcon({ id }) {
 export default function VehicleSystemsExplorer() {
   const [mount, setMount] = useState(null);
   const [activeId, setActiveId] = useState("engine");
-  useEffect(() => { setMount(document.getElementById("vehicleSystemsMount")); }, []);
+  useEffect(() => {
+    const findMount = () => {
+      const target = document.getElementById("vehicleSystemsMount");
+      if (target) {
+        setMount(target);
+        observer.disconnect();
+      }
+    };
+    const observer = new MutationObserver(findMount);
+    findMount();
+    if (!document.getElementById("vehicleSystemsMount")) {
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
+    return () => observer.disconnect();
+  }, []);
   const active = systems.find(item => item.id === activeId) || systems[0];
   if (!mount) return null;
   return createPortal(
