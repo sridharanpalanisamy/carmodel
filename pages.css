@@ -133,3 +133,45 @@
 .home-model-t-panel .ford-glb-status{padding:10px 12px;background:#f1eff0;color:var(--muted);font-size:9px}
 .home-model-t-panel .model-disclaimer{font-size:9px;line-height:1.7;color:var(--muted);margin:10px 0 0}
 @media(max-width:600px){.home-model-t-panel{padding:24px 0}.home-model-t-panel .ford-glb-stage{height:280px}.home-model-t-panel .turntable-heading{gap:10px}}
+
+
+/* Ford vehicle specification dashboard */
+.spec-dashboard{padding:48px 0 58px;border-top:1px solid var(--line);margin-top:42px}
+.spec-dashboard-heading{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:26px}
+.spec-dashboard-heading h2{font:700 clamp(28px,4vw,42px)/1.08 var(--display);letter-spacing:-1.7px;margin:9px 0}
+.spec-dashboard-heading h2 em{font-style:normal;color:var(--orange)}
+.spec-dashboard-heading p{font-size:11px;color:var(--muted);max-width:460px;margin:0}
+.spec-dashboard-index{font:700 9px var(--sans);letter-spacing:1.4px;color:var(--muted);white-space:nowrap}
+.spec-dashboard-selectors{display:grid;grid-template-columns:1fr 42px 1fr auto;gap:12px;align-items:end;padding:17px;background:#f2eff1;border:1px solid var(--line)}
+.spec-dashboard-selectors label{display:flex;flex-direction:column;gap:7px;min-width:0}
+.spec-dashboard-selectors label span{font-size:7px;font-weight:700;letter-spacing:1.2px;color:var(--muted)}
+.spec-dashboard-selectors select{width:100%;min-width:0;border:0;border-bottom:1px solid #aaa2aa;background:transparent;padding:9px 4px;color:var(--ink);font:600 12px var(--sans)}
+.spec-versus{display:grid;place-items:center;height:36px;color:var(--orange);font:800 10px var(--display)}
+.spec-swap{height:36px;border:1px solid var(--line);background:transparent;padding:0 12px;font:700 9px var(--sans);cursor:pointer}
+.spec-swap:hover{background:var(--ink);color:white;border-color:var(--ink)}
+.spec-vehicle-heads{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0 12px}
+.spec-vehicle-head{padding:18px;background:#f4f2f2;border-left:3px solid var(--orange)}
+.spec-vehicle-head+ .spec-vehicle-head{border-left-color:#777}
+.spec-vehicle-head>span{font-size:7px;letter-spacing:1px;color:var(--muted);text-transform:uppercase}
+.spec-vehicle-head h3{font:700 21px var(--display);margin:7px 0 2px}
+.spec-vehicle-head p{font-size:10px;color:var(--muted);margin:0}
+.spec-chart-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0}
+.spec-chart{background:#f4f2f2;padding:15px;min-width:0}
+.spec-chart-title{display:flex;justify-content:space-between;gap:8px;margin-bottom:15px;font:700 11px var(--display)}
+.spec-chart-title strong{font:700 8px var(--sans);color:var(--orange)}
+.spec-bar-row{display:grid;grid-template-columns:62px minmax(25px,1fr);gap:7px;align-items:center;margin:11px 0}
+.spec-bar-name{font-size:8px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spec-bar-track{height:8px;background:#dedadd;overflow:hidden}
+.spec-bar-track i{display:block;height:100%;background:var(--orange);min-width:0}
+.spec-bar-track i.spec-bar-alt{background:#777}
+.spec-bar-row>b{grid-column:2;font:700 9px var(--sans);text-align:right}
+.spec-table-wrap{overflow-x:auto;margin-top:16px}
+.spec-comparison-table{width:100%;border-collapse:collapse;min-width:530px;background:#f4f2f2;font-size:10px}
+.spec-comparison-table th,.spec-comparison-table td{padding:12px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+.spec-comparison-table thead th{font:700 9px var(--sans);letter-spacing:.7px;background:#e4dfe3}
+.spec-comparison-table tbody th{width:22%;font-weight:700;color:var(--muted)}
+.spec-data-notes{margin-top:17px;padding:15px 17px;border-left:2px solid var(--orange);background:#f2eff1}
+.spec-data-notes strong{font:700 11px var(--display)}
+.spec-data-notes p{font-size:9px;line-height:1.7;color:var(--muted);margin:6px 0 0}
+@media(max-width:760px){.spec-chart-grid{grid-template-columns:1fr}.spec-dashboard-selectors{grid-template-columns:1fr 34px 1fr}.spec-swap{grid-column:1/-1;width:100%}}
+@media(max-width:600px){.spec-dashboard{padding:34px 0 42px;margin-top:28px}.spec-dashboard-heading{align-items:start}.spec-dashboard-index{display:none}.spec-vehicle-heads{gap:8px}.spec-vehicle-head{padding:12px}.spec-vehicle-head h3{font-size:16px}.spec-dashboard-selectors{padding:12px;gap:7px}.spec-versus{font-size:8px}.spec-comparison-table th,.spec-comparison-table td{padding:10px}.spec-chart{padding:13px}}
