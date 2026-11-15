@@ -677,3 +677,24 @@
  .factory-stage-inline .factory-unit-illustration svg{max-height:135px!important}
  .factory-stage-inline .factory-stage-copy{padding:17px!important}
 }
+
+/* Continuous snake connector: 1→2→3→4, turn down, then 5→6→7 */
+.factory-flow-track{grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-rows:auto auto!important;column-gap:10px!important;row-gap:28px!important;align-items:stretch!important}
+.factory-flow-step{height:100%!important;min-height:94px!important}
+.factory-flow-step:nth-child(1) .factory-flow-edge,.factory-flow-step:nth-child(2) .factory-flow-edge,.factory-flow-step:nth-child(3) .factory-flow-edge{top:28px!important;left:calc(50% + 30px)!important;right:auto!important;width:calc(100% + 10px - 60px)!important;height:3px!important}
+.factory-flow-step:nth-child(4) .factory-flow-edge{top:28px!important;left:calc(50% - 1px)!important;right:auto!important;width:3px!important;height:calc(100% + 28px)!important;background:#b8aaa4!important}
+.factory-flow-step:nth-child(4) .factory-flow-edge i{width:100%!important;height:0!important}
+.factory-flow-step:nth-child(4) .factory-flow-edge:after{left:-3px!important;right:auto!important;top:auto!important;bottom:-1px!important;width:8px!important;height:8px!important;border:0!important;border-right:2px solid #8d7c75!important;border-bottom:2px solid #8d7c75!important;transform:rotate(45deg)!important}
+.factory-flow-step:nth-child(5) .factory-flow-edge,.factory-flow-step:nth-child(6) .factory-flow-edge{top:28px!important;left:auto!important;right:calc(50% + 30px)!important;width:calc(100% + 10px - 60px)!important;height:3px!important}
+.factory-flow-step:nth-child(5) .factory-flow-edge:after,.factory-flow-step:nth-child(6) .factory-flow-edge:after{left:-1px!important;right:auto!important;top:-4px!important;border:0!important;border-left:2px solid #8d7c75!important;border-bottom:2px solid #8d7c75!important;transform:rotate(45deg)!important}
+.factory-flow-edge{border-radius:4px!important}
+.factory-flow-edge.passed{background:#d56b38!important}
+.factory-flow-edge.passed:after{border-color:#d56b38!important}
+@media(max-width:600px){
+.factory-flow-track{column-gap:4px!important;row-gap:24px!important}
+.factory-flow-step{min-height:82px!important}
+.factory-flow-step:nth-child(1) .factory-flow-edge,.factory-flow-step:nth-child(2) .factory-flow-edge,.factory-flow-step:nth-child(3) .factory-flow-edge,.factory-flow-step:nth-child(5) .factory-flow-edge,.factory-flow-step:nth-child(6) .factory-flow-edge{top:23px!important;width:calc(100% + 4px - 50px)!important}
+.factory-flow-step:nth-child(1) .factory-flow-edge,.factory-flow-step:nth-child(2) .factory-flow-edge,.factory-flow-step:nth-child(3) .factory-flow-edge{left:calc(50% + 25px)!important}
+.factory-flow-step:nth-child(5) .factory-flow-edge,.factory-flow-step:nth-child(6) .factory-flow-edge{right:calc(50% + 25px)!important}
+.factory-flow-step:nth-child(4) .factory-flow-edge{top:23px!important;height:calc(100% + 24px)!important}
+}
