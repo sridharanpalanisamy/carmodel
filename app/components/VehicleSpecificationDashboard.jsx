@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
+import { fordNameplates } from "./ModelDirectory";
 
 const references = [
   { name: "Model T", year: "1908 reference", engine: "2.9 L inline-4", capacity: 2.9, power: 20, torque: 83, transmission: "2-speed planetary", drive: "Rear-wheel drive", note: "Launch-era reference; output and equipment changed during 1908–1927." },
@@ -17,6 +18,8 @@ const references = [
   { name: "Pinto", year: "1971 reference", engine: "1.6 L inline-4", capacity: 1.6, power: 75, torque: 96, transmission: "4-speed manual", drive: "Rear-wheel drive", note: "Launch-year 1.6 L reference using period gross rating." }
 ];
 
+const comparisonOptions = [...references, ...fordNameplates.filter(model => !references.some(reference => reference.name === model.name)).map(model => ({ name: model.name, year: model.years, engine: "Not verified for a specific year", capacity: null, power: null, torque: null, transmission: "Not verified", drive: "Not verified", note: "Choose a generation and market before comparing verified specifications." }))];
+
 const metricMax = { capacity: 5, power: 350, torque: 350 };
 const formatMetric = (value, unit) => value == null ? "Not available" : `${value.toLocaleString("en-US")} ${unit}`;
 
@@ -25,8 +28,8 @@ export default function VehicleSpecificationDashboard() {
   useEffect(() => { setMount(document.getElementById("specDashboardMount")); }, []);
   const [leftName, setLeftName] = useState("Model T");
   const [rightName, setRightName] = useState("Mustang");
-  const left = useMemo(() => references.find(item => item.name === leftName) || references[0], [leftName]);
-  const right = useMemo(() => references.find(item => item.name === rightName) || references[1], [rightName]);
+  const left = useMemo(() => comparisonOptions.find(item => item.name === leftName) || references[0], [leftName]);
+  const right = useMemo(() => comparisonOptions.find(item => item.name === rightName) || references[1], [rightName]);
   const metrics = [
     { key: "capacity", label: "Engine displacement", unit: "L", format: v => formatMetric(v, "L") },
     { key: "power", label: "Engine power", unit: "hp", format: v => formatMetric(v, "hp") },
@@ -43,7 +46,7 @@ export default function VehicleSpecificationDashboard() {
         <span className="spec-dashboard-index">DATA / 01</span>
       </div>
       <div className="spec-dashboard-selectors">
-        <label><span>VEHICLE A</span><select value={leftName} onChange={event => setLeftName(event.target.value)}>{references.map(item => <option key={item.name} value={item.name}>Ford {item.name}</option>)}</select></label>
+        <label><span>VEHICLE A</span><select value={leftName} onChange={event => setLeftName(event.target.value)}>{comparisonOptions.map(item => <option key={item.name} value={item.name}>Ford {item.name}</option>)}</select></label>
         <span className="spec-versus">VS</span>
         <label><span>VEHICLE B</span><select value={rightName} onChange={event => setRightName(event.target.value)}>{references.map(item => <option key={item.name} value={item.name}>Ford {item.name}</option>)}</select></label>
         <button type="button" className="spec-swap" onClick={() => { setLeftName(rightName); setRightName(leftName); }}>Swap vehicles ↔</button>
@@ -62,7 +65,7 @@ export default function VehicleSpecificationDashboard() {
         })}
       </div>
       <div className="spec-table-wrap"><table className="spec-comparison-table"><thead><tr><th>SPECIFICATION</th><th>FORD {left.name.toUpperCase()}</th><th>FORD {right.name.toUpperCase()}</th></tr></thead><tbody>{specs.map(([label, key]) => <tr key={key}><th scope="row">{label}</th><td>{left[key]}</td><td>{right[key]}</td></tr>)}{metrics.map(metric => <tr key={metric.key}><th scope="row">{metric.label}</th><td>{metric.format(left[metric.key])}</td><td>{metric.format(right[metric.key])}</td></tr>)}</tbody></table></div>
-      <div className="spec-data-notes"><strong>About these figures</strong><p>These are representative historical configurations, not universal specifications for every vehicle carrying the same name. Engine options, ratings, body styles and equipment varied by model year, market and trim. Torque is shown only where a reference value is available. Dimensions and top speed are intentionally excluded until matching year-specific data can be verified.</p><p>Currently includes 11 reference configurations. Other nameplates in the A–Z directory will be added as reliable year-specific specifications are verified.</p></div>
+      <div className="spec-data-notes"><strong>About these figures</strong><p>These are representative historical configurations, not universal specifications for every vehicle carrying the same name. Engine options, ratings, body styles and equipment varied by model year, market and trim. Torque is shown only where a reference value is available. Dimensions and top speed are intentionally excluded until matching year-specific data can be verified.</p><p>All A–Z nameplates can be selected. Verified historical figures are currently available for 11 reference configurations; for other models, unknown values are deliberately marked unavailable rather than guessed. Select a specific generation, year and market before adding verified data.</p></div>
     </section>,
     mount
   );
