@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { fordNameplates } from "./ModelDirectory";
 
-const references = [
+export const references = [
   { name: "Model T", year: "1908 reference", engine: "2.9 L inline-4", capacity: 2.9, power: 20, torque: 83, transmission: "2-speed planetary", drive: "Rear-wheel drive", note: "Launch-era reference; output and equipment changed during 1908–1927." },
   { name: "Model A", year: "1928–1931 reference", engine: "3.3 L inline-4", capacity: 3.3, power: 40, torque: 128, transmission: "3-speed manual", drive: "Rear-wheel drive", note: "Typical late Model A reference." },
   { name: "Ford V8", year: "1932 reference", engine: "3.6 L flathead V8", capacity: 3.6, power: 65, torque: 147, transmission: "3-speed manual", drive: "Rear-wheel drive", note: "Launch-era 221 cu in flathead V8." },
