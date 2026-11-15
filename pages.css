@@ -1740,3 +1740,24 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 /* Show unambiguous full decade labels on the dashboard chart. */
 .ford-command-decade>span{font-size:6.5px;white-space:nowrap;letter-spacing:-.2px}
 @media(max-width:420px){.ford-command-decade>span{font-size:5.5px;letter-spacing:-.35px}}
+
+
+/* Dashboard discovery tools and archive insight cards. */
+.ford-command-discovery{border-top:1px solid #d6ddde;padding-top:26px}
+.ford-command-discovery-search{display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center;max-width:680px;margin:0 0 10px}
+.ford-command-discovery-search label{grid-column:1/-1;font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:#64747a}
+.ford-command-discovery-search input{min-width:0;width:100%;padding:13px 14px;border:1px solid #cbd5d5;background:#f8f9f8;color:#17374a;font:12px var(--sans);outline:none}
+.ford-command-discovery-search input:focus{border-color:#477b82;box-shadow:0 0 0 2px #477b8226}
+.ford-command-discovery-search button{border:1px solid #cbd5d5;background:#edf1f0;color:#315e68;padding:11px 15px;font:10px var(--sans);cursor:pointer}
+.ford-command-search-results{max-width:680px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:8px 0 18px}
+.ford-command-search-results>a{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 12px;background:#f0f4f3;border:1px solid #d6ddde;color:#17374a;font-size:10px}
+.ford-command-search-results>a:hover{background:#e3ecea;border-color:#8ba9a8}
+.ford-command-search-results>a b{font-size:8px;color:#477b82;white-space:nowrap}
+.ford-command-search-results>p{grid-column:1/-1;margin:0;padding:12px;background:#f8f9f8;color:#69797e;font-size:10px}
+.ford-command-insight-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:20px}
+.ford-command-insight{display:flex;flex-direction:column;gap:8px;min-width:0;padding:17px;background:#edf1f0;border:1px solid #d6ddde;transition:background .18s ease,border-color .18s ease}
+.ford-command-insight:hover{background:#e3ecea;border-color:#8ba9a8}
+.ford-command-insight>span{font-size:8px;letter-spacing:.75px;color:#718087}
+.ford-command-insight>strong{font:700 17px var(--display);color:#17374a;overflow-wrap:anywhere}
+.ford-command-insight>small{font-size:9px;color:#477b82}
+@media(max-width:620px){.ford-command-insight-grid{grid-template-columns:1fr}.ford-command-search-results{grid-template-columns:1fr}}
