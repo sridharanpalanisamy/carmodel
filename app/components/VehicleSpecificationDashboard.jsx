@@ -48,7 +48,7 @@ export default function VehicleSpecificationDashboard() {
       <div className="spec-dashboard-selectors">
         <label><span>VEHICLE A</span><select value={leftName} onChange={event => setLeftName(event.target.value)}>{comparisonOptions.map(item => <option key={item.name} value={item.name}>Ford {item.name}</option>)}</select></label>
         <span className="spec-versus">VS</span>
-        <label><span>VEHICLE B</span><select value={rightName} onChange={event => setRightName(event.target.value)}>{references.map(item => <option key={item.name} value={item.name}>Ford {item.name}</option>)}</select></label>
+        <label><span>VEHICLE B</span><select value={rightName} onChange={event => setRightName(event.target.value)}>{comparisonOptions.map(item => <option key={item.name} value={item.name}>Ford {item.name}</option>)}</select></label>
         <button type="button" className="spec-swap" onClick={() => { setLeftName(rightName); setRightName(leftName); }}>Swap vehicles ↔</button>
       </div>
       <div className="spec-vehicle-heads">
