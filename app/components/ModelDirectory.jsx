@@ -50,13 +50,13 @@ export default function ModelDirectory() {
       <div className="az-grid az-photo-grid az-photo-grid-upgraded">
         {filteredModels.map((model,index)=>(
           <article className={"az-card az-photo-card az-photo-card-upgraded "+(selected===model.name?"is-selected":"")} key={model.name}>
-            <div className="az-photo-frame"><img src={model.image.startsWith("http")?model.image:"/carmodel/assets/images/"+model.image} alt={"Ford "+model.name+" — "+model.years} loading={index<3?"eager":"lazy"} onError={event=>{event.currentTarget.style.visibility="hidden";}}/><span className="az-photo-number">0{models.indexOf(model)+1}</span><span className="az-photo-type">{model.category} · {model.type}</span></div>
+            <div className="az-photo-frame"><img src={model.image.startsWith("http")?model.image:"/carmodel/assets/images/"+model.image} alt={"Ford "+model.name+" — "+model.years} loading={index<3?"eager":"lazy"} onError={event=>{event.currentTarget.style.visibility="hidden";}}/><span className="az-photo-number">0{categorizedModels.indexOf(model)+1}</span><span className="az-photo-type">{model.category} · {model.type}</span></div>
             <div className="az-card-copy"><div className="az-card-meta">{model.years}</div><h3>Ford {model.name}</h3><p>{model.description}</p><div className="az-card-period">{model.period}</div></div>
             <div className="az-card-actions">
               <button type="button" className="az-view-button" aria-expanded={selected===model.name} onClick={()=>setSelected(selected===model.name?"":model.name)}>{selected===model.name?"Hide details":"View details"} <span>{selected===model.name?"−":"↗"}</span></button>
               <a className="az-compare-button" href="/carmodel/specifications/">Explore specifications ↗</a>
             </div>
-            {selected===model.name&&<div className="az-inline-detail"><span className="eyebrow">MODEL NOTES / {String(models.indexOf(model)+1).padStart(2,"0")}</span><p>{model.detail}</p><div className="az-highlight-list">{model.highlights.map(item=><span key={item}>{item}</span>)}</div></div>}
+            {selected===model.name&&<div className="az-inline-detail"><span className="eyebrow">MODEL NOTES / {String(categorizedModels.indexOf(model)+1).padStart(2,"0")}</span><p>{model.detail}</p><div className="az-highlight-list">{model.highlights.map(item=><span key={item}>{item}</span>)}</div></div>}
           </article>
         ))}
       </div>
