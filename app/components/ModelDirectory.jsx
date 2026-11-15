@@ -179,11 +179,6 @@ export default function ModelDirectory() {
               </div>
               <p className="az-detail-note">Specifications are representative where a reference configuration is available. For other nameplates, exact engine capacity, fuel, transmission and drivetrain depend on model year, generation, trim and country.</p>
               <div className="az-detail-actions">
-                <button type="button" className="model-3d-button" onClick={() => {
-                  window.dispatchEvent(new CustomEvent("ford:compare-model", { detail: { name: selectedModel.name } }));
-                }}>
-                  Compare this model ↗
-                </button>
                 <button type="button" className="model-3d-button" aria-expanded={show3D} onClick={() => setShow3D(value => !value)}>
                   {show3D ? "Hide 3D View" : "3D View"}
                 </button>
