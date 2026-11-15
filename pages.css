@@ -698,3 +698,31 @@
 .factory-flow-step:nth-child(5) .factory-flow-edge,.factory-flow-step:nth-child(6) .factory-flow-edge{right:calc(50% + 25px)!important}
 .factory-flow-step:nth-child(4) .factory-flow-edge{top:23px!important;height:calc(100% + 24px)!important}
 }
+
+/* Factory flow: align every connector to the centre of its circular symbol. */
+.factory-flow-track{align-items:stretch!important}
+.factory-flow-step{height:100%!important}
+.factory-flow-step:nth-child(1) .factory-flow-edge,
+.factory-flow-step:nth-child(2) .factory-flow-edge,
+.factory-flow-step:nth-child(3) .factory-flow-edge,
+.factory-flow-step:nth-child(5) .factory-flow-edge,
+.factory-flow-step:nth-child(6) .factory-flow-edge{
+  top:42px!important;
+}
+.factory-flow-step:nth-child(4) .factory-flow-edge{
+  top:42px!important;
+  height:calc(100% + 28px)!important;
+}
+@media(max-width:520px){
+  .factory-flow-step:nth-child(1) .factory-flow-edge,
+  .factory-flow-step:nth-child(2) .factory-flow-edge,
+  .factory-flow-step:nth-child(3) .factory-flow-edge,
+  .factory-flow-step:nth-child(5) .factory-flow-edge,
+  .factory-flow-step:nth-child(6) .factory-flow-edge{
+    top:37px!important;
+  }
+  .factory-flow-step:nth-child(4) .factory-flow-edge{
+    top:37px!important;
+    height:calc(100% + 24px)!important;
+  }
+}
