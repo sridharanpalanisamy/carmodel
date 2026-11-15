@@ -67,15 +67,30 @@ export default function VehicleSpecificationDashboard() {
       <div className="spec-vehicle-heads">
         {[left, right].map((item, index) => <div className="spec-vehicle-head" key={index}><span>0{index + 1} / {item.year}</span><h3>Ford {item.name}</h3><p>{item.engine}</p></div>)}
       </div>
-      <div className="spec-chart-grid">
-        {metrics.map(metric => {
-          const a = left[metric.key], b = right[metric.key], max = metricMax[metric.key];
-          return <article className="spec-chart" key={metric.key}>
-            <div className="spec-chart-title"><span>{metric.label}</span><strong>{metric.unit}</strong></div>
-            <div className="spec-bar-row"><span className="spec-bar-name">{left.name}</span><div className="spec-bar-track"><i style={{ width: a == null ? "0%" : `${Math.max(3, a / max * 100)}%` }} /></div><b>{metric.format(a)}</b></div>
-            <div className="spec-bar-row"><span className="spec-bar-name">{right.name}</span><div className="spec-bar-track"><i className="spec-bar-alt" style={{ width: b == null ? "0%" : `${Math.max(3, b / max * 100)}%` }} /></div><b>{metric.format(b)}</b></div>
-          </article>;
-        })}
+      <div className="spec-chart-grid spec-chart-grid-varied">
+        <article className="spec-chart spec-chart-donut">
+          <div className="spec-chart-title"><span>Engine displacement</span><strong>L / CAPACITY</strong></div>
+          <div className="spec-donut-pair">
+            {[left,right].map((item,index)=>{const value=item.capacity;const percent=value==null?0:Math.min(100,value/metricMax.capacity*100);return <div className="spec-donut-item" key={item.name}><div className="spec-donut" style={{"--donut-value":percent+"%"}}><span><b>{value==null?"—":value.toFixed(1)}</b><small>L</small></span></div><strong>{item.name}</strong></div>;})}
+          </div>
+          <p className="spec-chart-caption">Paired radial comparison · maximum reference scale 5.0 L</p>
+        </article>
+        <article className="spec-chart spec-chart-columns">
+          <div className="spec-chart-title"><span>Engine power</span><strong>HP / OUTPUT</strong></div>
+          <div className="spec-column-chart">
+            {[left,right].map((item,index)=>{const value=item.power;const height=value==null?0:Math.max(3,value/metricMax.power*100);return <div className="spec-column-item" key={item.name}><div className="spec-column-value">{value==null?"Not available":value+" hp"}</div><div className={"spec-column "+(index===1?"alt":"")} style={{height:height+"%"}}></div><strong>{item.name}</strong></div>;})}
+            <div className="spec-column-axis"><span>0</span><span>175</span><span>350 hp</span></div>
+          </div>
+          <p className="spec-chart-caption">Vertical columns · common scale 0–350 hp</p>
+        </article>
+        <article className="spec-chart spec-chart-dumbbell">
+          <div className="spec-chart-title"><span>Engine torque</span><strong>LB-FT / PULL</strong></div>
+          <div className="spec-dumbbell-chart">
+            <div className="spec-dumbbell-axis"><span>0</span><span>175</span><span>350 lb-ft</span></div>
+            {[left,right].map((item,index)=>{const value=item.torque;const position=value==null?0:Math.min(100,value/metricMax.torque*100);return <div className="spec-dumbbell-row" key={item.name}><strong>{item.name}</strong><div className="spec-dumbbell-track"><i className={index===1?"alt":""} style={{left:position+"%"}}></i></div><b>{value==null?"Not available":value+" lb-ft"}</b></div>;})}
+          </div>
+          <p className="spec-chart-caption">Position plot · unavailable historical figures remain blank</p>
+        </article>
       </div>
       <div className="spec-table-wrap"><table className="spec-comparison-table"><thead><tr><th>SPECIFICATION</th><th>FORD {left.name.toUpperCase()}</th><th>FORD {right.name.toUpperCase()}</th></tr></thead><tbody>{specs.map(([label, key]) => <tr key={key}><th scope="row">{label}</th><td>{left[key]}</td><td>{right[key]}</td></tr>)}{metrics.map(metric => <tr key={metric.key}><th scope="row">{metric.label}</th><td>{metric.format(left[metric.key])}</td><td>{metric.format(right[metric.key])}</td></tr>)}</tbody></table></div>
       <div className="spec-data-notes"><strong>About these figures</strong><p>These are representative historical configurations, not universal specifications for every vehicle carrying the same name. Engine options, ratings, body styles and equipment varied by model year, market and trim. Torque is shown only where a reference value is available. Dimensions and top speed are intentionally excluded until matching year-specific data can be verified.</p><p>All A–Z nameplates can be selected. Verified historical figures are currently available for 11 reference configurations; for other models, unknown values are deliberately marked unavailable rather than guessed. Select a specific generation, year and market before adding verified data.</p></div>
