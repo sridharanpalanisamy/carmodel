@@ -180,3 +180,46 @@
 .directory-shortcut{display:inline-block;margin-top:9px;color:var(--orange);font:700 10px var(--sans);text-decoration:none}
 .directory-shortcut:hover{text-decoration:underline}
 .directory-page .az-archive{margin-top:0}
+
+
+/* Interactive automotive manufacturing process explorer */
+.factory-explorer{padding:48px 0 54px;border-top:1px solid var(--line);margin-top:34px}
+.factory-explorer-heading{display:flex;justify-content:space-between;align-items:end;gap:22px;margin-bottom:24px}
+.factory-explorer-heading h2,.factory-learning-note h2{font:700 clamp(30px,4vw,44px)/1.05 var(--display);letter-spacing:-1.5px;margin:9px 0}
+.factory-explorer-heading h2 em,.factory-learning-note h2 em{font-style:normal;color:var(--orange)}
+.factory-explorer-heading p{max-width:490px;color:var(--muted);font-size:11px;line-height:1.7;margin:0}
+.factory-index{display:flex;align-items:center;gap:10px;color:var(--muted);font:700 8px/1.5 var(--sans);letter-spacing:1px}
+.factory-index strong{font:700 38px var(--display);color:var(--orange)}
+.factory-progress{height:3px;background:#dedadd;margin:0 0 14px}.factory-progress span{display:block;height:100%;background:var(--orange);transition:width .25s ease}
+.factory-stage-nav{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin-bottom:16px}
+.factory-stage-nav button{min-width:0;min-height:66px;padding:10px 8px;text-align:left;border:1px solid var(--line);background:#f4f2f2;color:var(--muted);cursor:pointer}
+.factory-stage-nav button span{display:block;font:700 8px var(--sans);color:var(--orange);margin-bottom:7px}
+.factory-stage-nav button strong{display:block;font:700 10px/1.3 var(--sans)}
+.factory-stage-nav button.active{background:var(--ink);border-color:var(--ink);color:white}
+.factory-stage-nav button:focus-visible,.factory-stage-controls button:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.factory-stage-detail{display:grid;grid-template-columns:minmax(220px,.78fr) minmax(0,1.5fr);background:#f1eff0;border:1px solid var(--line)}
+.factory-stage-visual{min-height:350px;position:relative;display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;padding:25px;background:#e3dfe1;overflow:hidden}
+.factory-stage-number{font:700 clamp(70px,10vw,112px)/.9 var(--display);color:#c9c1c5;letter-spacing:-5px}
+.factory-stage-symbol{font:800 clamp(24px,3vw,38px) var(--display);letter-spacing:3px;color:var(--orange);border:1px solid #b9aeb4;padding:16px 18px;position:relative}
+.factory-stage-symbol:after{content:"";position:absolute;width:95px;height:95px;border:1px solid #c7bec2;border-radius:50%;right:-54px;top:-52px}
+.factory-stage-area{font:700 8px var(--sans);letter-spacing:1.3px;color:var(--muted);text-transform:uppercase}
+.factory-stage-copy{padding:27px 30px;min-width:0}
+.factory-stage-copy h3{font:700 clamp(24px,3vw,34px)/1.1 var(--display);margin:8px 0 10px}
+.factory-stage-summary{font-size:11px;line-height:1.75;color:var(--muted);max-width:660px}
+.factory-stage-copy h4{font:700 12px var(--display);margin:20px 0 9px}
+.factory-stage-copy ol{padding-left:18px;margin:0;color:var(--muted);font-size:10px;line-height:1.8}
+.factory-stage-copy li{padding-left:4px;margin:4px 0}
+.factory-facts{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-top:20px}
+.factory-facts>div{padding:13px;background:#f8f7f6;display:flex;flex-direction:column;gap:7px;min-width:0}
+.factory-facts span{font:700 7px var(--sans);letter-spacing:1px;color:var(--muted)}
+.factory-facts strong{font:600 10px/1.5 var(--sans)}
+.factory-stage-controls{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px}
+.factory-stage-controls button{border:1px solid var(--ink);background:var(--ink);color:white;padding:10px 13px;font:700 9px var(--sans);cursor:pointer}
+.factory-stage-controls button:hover:not(:disabled){background:var(--orange);border-color:var(--orange)}
+.factory-stage-controls button:disabled{opacity:.35;cursor:not-allowed}
+.factory-stage-controls span{font:700 9px var(--sans);color:var(--muted)}
+.factory-disclaimer{font-size:9px;line-height:1.7;color:var(--muted);margin:14px 0 0}
+.factory-learning-note{padding:35px 0;border-top:1px solid var(--line);margin-top:28px}
+.factory-learning-note p{max-width:650px;color:var(--muted);font-size:11px;line-height:1.8}
+@media(max-width:760px){.factory-stage-nav{grid-template-columns:repeat(4,minmax(0,1fr))}.factory-stage-detail{grid-template-columns:1fr}.factory-stage-visual{min-height:170px;padding:18px}.factory-stage-number{font-size:64px}.factory-stage-symbol{font-size:24px;padding:10px 14px}.factory-stage-copy{padding:22px 18px}}
+@media(max-width:460px){.factory-explorer-heading{align-items:flex-start}.factory-index{display:none}.factory-stage-nav{grid-template-columns:repeat(2,minmax(0,1fr))}.factory-facts{grid-template-columns:1fr}.factory-stage-controls button{padding:9px 10px}}
