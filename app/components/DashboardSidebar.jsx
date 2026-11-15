@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -11,10 +12,59 @@ const items = [
   { href: "/factory/", label: "Factory Process", code: "05", icon: "⌁", match: ["/factory"] }
 ];
 
+const DEFAULT_POSITION = { x: 0, y: 70 };
+
 export default function DashboardSidebar() {
-  const pathname = (usePathname() || "/").replace(/\/+$/, "");
+  const pathname = (usePathname() || "/").replace(/\\/+$/, "");
+  const [position, setPosition] = useState(DEFAULT_POSITION);
+  const dragOffset = useRef(null);
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(window.localStorage.getItem("ford-workspace-sidebar-position") || "null");
+      if (saved && Number.isFinite(saved.x) && Number.isFinite(saved.y)) {
+        setPosition({
+          x: Math.max(0, Math.min(saved.x, window.innerWidth - 90)),
+          y: Math.max(0, Math.min(saved.y, window.innerHeight - 100))
+        });
+      }
+    } catch {}
+  }, []);
+
+  function startDrag(event) {
+    if (event.target.closest("button")) return;
+    event.preventDefault();
+    dragOffset.current = { x: event.clientX - position.x, y: event.clientY - position.y };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function moveDrag(event) {
+    if (!dragOffset.current) return;
+    const width = window.matchMedia("(max-width: 760px)").matches ? Math.min(window.innerWidth * 0.9, 360) : 244;
+    const x = Math.max(0, Math.min(event.clientX - dragOffset.current.x, window.innerWidth - width));
+    const y = Math.max(0, Math.min(event.clientY - dragOffset.current.y, window.innerHeight - 90));
+    setPosition({ x, y });
+  }
+
+  function endDrag() {
+    if (!dragOffset.current) return;
+    dragOffset.current = null;
+    try { window.localStorage.setItem("ford-workspace-sidebar-position", JSON.stringify(position)); } catch {}
+  }
+
+  function resetPosition() {
+    setPosition(DEFAULT_POSITION);
+    try { window.localStorage.removeItem("ford-workspace-sidebar-position"); } catch {}
+  }
+
   return (
-    <aside className="dashboard-sidebar" aria-label="Ford dashboard navigation">
+    <aside className="dashboard-sidebar dashboard-sidebar-movable" aria-label="Ford dashboard navigation"
+      style={{ "--sidebar-x": position.x + "px", "--sidebar-y": position.y + "px" }}>
+      <div className="dashboard-sidebar-dragbar" onPointerDown={startDrag} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag}>
+        <span className="dashboard-sidebar-drag-handle" aria-hidden="true">⠿</span>
+        <span className="dashboard-sidebar-drag-label">DRAG TO MOVE</span>
+        <button type="button" className="dashboard-sidebar-reset" onClick={resetPosition} title="Return sidebar to its default position">Reset</button>
+      </div>
       <div className="dashboard-sidebar-brand">
         <span className="dashboard-sidebar-mark">F</span>
         <span><strong>FORD WORKSPACE</strong><small>KNOWLEDGE CENTRE</small></span>
