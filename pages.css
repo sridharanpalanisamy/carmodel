@@ -223,3 +223,43 @@
 .factory-learning-note p{max-width:650px;color:var(--muted);font-size:11px;line-height:1.8}
 @media(max-width:760px){.factory-stage-nav{grid-template-columns:repeat(4,minmax(0,1fr))}.factory-stage-detail{grid-template-columns:1fr}.factory-stage-visual{min-height:170px;padding:18px}.factory-stage-number{font-size:64px}.factory-stage-symbol{font-size:24px;padding:10px 14px}.factory-stage-copy{padding:22px 18px}}
 @media(max-width:460px){.factory-explorer-heading{align-items:flex-start}.factory-index{display:none}.factory-stage-nav{grid-template-columns:repeat(2,minmax(0,1fr))}.factory-facts{grid-template-columns:1fr}.factory-stage-controls button{padding:9px 10px}}
+
+/* Interactive Ford heritage timeline */
+.interactive-heritage{padding:48px 0 60px;border-top:1px solid var(--line)}
+.interactive-heritage-heading{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:22px}
+.interactive-heritage-heading h2{font:700 clamp(30px,4vw,44px)/1.05 var(--display);letter-spacing:-1.5px;margin:9px 0}
+.interactive-heritage-heading h2 em{font-style:normal;color:var(--orange)}
+.interactive-heritage-heading p{max-width:540px;font-size:11px;line-height:1.7;color:var(--muted);margin:0}
+.heritage-search{display:flex;align-items:center;gap:9px;width:min(260px,100%);border-bottom:1px solid var(--line);padding:9px 0;color:var(--orange)}
+.heritage-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--ink);font:10px var(--sans)}
+.heritage-filter-row{display:flex;flex-wrap:wrap;gap:7px;margin:22px 0 8px}
+.heritage-filter-row button{border:1px solid var(--line);background:transparent;padding:9px 13px;color:var(--muted);font:700 8px var(--sans);cursor:pointer}
+.heritage-filter-row button.active,.heritage-filter-row button:hover{background:var(--ink);border-color:var(--ink);color:white}
+.heritage-timeline-track{display:flex;gap:0;overflow-x:auto;padding:22px 4px 18px;scrollbar-width:thin;scroll-snap-type:x proximity}
+.heritage-year{position:relative;flex:1 0 92px;display:flex;flex-direction:column;align-items:center;gap:8px;border:0;background:transparent;color:var(--muted);cursor:pointer;scroll-snap-align:center}
+.heritage-year span{font:800 14px var(--display);color:var(--ink)}
+.heritage-year i{width:11px;height:11px;border-radius:50%;background:#bcb4ba;border:2px solid var(--paper);outline:1px solid #bcb4ba;z-index:1}
+.heritage-year:not(:last-child)::after{content:"";position:absolute;top:34px;left:50%;width:100%;height:1px;background:var(--line)}
+.heritage-year small{font:700 7px var(--sans);letter-spacing:.6px;text-transform:uppercase}
+.heritage-year.active span,.heritage-year.active small{color:var(--orange)}
+.heritage-year.active i{background:var(--orange);outline-color:var(--orange);transform:scale(1.2)}
+.heritage-milestone-detail{display:grid;grid-template-columns:minmax(240px,.85fr) minmax(0,1.15fr);background:#f2eff1;border:1px solid var(--line);margin-top:8px}
+.heritage-detail-visual{position:relative;min-height:300px;background:#e2dddf;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.heritage-detail-visual img{width:100%;height:100%;min-height:300px;max-height:390px;object-fit:cover;display:block}
+.heritage-detail-date{position:absolute;left:14px;bottom:14px;padding:8px 10px;background:var(--ink);color:white;font:700 8px var(--sans);letter-spacing:.8px}
+.heritage-visual-placeholder{display:flex;flex-direction:column;align-items:center;gap:8px;color:#a69da3}
+.heritage-visual-placeholder span{font:800 12px var(--sans);letter-spacing:4px}
+.heritage-visual-placeholder strong{font:800 clamp(70px,10vw,120px)/1 var(--display);color:var(--orange)}
+.heritage-visual-placeholder small{font:700 8px var(--sans);letter-spacing:1.5px}
+.heritage-detail-copy{padding:30px;display:flex;flex-direction:column;align-items:flex-start}
+.heritage-detail-copy h3{font:700 clamp(24px,3vw,34px)/1.1 var(--display);letter-spacing:-.8px;margin:10px 0}
+.heritage-detail-copy p{font-size:10px;line-height:1.8;color:var(--muted);max-width:600px}
+.heritage-detail-copy .heritage-detail-summary{font-size:12px;color:var(--ink);font-weight:600}
+.heritage-detail-copy>a{font-size:9px;font-weight:700;color:var(--orange);margin-top:6px}
+.heritage-detail-controls{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;margin-top:auto;padding-top:24px}
+.heritage-detail-controls button{border:1px solid var(--line);background:transparent;padding:10px 12px;font:700 9px var(--sans);cursor:pointer}
+.heritage-detail-controls button:disabled{opacity:.35;cursor:not-allowed}
+.heritage-detail-controls span{font:700 8px var(--sans);color:var(--muted)}
+.heritage-no-results{padding:30px;background:#f2eff1;color:var(--muted);font-size:11px}
+.heritage-data-note{font-size:8px;line-height:1.7;color:var(--muted);margin-top:14px}
+@media(max-width:700px){.interactive-heritage-heading{display:block}.heritage-search{width:100%;margin-top:18px}.heritage-milestone-detail{grid-template-columns:1fr}.heritage-detail-visual,.heritage-detail-visual img{min-height:210px;max-height:260px}.heritage-detail-copy{padding:22px 18px}.heritage-detail-controls{padding-top:18px}}
