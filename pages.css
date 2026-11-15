@@ -1402,3 +1402,127 @@ body:has(.dashboard-sidebar) .site-footer{width:calc(100% - 244px);margin-left:2
   .dashboard-sidebar-movable.is-moved .dashboard-sidebar-code,
   .dashboard-sidebar-movable.is-moved .dashboard-sidebar-arrow{display:block}
 }
+
+
+/* Compact fixed left icon rail: no dragging, no expanding panel. */
+.dashboard-sidebar-icon-rail{
+  position:fixed!important;
+  top:70px!important;
+  left:0!important;
+  right:auto!important;
+  bottom:0!important;
+  width:68px!important;
+  height:calc(100vh - 70px)!important;
+  max-height:none!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  padding:16px 8px 12px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  gap:18px!important;
+  background:#242323!important;
+  border-right:1px solid #393432!important;
+  border-bottom:0!important;
+  z-index:40!important;
+}
+.dashboard-sidebar-icon-rail .dashboard-sidebar-brand{
+  display:flex!important;
+  justify-content:center!important;
+  width:100%;
+  padding:0 0 15px!important;
+  border-bottom:1px solid #49413d!important;
+}
+.dashboard-sidebar-icon-rail .dashboard-sidebar-mark{
+  width:38px;height:38px;flex:0 0 38px;
+  font-size:23px;
+}
+.dashboard-sidebar-icon-rail .dashboard-sidebar-nav{
+  width:100%;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center;
+  gap:10px!important;
+  overflow:visible!important;
+}
+.dashboard-sidebar-icon-rail .dashboard-sidebar-link{
+  position:relative;
+  width:48px!important;
+  min-width:48px;
+  height:48px!important;
+  min-height:48px!important;
+  padding:0!important;
+  display:flex!important;
+  align-items:center;
+  justify-content:center;
+  border:1px solid transparent!important;
+  background:transparent;
+}
+.dashboard-sidebar-icon-rail .dashboard-sidebar-code,
+.dashboard-sidebar-icon-rail .dashboard-sidebar-link-label,
+.dashboard-sidebar-icon-rail .dashboard-sidebar-arrow,
+.dashboard-sidebar-icon-rail .dashboard-sidebar-label{
+  display:none!important;
+}
+.dashboard-sidebar-icon-rail .dashboard-sidebar-icon{
+  font-size:21px;
+  line-height:1;
+}
+.dashboard-sidebar-icon-rail .dashboard-sidebar-link:hover,
+.dashboard-sidebar-icon-rail .dashboard-sidebar-link.active{
+  background:#3a312d!important;
+  border-color:#8b604b!important;
+}
+.dashboard-sidebar-icon-rail .dashboard-sidebar-foot{
+  display:flex!important;
+  justify-content:center;
+  width:100%;
+  margin-top:auto!important;
+  padding:14px 0 5px!important;
+  border-top:1px solid #49413d!important;
+}
+.dashboard-sidebar-icon-rail .dashboard-sidebar-status{margin:0!important}
+body:has(.dashboard-sidebar-icon-rail) .page-shell{
+  width:calc(100% - 68px)!important;
+  max-width:none!important;
+  margin:0 0 0 68px!important;
+  padding-left:clamp(18px,3vw,42px)!important;
+  padding-right:clamp(18px,3vw,42px)!important;
+}
+body:has(.dashboard-sidebar-icon-rail) .site-footer{
+  width:calc(100% - 68px)!important;
+  margin-left:68px!important;
+  padding-left:clamp(18px,3vw,42px)!important;
+  padding-right:clamp(18px,3vw,42px)!important;
+}
+@media(max-width:760px){
+  .dashboard-sidebar-icon-rail{
+    top:62px!important;
+    bottom:0!important;
+    left:0!important;
+    width:56px!important;
+    height:calc(100vh - 62px)!important;
+    max-height:none!important;
+    padding:12px 5px 9px!important;
+    gap:14px!important;
+    border-right:1px solid #393432!important;
+    border-bottom:0!important;
+  }
+  .dashboard-sidebar-icon-rail .dashboard-sidebar-brand{padding-bottom:12px!important}
+  .dashboard-sidebar-icon-rail .dashboard-sidebar-mark{width:34px;height:34px;flex-basis:34px}
+  .dashboard-sidebar-icon-rail .dashboard-sidebar-nav{display:flex!important;flex-direction:column!important;gap:8px!important;overflow:visible!important}
+  .dashboard-sidebar-icon-rail .dashboard-sidebar-link{width:44px!important;min-width:44px;height:44px!important;min-height:44px!important;padding:0!important}
+  .dashboard-sidebar-icon-rail .dashboard-sidebar-icon{font-size:19px}
+  body:has(.dashboard-sidebar-icon-rail) .page-shell{
+    width:calc(100% - 56px)!important;
+    margin:0 0 0 56px!important;
+    padding-left:12px!important;
+    padding-right:12px!important;
+  }
+  body:has(.dashboard-sidebar-icon-rail) .site-footer{
+    width:calc(100% - 56px)!important;
+    margin-left:56px!important;
+    padding-left:12px!important;
+    padding-right:12px!important;
+  }
+}
