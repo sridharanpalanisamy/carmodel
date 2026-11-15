@@ -9,4 +9,4 @@ const markup = `<main class="page-shell inner-page">
 <section class="heritage-directory-section az-heritage-section"><div id="azArchiveMount"></div></section>
 </main>
 <footer class="site-footer inner-footer"><a class="brand" href="/carmodel/"><span class="brand-mark">F</span><span>CLASSIC FORD<small>THE HERITAGE COLLECTION</small></span></a><p>A visual tribute to the cars that moved generations.</p><p class="image-credits">Image credits: Ford Mustang 1965 — Bene Riobó; Ford GT40 — Calreyn88. Wikimedia Commons, CC BY-SA 4.0.</p><div class="footer-bottom"><span>© 2026 Classic Ford Collection</span><span>Built for automotive enthusiasts</span></div></footer>`;
-export default function Page(){return <><link rel="stylesheet" href="/carmodel/pages.css?v=20261115-heritage-directory"/><LegacyPage markup={markup}/><InteractiveHeritageTimeline/><AtoZDirectory/></>;}
+export default function Page(){return <><link rel="stylesheet" href="/carmodel/pages.css?v=20261115-heritage-directory"/><LegacyPage markup={markup}/><div className="page-shell heritage-timeline-shell"><InteractiveHeritageTimeline/></div><AtoZDirectory/></>;}
