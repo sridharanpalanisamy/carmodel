@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 
 const references = [
   { name: "Model T", year: "1908 reference", engine: "2.9 L inline-4", capacity: 2.9, power: 20, torque: 83, transmission: "2-speed planetary", drive: "Rear-wheel drive", note: "Launch-era reference; output and equipment changed during 1908–1927." },
