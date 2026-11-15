@@ -755,3 +755,44 @@
  .factory-flow-node strong{font-size:8px!important}
  .factory-flow-node small{font-size:7px!important}
 }
+
+/* Project 10: interactive vehicle systems explorer */
+.vehicle-systems{margin:54px 0 36px;padding:34px;background:#f5f1ee;border:1px solid #ded5d0}
+.vehicle-systems-heading{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:26px}
+.vehicle-systems-heading h2{margin:8px 0 10px;font:500 clamp(28px,4vw,42px)/1.05 var(--serif);color:var(--ink)}
+.vehicle-systems-heading h2 em{color:#b65a35}
+.vehicle-systems-heading p{max-width:600px;margin:0;color:#716761;font:14px/1.6 var(--sans)}
+.vehicle-systems-index{padding:8px 10px;border:1px solid #d7cbc4;color:#8c6a5a;font:700 9px var(--sans);letter-spacing:1px;white-space:nowrap}
+.vehicle-systems-layout{display:grid;grid-template-columns:minmax(230px,.72fr) minmax(0,1.5fr);gap:18px;align-items:stretch}
+.vehicle-system-list{display:grid;gap:8px;align-content:start}
+.vehicle-system-choice{display:flex;align-items:center;gap:12px;width:100%;min-height:68px;padding:10px 12px;border:1px solid #ded5d0;background:#fffdfa;color:#302b2b;text-align:left;cursor:pointer;transition:border-color .18s,background .18s,transform .18s}
+.vehicle-system-choice:hover{border-color:#bd7655;transform:translateX(2px)}
+.vehicle-system-choice.active{border-color:#bd623b;background:#2b2729;color:#fff;box-shadow:inset 3px 0 #dc8156}
+.vehicle-system-icon,.vehicle-system-large-icon{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border:1px solid #d8ccc5;background:#f7f1ed;color:#9b563b}
+.vehicle-system-icon svg{width:23px;height:23px}
+.vehicle-system-choice.active .vehicle-system-icon{background:#463a38;border-color:#76594f;color:#f2a17a}
+.vehicle-system-label{display:grid;gap:5px;min-width:0}
+.vehicle-system-label small{font:700 8px var(--sans);letter-spacing:.65px;color:#9b8277}
+.vehicle-system-choice.active .vehicle-system-label small{color:#e3a383}
+.vehicle-system-label strong{font:700 13px var(--sans)}
+.vehicle-system-arrow{margin-left:auto;color:#b66b4a;font-size:17px}
+.vehicle-system-detail{min-width:0;padding:24px 26px;background:#fffdfa;border:1px solid #ded5d0}
+.vehicle-system-detail-top{display:flex;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid #eee6e1;color:#987b6e;font:700 8px var(--sans);letter-spacing:.8px}
+.vehicle-system-title-row{display:flex;align-items:center;gap:15px;padding:20px 0 16px}
+.vehicle-system-large-icon{flex-basis:58px;width:58px;height:58px;background:#f3e9e3;border-color:#e3c9ba}
+.vehicle-system-large-icon svg{width:31px;height:31px}
+.vehicle-system-title-row h3{margin:0 0 5px;color:#2d2929;font:500 27px/1.1 var(--serif)}
+.vehicle-system-title-row p{margin:0;color:#746b66;font:12px/1.5 var(--sans)}
+.vehicle-system-section{padding:14px 0;border-top:1px solid #eee6e1}
+.vehicle-system-section h4,.vehicle-system-check strong{display:block;margin:0 0 8px;color:#a45b3c;font:700 9px var(--sans);letter-spacing:1px}
+.vehicle-system-section p,.vehicle-system-check p{margin:0;color:#514a46;font:12px/1.65 var(--sans)}
+.vehicle-system-flow{margin-top:10px;padding:11px 13px;background:#f4efeb;border-left:3px solid #c46b43;color:#55453e;font:600 11px/1.5 var(--sans)}
+.vehicle-system-section ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 20px;margin:0;padding-left:17px;color:#514a46;font:11px/1.5 var(--sans)}
+.vehicle-system-check{margin-top:4px;padding:13px 15px;background:#f7f2ee}
+.vehicle-system-controls{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:17px;padding-top:13px;border-top:1px solid #eee6e1}
+.vehicle-system-controls button{border:1px solid #d7cbc4;background:#fffdfa;padding:8px 11px;color:#473c38;font:700 10px var(--sans);cursor:pointer}
+.vehicle-system-controls button:hover{background:#292326;color:white;border-color:#292326}
+.vehicle-system-controls span{color:#95837a;font:700 9px var(--sans)}
+.vehicle-systems-note{margin:14px 0 0;color:#81756e;font:10px/1.6 var(--sans)}
+@media(max-width:760px){.vehicle-systems{padding:22px 16px}.vehicle-systems-layout{grid-template-columns:1fr}.vehicle-system-list{grid-template-columns:repeat(2,minmax(0,1fr))}.vehicle-system-choice{min-height:62px;padding:8px}.vehicle-system-icon{flex-basis:34px;width:34px;height:34px}.vehicle-system-icon svg{width:20px;height:20px}.vehicle-system-label small{font-size:7px}.vehicle-system-label strong{font-size:11px}.vehicle-system-detail{padding:19px 16px}}
+@media(max-width:440px){.vehicle-systems-heading{display:block}.vehicle-systems-index{display:inline-block;margin-top:14px}.vehicle-system-list{grid-template-columns:1fr 1fr;gap:6px}.vehicle-system-choice{gap:7px}.vehicle-system-label strong{font-size:10px}.vehicle-system-detail-top span:last-child{display:none}.vehicle-system-section ul{grid-template-columns:1fr}}
