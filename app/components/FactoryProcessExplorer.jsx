@@ -62,6 +62,14 @@ export default function FactoryProcessExplorer() {
       <div className="factory-flow-header"><span>PRODUCTION FLOW MAP</span><small>Select any node to inspect that manufacturing unit</small></div>
       <div className="factory-flow-scroll">
         <div className="factory-flow-track" role="group" aria-label="Choose a vehicle manufacturing stage">
+          <svg className="factory-flow-connectors" viewBox="0 0 1000 272" preserveAspectRatio="none" aria-hidden="true">
+            <defs><marker id="factoryFlowArrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1L7 4.5L1 8" fill="none" stroke="#9a8981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></marker></defs>
+            <g fill="none" stroke="#b8aaa4" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" markerEnd="url(#factoryFlowArrow)">
+              <path d="M154 44H346"/><path d="M404 44H596"/><path d="M654 44H846"/>
+              <path d="M875 73V165"/>
+              <path d="M846 194H654"/><path d="M596 194H404"/>
+            </g>
+          </svg>
           {stages.map((item,index)=><div className="factory-flow-step" key={item.id}>
             <button type="button" className={active===index?"factory-flow-node active":"factory-flow-node"} aria-pressed={active===index} aria-label={`Show ${item.name} details`} onClick={()=>setActive(index)}>
               <span className="factory-flow-node-number">{item.id}</span>
@@ -69,7 +77,7 @@ export default function FactoryProcessExplorer() {
               <strong>{item.name}</strong>
               <small>{item.area.split(" · ")[0]}</small>
             </button>
-            {index<stages.length-1?<div className={active>index?"factory-flow-edge passed":"factory-flow-edge"} aria-hidden="true"><i /></div>:null}
+
           </div>)}
         </div>
       </div>
