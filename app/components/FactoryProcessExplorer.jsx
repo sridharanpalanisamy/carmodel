@@ -45,10 +45,21 @@ export default function FactoryProcessExplorer() {
         <div><span className="eyebrow">INTERACTIVE PRODUCTION GUIDE</span><h2 id="factoryExplorerTitle">From raw material<br/>to <em>road-ready.</em></h2><p>Choose a production stage to see what happens, what comes out of the process and which quality checks matter.</p></div>
         <div className="factory-index"><strong>07</strong><span>PROCESS<br/>STAGES</span></div>
       </div>
-      <div className="factory-progress" aria-label={`Stage ${active + 1} of ${stages.length}`}><span style={{width:progress+"%"}} /></div>
-      <div className="factory-stage-nav" role="tablist" aria-label="Vehicle production stages">
-        {stages.map((item,index)=><button key={item.id} type="button" role="tab" aria-selected={active===index} className={active===index?"active":""} onClick={()=>setActive(index)}><span>{item.id}</span><strong>{item.name}</strong></button>)}
+      <div className="factory-flow-header"><span>PRODUCTION FLOW MAP</span><small>Select any node to inspect that manufacturing unit</small></div>
+      <div className="factory-flow-scroll">
+        <div className="factory-flow-track" role="group" aria-label="Interactive vehicle manufacturing process flow">
+          {stages.map((item,index)=><div className="factory-flow-step" key={item.id}>
+            <button type="button" className={active===index?"factory-flow-node active":"factory-flow-node"} aria-pressed={active===index} onClick={()=>setActive(index)}>
+              <span className="factory-flow-node-number">{item.id}</span>
+              <span className="factory-flow-node-icon" aria-hidden="true">{["▤","⚙","≋","◈","⚙","▱","✓"][index]}</span>
+              <strong>{item.name}</strong>
+              <small>{item.area.split(" · ")[0]}</small>
+            </button>
+            {index<stages.length-1?<div className={active>index?"factory-flow-edge passed":"factory-flow-edge"} aria-hidden="true"><i /></div>:null}
+          </div>)}
+        </div>
       </div>
+      <div className="factory-progress" aria-label={`Stage ${active + 1} of ${stages.length}`}><span style={{width:progress+"%"}} /></div>
       <article className="factory-stage-detail" role="tabpanel">
         <div className="factory-stage-visual"><FactoryUnitVisual stage={stage} /></div>
         <div className="factory-stage-copy">
