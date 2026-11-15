@@ -1774,3 +1774,20 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 @media(max-width:900px){.ford-command-path-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:440px){.ford-command-path-grid{grid-template-columns:1fr}.ford-command-path-card{min-height:155px}}
 @media(prefers-reduced-motion:reduce){.ford-command-path-card{transition:none}}
+
+
+/* Compact comparison snapshots on the dashboard. */
+.ford-command-compare-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.ford-command-compare-card{min-width:0;padding:18px;background:#f8f9f8;border:1px solid #d6ddde}
+.ford-command-compare-card>span{display:block;font-size:8px;letter-spacing:.65px;color:#718087;min-height:24px}
+.ford-command-compare-names{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:8px;align-items:center;padding:13px 0;border-bottom:1px solid #dce2e2}
+.ford-command-compare-names strong{font:700 16px var(--display);color:#17374a;overflow-wrap:anywhere}
+.ford-command-compare-names strong:last-child{text-align:right}
+.ford-command-compare-names i{font-style:normal;font-size:8px;font-weight:800;color:#8a989b}
+.ford-command-compare-metrics{display:grid;gap:10px;padding:14px 0}
+.ford-command-compare-metrics>div{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ford-command-compare-metrics small{font-size:7px;letter-spacing:.7px;color:#718087}
+.ford-command-compare-metrics b{font-size:9px;color:#315e68;text-align:right}
+.ford-command-compare-metrics em{font-style:normal;color:#9aa5a7;padding:0 3px}
+.ford-command-compare-card>a{font-size:8px;font-weight:800;color:#315e68}
+@media(max-width:760px){.ford-command-compare-grid{grid-template-columns:1fr}.ford-command-compare-card>span{min-height:0}}
