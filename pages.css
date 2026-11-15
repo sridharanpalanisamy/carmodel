@@ -624,3 +624,56 @@
  .factory-stage-inline .factory-stage-copy{padding:22px 17px}
  .factory-stage-inline .factory-unit-illustration svg{max-height:210px}
 }
+
+
+/* Factory flow refinement: keep every process visible, connected and details inline */
+.factory-flow-scroll{overflow:visible!important;padding:10px 0 14px!important}
+.factory-flow-track{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-rows:auto auto!important;gap:22px 10px!important;min-width:0!important;align-items:center}
+.factory-flow-step{position:relative!important;display:flex!important;justify-content:center!important;min-width:0!important;overflow:visible!important}
+.factory-flow-step:nth-child(1){grid-column:1;grid-row:1}
+.factory-flow-step:nth-child(2){grid-column:2;grid-row:1}
+.factory-flow-step:nth-child(3){grid-column:3;grid-row:1}
+.factory-flow-step:nth-child(4){grid-column:4;grid-row:1}
+.factory-flow-step:nth-child(5){grid-column:4;grid-row:2}
+.factory-flow-step:nth-child(6){grid-column:3;grid-row:2}
+.factory-flow-step:nth-child(7){grid-column:2;grid-row:2}
+.factory-flow-node{position:relative!important;z-index:2!important;align-items:center!important;justify-content:flex-start!important;gap:5px!important;min-height:0!important;height:auto!important;padding:0 2px 4px!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;color:var(--ink)!important;text-align:center!important;transform:none!important}
+.factory-flow-node:hover{background:transparent!important;box-shadow:none!important;transform:translateY(-2px)!important}
+.factory-flow-node.active{background:transparent!important;color:var(--ink)!important;box-shadow:none!important}
+.factory-flow-node-icon{display:grid!important;place-items:center!important;width:58px!important;height:58px!important;border-radius:50%!important;border:2px solid #b9aaa3!important;background:#f4eeeb!important;color:#4b4140!important;box-shadow:0 3px 10px #17171910!important}
+.factory-flow-node.active .factory-flow-node-icon{background:#292326!important;border:3px solid #d56b38!important;color:#fff!important;box-shadow:0 0 0 5px #d56b3822!important}
+.factory-flow-node-icon svg{width:27px!important;height:27px!important}
+.factory-flow-node-number{font-size:8px!important}
+.factory-flow-node strong{display:block!important;max-width:100%!important;min-height:0!important;font-size:10px!important;line-height:1.2!important;overflow-wrap:anywhere}
+.factory-flow-node small{font-size:8px!important;line-height:1.2!important;letter-spacing:.2px!important}
+.factory-flow-edge{display:block!important;position:absolute!important;z-index:1!important;top:28px!important;left:calc(50% + 30px)!important;right:auto!important;width:calc(100% + 10px - 60px)!important;height:3px!important;margin:0!important;background:#b8aaa4!important}
+.factory-flow-edge:after{content:""!important;position:absolute!important;right:-1px!important;top:-4px!important;width:8px!important;height:8px!important;border-top:2px solid #8d7c75!important;border-right:2px solid #8d7c75!important;transform:rotate(45deg)!important}
+.factory-flow-edge i{display:block!important;width:100%!important;height:100%!important;background:#d56b38!important;opacity:.72}
+.factory-flow-step:nth-child(4) .factory-flow-edge{top:58px!important;left:calc(50% - 1px)!important;width:3px!important;height:26px!important}
+.factory-flow-step:nth-child(4) .factory-flow-edge:after{right:-3px!important;top:auto!important;bottom:-1px!important;transform:rotate(135deg)!important}
+.factory-flow-step:nth-child(5) .factory-flow-edge,.factory-flow-step:nth-child(6) .factory-flow-edge{left:auto!important;right:calc(50% + 30px)!important}
+.factory-flow-step:nth-child(5) .factory-flow-edge:after,.factory-flow-step:nth-child(6) .factory-flow-edge:after{right:auto!important;left:-1px!important;transform:rotate(225deg)!important}
+.factory-stage-inline{grid-template-columns:minmax(190px,.7fr) minmax(0,1.3fr)!important;gap:0!important;margin-top:12px!important;scroll-margin-top:12px!important}
+.factory-stage-inline .factory-stage-visual{min-height:220px!important;padding:16px!important}
+.factory-stage-inline .factory-unit-illustration svg{max-height:175px!important}
+.factory-stage-inline .factory-stage-copy{min-width:0!important;padding:20px 22px!important}
+.factory-stage-inline .factory-stage-copy h3{margin:5px 0 8px!important}
+.factory-stage-inline .factory-stage-summary{margin-bottom:10px!important}
+.factory-stage-inline .factory-stage-copy ol{margin:8px 0 12px!important;padding-left:18px!important}
+.factory-stage-inline .factory-stage-copy li{margin:4px 0!important;font-size:12px!important;line-height:1.4!important}
+.factory-stage-inline .factory-facts{gap:10px!important;margin-top:10px!important}
+.factory-stage-inline .factory-stage-controls{margin-top:12px!important}
+@media(max-width:600px){
+ .factory-flow-track{gap:18px 4px!important}
+ .factory-flow-node-icon{width:48px!important;height:48px!important}
+ .factory-flow-node-icon svg{width:23px!important;height:23px!important}
+ .factory-flow-edge{top:23px!important;left:calc(50% + 25px)!important;width:calc(100% + 4px - 50px)!important}
+ .factory-flow-step:nth-child(4) .factory-flow-edge{top:48px!important;height:22px!important}
+ .factory-flow-step:nth-child(5) .factory-flow-edge,.factory-flow-step:nth-child(6) .factory-flow-edge{right:calc(50% + 25px)!important}
+ .factory-flow-node strong{font-size:8px!important}
+ .factory-flow-node small{font-size:7px!important}
+ .factory-stage-inline{grid-template-columns:1fr!important}
+ .factory-stage-inline .factory-stage-visual{min-height:170px!important}
+ .factory-stage-inline .factory-unit-illustration svg{max-height:135px!important}
+ .factory-stage-inline .factory-stage-copy{padding:17px!important}
+}
