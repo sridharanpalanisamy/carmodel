@@ -4,15 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const items = [
-  { href: "/ford-dashboard/", label: "Overview", code: "01", icon: "⌂", match: ["/ford-dashboard/"] },
-  { href: "/models/", label: "Ford Models", code: "02", icon: "▤", match: ["/models/"] },
-  { href: "/specifications/", label: "Comparison", code: "03", icon: "⇄", match: ["/specifications/"] },
-  { href: "/engineering/", label: "Engineering", code: "04", icon: "⚙", match: ["/engineering/"] },
-  { href: "/factory/", label: "Factory Process", code: "05", icon: "⌁", match: ["/factory/"] }
+  { href: "/ford-dashboard/", label: "Overview", code: "01", icon: "⌂", match: ["/ford-dashboard"] },
+  { href: "/models/", label: "Ford Models", code: "02", icon: "▤", match: ["/models"] },
+  { href: "/specifications/", label: "Comparison", code: "03", icon: "⇄", match: ["/specifications"] },
+  { href: "/engineering/", label: "Engineering", code: "04", icon: "⚙", match: ["/engineering"] },
+  { href: "/factory/", label: "Factory Process", code: "05", icon: "⌁", match: ["/factory"] }
 ];
 
 export default function DashboardSidebar() {
-  const pathname = usePathname() || "/";
+  const pathname = (usePathname() || "/").replace(/\\/+$/, "");
   return (
     <aside className="dashboard-sidebar" aria-label="Ford dashboard navigation">
       <div className="dashboard-sidebar-brand">
