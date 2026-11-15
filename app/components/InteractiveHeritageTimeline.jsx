@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const milestones = [
 {year:1903,date:"June 1903",type:"Company",title:"Ford Motor Company is founded",summary:"Henry Ford and investors organize Ford Motor Company in Detroit.",detail:"The company was organized in June 1903. Its first car sale followed in July: a two-cylinder Model A assembled at the Mack Avenue plant.",image:"/carmodel/assets/images/ford_model_t.png",alt:"Early Ford vehicle",source:"https://www.thehenryford.org/collections/explore/popular-research-topics/ford-motor-co-chronology-1903-2003"},
@@ -18,7 +18,7 @@ const categories=["All","Company","Vehicle","Innovation","Motorsport"];
 export default function InteractiveHeritageTimeline(){
  const [category,setCategory]=useState("All");
  const [year,setYear]=useState(1903);
- const [search,setSearch]=useState("");
+ const [search,setSearch]=useState("");\n useEffect(()=>{const requested=Number(new URLSearchParams(window.location.search).get("year"));if(Number.isFinite(requested)&&requested>0){const nearest=milestones.reduce((best,item)=>Math.abs(item.year-requested)<Math.abs(best.year-requested)?item:best,milestones[0]);setYear(nearest.year);}},[]);
  const items=useMemo(()=>milestones.filter(m=>(category==="All"||m.type===category)&&(!search||(m.title+" "+m.year+" "+m.summary).toLowerCase().includes(search.toLowerCase()))),[category,search]);
  const active=items.find(m=>m.year===year)||items[0];
  const index=active?items.findIndex(m=>m.year===active.year):-1;
