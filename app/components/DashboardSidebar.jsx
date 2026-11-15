@@ -17,7 +17,7 @@ const DEFAULT_POSITION = { x: 0, y: 70 };
 export default function DashboardSidebar() {
   const pathname = (usePathname() || "/").replace(/\\/+$/, "");
   const [position, setPosition] = useState(DEFAULT_POSITION);
-  const dragOffset = useRef(null);
+  const dragOffset = useRef(null);\n  const positionRef = useRef(DEFAULT_POSITION);
 
   useEffect(() => {
     try {
@@ -43,22 +43,22 @@ export default function DashboardSidebar() {
     const width = window.matchMedia("(max-width: 760px)").matches ? Math.min(window.innerWidth * 0.9, 360) : 244;
     const x = Math.max(0, Math.min(event.clientX - dragOffset.current.x, window.innerWidth - width));
     const y = Math.max(0, Math.min(event.clientY - dragOffset.current.y, window.innerHeight - 90));
-    setPosition({ x, y });
+    const next = { x, y };\n    positionRef.current = next;\n    setPosition(next);
   }
 
   function endDrag() {
     if (!dragOffset.current) return;
     dragOffset.current = null;
-    try { window.localStorage.setItem("ford-workspace-sidebar-position", JSON.stringify(position)); } catch {}
+    try { window.localStorage.setItem("ford-workspace-sidebar-position", JSON.stringify(positionRef.current)); } catch {}
   }
 
   function resetPosition() {
-    setPosition(DEFAULT_POSITION);
+    positionRef.current = DEFAULT_POSITION;\n    setPosition(DEFAULT_POSITION);
     try { window.localStorage.removeItem("ford-workspace-sidebar-position"); } catch {}
   }
 
   return (
-    <aside className="dashboard-sidebar dashboard-sidebar-movable" aria-label="Ford dashboard navigation"
+    <aside className={"dashboard-sidebar dashboard-sidebar-movable" + (position.x !== 0 || position.y !== 70 ? " is-moved" : "")} aria-label="Ford dashboard navigation"
       style={{ "--sidebar-x": position.x + "px", "--sidebar-y": position.y + "px" }}>
       <div className="dashboard-sidebar-dragbar" onPointerDown={startDrag} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag}>
         <span className="dashboard-sidebar-drag-handle" aria-hidden="true">⠿</span>
