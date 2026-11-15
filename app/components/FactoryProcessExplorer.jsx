@@ -15,6 +15,7 @@ const stages = [
 
 export default function FactoryProcessExplorer() {
   const [mount, setMount] = useState(null);
+  useEffect(() => { setMount(document.getElementById("factoryExplorerMount")); }, []);
   const [active, setActive] = useState(0);
   const stage = stages[active];
   const progress = useMemo(() => ((active + 1) / stages.length) * 100, [active]);
