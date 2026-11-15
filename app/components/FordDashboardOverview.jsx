@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { fordNameplates } from "./AtoZDirectory";
+import { references } from "./VehicleSpecificationDashboard";
 
 const featured = [
   { name: "Mustang", year: "1964–present", note: "Pony-car icon" },
@@ -32,6 +33,12 @@ const decadeFor = years => {
   return match ? Math.floor(Number(match[0]) / 10) * 10 : null;
 };
 const decadeLabels = ["1900s", "1910s", "1920s", "1930s", "1940s", "1950s", "1960s", "1970s", "1980s", "1990s", "2000s", "2010s", "2020s"];
+const comparisonPairs = [
+  { left: "Mustang", right: "GT40", label: "Pony car vs endurance racer" },
+  { left: "Model T", right: "Model A", label: "Early mass-mobility generations" },
+  { left: "Thunderbird", right: "Falcon", label: "Two very different 1960s-era roles" }
+];
+
 
 export default function FordDashboardOverview() {
   const [search, setSearch] = useState("");
@@ -105,6 +112,12 @@ export default function FordDashboardOverview() {
             <p className="ford-command-chart-note">Uses the first four-digit year shown in each directory entry; this is a directory overview, not a count of vehicles produced.</p>
           </article>
         </div>
+      </section>
+
+      <section className="ford-command-section ford-command-comparison-snapshot">
+        <div className="ford-command-section-heading"><div><span className="eyebrow">REFERENCE DATA / QUICK LOOK</span><h2>Compare two <em>Ford icons.</em></h2><p>Small snapshots from the site's year-labelled specification references.</p></div><Link href="/specifications/">Open full comparison ↗</Link></div>
+        <div className="ford-command-compare-grid">{comparisonPairs.map(pair=>{const a=references.find(item=>item.name===pair.left);const b=references.find(item=>item.name===pair.right);return <article className="ford-command-compare-card" key={pair.left+"-"+pair.right}><span>{pair.label}</span><div className="ford-command-compare-names"><strong>{a.name}</strong><i>VS</i><strong>{b.name}</strong></div><div className="ford-command-compare-metrics"><div><small>ENGINE</small><b>{a.capacity.toFixed(1)} L <em>/</em> {b.capacity.toFixed(1)} L</b></div><div><small>POWER</small><b>{a.power} hp <em>/</em> {b.power} hp</b></div><div><small>REFERENCE</small><b>{a.year} <em>/</em> {b.year}</b></div></div><Link href="/specifications/">Compare specifications ↗</Link></article>;})}</div>
+        <p className="ford-command-chart-note">Figures are representative configurations from the specification library, not universal model-wide values. Open the comparison page for drivetrain, transmission, torque and notes.</p>
       </section>
 
       <section className="ford-command-section ford-command-research-paths">
