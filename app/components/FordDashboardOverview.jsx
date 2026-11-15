@@ -107,6 +107,16 @@ export default function FordDashboardOverview() {
         </div>
       </section>
 
+      <section className="ford-command-section ford-command-research-paths">
+        <div className="ford-command-section-heading"><div><span className="eyebrow">START WITH A THEME</span><h2>Choose a research <em>path.</em></h2><p>Jump into a focused part of Ford history, vehicle design and model development.</p></div></div>
+        <div className="ford-command-path-grid">
+          <Link href="/models/?search=Capri" className="ford-command-path-card"><span>01 / ELECTRIFICATION</span><strong>Electric-era models</strong><p>Explore the revived Capri and Ford's changing approach to electrified vehicles.</p><b>Explore Capri ↗</b></Link>
+          <Link href="/models/?search=GT40" className="ford-command-path-card"><span>02 / MOTORSPORT</span><strong>Performance heritage</strong><p>Start with the GT40 and trace Ford's competition-focused engineering story.</p><b>Explore GT40 ↗</b></Link>
+          <Link href="/models/?search=F-Series" className="ford-command-path-card"><span>03 / WORK & UTILITY</span><strong>Pickup generations</strong><p>Browse the F-Series and its long-running role in work and transport.</p><b>Explore F-Series ↗</b></Link>
+          <Link href="/models/?search=Bronco" className="ford-command-path-card"><span>04 / OFF-ROAD</span><strong>Adventure vehicles</strong><p>Discover the Bronco nameplate and its dedicated off-road identity.</p><b>Explore Bronco ↗</b></Link>
+        </div>
+      </section>
+
       <section className="ford-command-section ford-command-featured">
         <div className="ford-command-section-heading"><div><span className="eyebrow">CURATED MODEL SPOTLIGHT</span><h2>Explore iconic <em>nameplates.</em></h2><p>A quick route into a selection of Ford vehicles from different eras and segments.</p></div><label className="ford-command-search"><span>⌕</span><input value={search} onChange={event=>setSearch(event.target.value)} placeholder="Find a featured model" aria-label="Search featured models"/></label></div>
         <div className="ford-command-feature-grid">{filteredFeatured.map(model=><Link href={"/models/?search="+encodeURIComponent(model.name)} className="ford-command-feature-card" key={model.name}><div className="ford-command-feature-copy"><span>{model.year}</span><h3>Ford {model.name}</h3><p>{model.note}</p><b>Explore model <i>↗</i></b></div></Link>)}</div>
