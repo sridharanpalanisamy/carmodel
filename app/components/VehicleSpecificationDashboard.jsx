@@ -28,6 +28,19 @@ export default function VehicleSpecificationDashboard() {
   useEffect(() => { setMount(document.getElementById("specDashboardMount")); }, []);
   const [leftName, setLeftName] = useState("Model T");
   const [rightName, setRightName] = useState("Mustang");
+
+  useEffect(() => {
+    const handleDirectoryCompare = event => {
+      const name = event.detail?.name;
+      if (!comparisonOptions.some(item => item.name === name)) return;
+      if (leftName === name) setLeftName(rightName);
+      setRightName(name);
+      document.getElementById("spec-dashboard")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    window.addEventListener("ford:compare-model", handleDirectoryCompare);
+    return () => window.removeEventListener("ford:compare-model", handleDirectoryCompare);
+  }, [leftName, rightName]);
+
   const left = useMemo(() => comparisonOptions.find(item => item.name === leftName) || references[0], [leftName]);
   const right = useMemo(() => comparisonOptions.find(item => item.name === rightName) || references[1], [rightName]);
   const metrics = [
