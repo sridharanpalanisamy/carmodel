@@ -27,7 +27,7 @@ const markup = `
 </footer>`;
 export default function Page() {
   return <>
-    <link rel="stylesheet" href="/carmodel/pages.css?v=20261115-models-photo-comparison" />
+    <link rel="stylesheet" href="/carmodel/pages.css?v=20261115-models-photo-upgrade-1" />
     <LegacyPage markup={markup} />
     <ModelDirectory />
     <VehicleSpecificationDashboard />
