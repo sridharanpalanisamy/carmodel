@@ -1730,3 +1730,8 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .ford-command-decade-link:hover .ford-command-decade b,.ford-command-decade-link:hover .ford-command-decade>span{color:#17374a}
 .ford-command-legend-row:hover{background:#e8efed}
 .ford-command-legend-row:focus-visible{outline:2px solid #477b82;outline-offset:2px}
+
+
+/* Independent accent palette for dashboard charts only. */
+.ford-command-decade-bar i{background:linear-gradient(180deg,#60a5fa 0%,#8b5cf6 52%,#14b8a6 100%)}
+.ford-command-decade-link:hover .ford-command-decade-bar{background:#e8edf7}
