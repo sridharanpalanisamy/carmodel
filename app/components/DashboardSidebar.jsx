@@ -12,7 +12,7 @@ const items = [
 ];
 
 export default function DashboardSidebar() {
-  const pathname = (usePathname() || "/").replace(/\\/+$/, "");
+  const pathname = (usePathname() || "/").replace(/\/+$/, "");
   return (
     <aside className="dashboard-sidebar" aria-label="Ford dashboard navigation">
       <div className="dashboard-sidebar-brand">
