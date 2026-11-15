@@ -35,6 +35,7 @@ const decadeLabels = ["1900s", "1910s", "1920s", "1930s", "1940s", "1950s", "196
 
 export default function FordDashboardOverview() {
   const [search, setSearch] = useState("");
+  const [archiveSearch, setArchiveSearch] = useState("");
   const directoryStats = useMemo(() => {
     const counts = categories.map(category => ({ category, count: fordNameplates.filter(model => categoryFor(model.name) === category).length }));
     const decades = decadeLabels.map(label => {
@@ -44,6 +45,9 @@ export default function FordDashboardOverview() {
     return { counts, decades };
   }, []);
   const filteredFeatured = featured.filter(model => (model.name + " " + model.note + " " + model.year).toLowerCase().includes(search.trim().toLowerCase()));
+  const archiveMatches = archiveSearch.trim() ? fordNameplates.filter(model => model.name.toLowerCase().includes(archiveSearch.trim().toLowerCase())).slice(0, 5) : [];
+  const leadingCategory = [...directoryStats.counts].sort((a, b) => b.count - a.count)[0];
+  const leadingDecade = [...directoryStats.decades].sort((a, b) => b.count - a.count)[0];
   const maxDecade = Math.max(...directoryStats.decades.map(item => item.count), 1);
   const categoryTotal = directoryStats.counts.reduce((sum, item) => sum + item.count, 0);
   const categoryDonut = directoryStats.counts.reduce((parts, item, index) => {
@@ -74,6 +78,17 @@ export default function FordDashboardOverview() {
         <Link href="/heritage/" className="ford-command-kpi"><span>HERITAGE TIMELINE</span><strong>{milestones.length}</strong><small>Key historical milestones ↗</small></Link>
         <Link href="/engineering/" className="ford-command-kpi"><span>ENGINEERING LIBRARY</span><strong>6</strong><small>Vehicle systems explored ↗</small></Link>
         <Link href="/specifications/" className="ford-command-kpi"><span>VERIFIED REFERENCE DATA</span><strong>11</strong><small>Historical spec references ↗</small></Link>
+      </section>
+
+      <section className="ford-command-section ford-command-discovery">
+        <div className="ford-command-section-heading"><div><span className="eyebrow">ARCHIVE DISCOVERY</span><h2>Find your <em>Ford.</em></h2><p>Search across every nameplate in the A–Z archive, not just the featured selection.</p></div></div>
+        <div className="ford-command-discovery-search"><label htmlFor="ford-archive-search">Search the model archive</label><input id="ford-archive-search" value={archiveSearch} onChange={event=>setArchiveSearch(event.target.value)} placeholder="Try Mustang, Bronco, F-Series..." autoComplete="off"/>{archiveSearch.trim() && <button type="button" onClick={()=>setArchiveSearch("")}>Clear</button>}</div>
+        {archiveSearch.trim() && <div className="ford-command-search-results" aria-live="polite">{archiveMatches.length ? archiveMatches.map(model=><Link href={"/models/?search="+encodeURIComponent(model.name)} key={model.name}><span>{model.name}</span><b>View model ↗</b></Link>) : <p>No matching nameplate found. Try a shorter search.</p>}</div>}
+        <div className="ford-command-insight-grid">
+          <Link href={"/models/?category="+encodeURIComponent(leadingCategory.category)} className="ford-command-insight"><span>LEADING DIRECTORY CATEGORY</span><strong>{leadingCategory.category}</strong><small>{leadingCategory.count} listed nameplates ↗</small></Link>
+          <Link href={"/heritage/?year="+leadingDecade.label.slice(0,4)} className="ford-command-insight"><span>BUSIEST NAMEPLATE DECADE</span><strong>{leadingDecade.label}</strong><small>{leadingDecade.count} first-listed entries ↗</small></Link>
+          <Link href="/heritage/" className="ford-command-insight"><span>HERITAGE COVERAGE</span><strong>1903–2020</strong><small>Explore selected milestones ↗</small></Link>
+        </div>
       </section>
 
       <section className="ford-command-section">
