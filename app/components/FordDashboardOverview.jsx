@@ -9,7 +9,7 @@ const featured = [
   { name: "Model T", year: "1908–1927", note: "Mass-mobility milestone" },
   { name: "GT40", year: "1964–1969", note: "Endurance racing legend" },
   { name: "Bronco", year: "1966–present", note: "Off-road heritage" },
-  { name: "F-Series", year: "1948–present", note: "Pickup truck family" },
+  { name: "F-100", year: "1953 reference", note: "F-Series pickup heritage" },
   { name: "Thunderbird", year: "1955–2005", note: "Personal luxury" }
 ];
 const milestones = [
