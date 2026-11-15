@@ -44,7 +44,6 @@ export default function FordDashboardOverview() {
     return { counts, decades };
   }, []);
   const filteredFeatured = featured.filter(model => (model.name + " " + model.note + " " + model.year).toLowerCase().includes(search.trim().toLowerCase()));
-  const maxCategory = Math.max(...directoryStats.counts.map(item => item.count), 1);
   const maxDecade = Math.max(...directoryStats.decades.map(item => item.count), 1);
   const categoryTotal = directoryStats.counts.reduce((sum, item) => sum + item.count, 0);
   const categoryDonut = directoryStats.counts.reduce((parts, item, index) => {
@@ -87,7 +86,7 @@ export default function FordDashboardOverview() {
           </article>
           <article className="ford-command-panel">
             <div className="ford-command-panel-head"><div><span>02 / HISTORICAL SPREAD</span><h3>First listed model year</h3></div><small>By decade</small></div>
-            <div className="ford-command-decade-chart" aria-label="Nameplate counts by decade. Select a bar to explore the nearest heritage milestone.">{directoryStats.decades.map(item=><Link href={"/heritage/?year="+item.label.slice(0,4)} className="ford-command-decade ford-command-decade-link" key={item.label} aria-label={"Explore heritage around "+item.label} title={item.label+" — "+item.count+" nameplates"}><div className="ford-command-decade-bar"><i style={{height:(item.count/maxDecade*100)+"%"}}/></div><b>{item.count}</b><span>{item.label}</span></Link>)}</div>
+            <div className="ford-command-decade-chart" aria-label="Nameplate counts by decade. Select a bar to explore the nearest heritage milestone.">{directoryStats.decades.map(item=><Link href={"/heritage/?year="+item.label.slice(0,4)} className="ford-command-decade ford-command-decade-link" key={item.label} aria-label={item.label+": "+item.count+" nameplates. Open the heritage timeline around this decade."} title={item.label+" — "+item.count+" nameplates"}><div className="ford-command-decade-bar"><i style={{height:(item.count/maxDecade*100)+"%"}}/></div><b>{item.count}</b><span>{item.label}</span></Link>)}</div>
             <p className="ford-command-chart-note">Uses the first four-digit year shown in each directory entry; this is a directory overview, not a count of vehicles produced.</p>
           </article>
         </div>
