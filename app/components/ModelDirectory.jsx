@@ -33,7 +33,7 @@ export default function ModelDirectory() {
   const [query,setQuery] = useState("");
   const [selected,setSelected] = useState("");
   const [category,setCategory] = useState("All vehicles");
-  useEffect(() => { setMount(document.getElementById("azArchiveMount")); const params = new URLSearchParams(window.location.search); const requested = params.get("category"); const categoryMap = { "Passenger car": "Cars", "SUV / off-road": "SUVs & 4×4", "Pickup / utility": "Trucks & Pickups", "Van / commercial": "Commercial", "Performance / sports": "Performance" }; if (requested && categoryMap[requested]) setCategory(categoryMap[requested]); }, []);
+  useEffect(() => { setMount(document.getElementById("azArchiveMount")); const params = new URLSearchParams(window.location.search); const requested = params.get("category"); const requestedSearch = params.get("search"); if (requestedSearch) setQuery(requestedSearch); const categoryMap = { "Passenger car": "Cars", "SUV / off-road": "SUVs & 4×4", "Pickup / utility": "Trucks & Pickups", "Van / commercial": "Commercial", "Performance / sports": "Performance" }; if (requested && categoryMap[requested]) setCategory(categoryMap[requested]); }, []);
   const filteredModels = useMemo(() => {
     const term=query.trim().toLowerCase();
     return categorizedModels.filter(model => (category === "All vehicles" || model.category === category) && (model.name+" "+model.years+" "+model.period+" "+model.type+" "+model.description).toLowerCase().includes(term));
