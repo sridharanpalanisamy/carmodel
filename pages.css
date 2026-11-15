@@ -1735,3 +1735,8 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 /* Independent accent palette for dashboard charts only. */
 .ford-command-decade-bar i{background:linear-gradient(180deg,#60a5fa 0%,#8b5cf6 52%,#14b8a6 100%)}
 .ford-command-decade-link:hover .ford-command-decade-bar{background:#e8edf7}
+
+
+/* Show unambiguous full decade labels on the dashboard chart. */
+.ford-command-decade>span{font-size:6.5px;white-space:nowrap;letter-spacing:-.2px}
+@media(max-width:420px){.ford-command-decade>span{font-size:5.5px;letter-spacing:-.35px}}
