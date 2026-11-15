@@ -87,6 +87,7 @@ export default function ModelDirectory() {
   const [activeLetter, setActiveLetter] = useState("all");
   const [selectedModel, setSelectedModel] = useState(null);
   const [show3D, setShow3D] = useState(false);
+  const [showAll, setShowAll] = useState(false);
   const inlineViewerRef = useRef(null);
 
   useEffect(() => {
@@ -107,31 +108,35 @@ export default function ModelDirectory() {
     ).sort((a, b) => a[0].localeCompare(b[0]));
   }, [query, activeLetter]);
 
+  const featuredNames = ["Mustang", "Model T", "GT40", "Bronco", "F-Series", "Thunderbird"];
+  const hasActiveFilter = query.trim().length > 0 || activeLetter !== "all";
+  const displayedModels = hasActiveFilter || showAll ? filteredModels : featuredNames.map(name => models.find(model => model[0] === name)).filter(Boolean);
+
   if (!mount) return null;
 
   return createPortal(
     <section className="az-archive" id="az-archive">
       <div className="models-heading">
         <div>
-          <span className="eyebrow">THE COMPLETE NAMEPLATE INDEX</span>
-          <h2>Ford models, A to Z.</h2>
-          <p className="collection-subtitle">Browse a wider alphabetical directory of Ford passenger cars, performance cars, SUVs, pickups and vans. Not every nameplate was sold in every country.</p>
+          <span className="eyebrow">EXPLORE THE FORD ARCHIVE</span>
+          <h2>Find a Ford model.</h2>
+          <p className="collection-subtitle">Start with six highlights or search the complete nameplate archive.</p>
         </div>
         <label className="search-wrap">
           <span>⌕</span>
           <input id="azSearch" type="search" placeholder="Search the A–Z directory..." aria-label="Search A to Z Ford models" value={query} onChange={event => setQuery(event.target.value)} />
         </label>
       </div>
-      <div className="az-letters" id="azLetters" aria-label="Filter by first letter">
+      {(showAll || hasActiveFilter) && <div className="az-letters" id="azLetters" aria-label="Filter by first letter">
         {letters.map(letter => (
           <button key={letter} type="button" className={activeLetter === letter ? "active" : ""} data-letter={letter} aria-pressed={activeLetter === letter} onClick={() => setActiveLetter(letter)}>
             {letter === "all" ? "All" : letter}
           </button>
         ))}
-      </div>
-      <p className="az-count" id="azCount" aria-live="polite">{filteredModels.length} Ford nameplate{filteredModels.length === 1 ? "" : "s"} shown</p>
+      </div>}
+      <p className="az-count" id="azCount" aria-live="polite">{hasActiveFilter || showAll ? filteredModels.length + " Ford nameplate" + (filteredModels.length === 1 ? "" : "s") + " found" : "Featured Ford nameplates"}</p>
       <div className="az-grid" id="azGrid">
-        {filteredModels.map(([name, years, description]) => (
+        {displayedModels.map(([name, years, description]) => (
           <article
             className="az-card"
             key={name}
@@ -151,6 +156,7 @@ export default function ModelDirectory() {
           </article>
         ))}
       </div>
+      {!hasActiveFilter && <button type="button" className="az-expand-button" onClick={() => setShowAll(value => !value)}>{showAll ? "Show featured models" : "Browse all " + models.length + " Ford nameplates"} <span>{showAll ? "−" : "+"}</span></button>}
       {selectedModel && (
         <div className="az-detail-backdrop" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) setSelectedModel(null); }}>
           <section className="az-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="azDetailTitle">
@@ -201,7 +207,7 @@ export default function ModelDirectory() {
           </section>
         </div>
       )}
-      <p className="az-note">Historical nameplates and model families are included across different markets and generations. Engine capacity, fuel type, performance and equipment vary by model year, trim and country; use the individual vehicle's specification sheet for verified year-specific details. This is an enthusiast reference directory, not a claim that every model was available in every market.</p>
+      {(showAll || hasActiveFilter) && <p className="az-note">Historical nameplates span different markets and generations. Specifications vary by model year, trim and country.</p>}
     </section>,
     mount
   );
