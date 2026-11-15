@@ -957,7 +957,7 @@
 
 
 /* Dedicated Ford workspace sidebar and focused dashboard pages */
-.dashboard-sidebar{position:fixed;z-index:4;top:70px;left:0;bottom:0;width:244px;padding:25px 15px 18px;background:#242323;color:#f7f1eb;display:flex;flex-direction:column;border-right:1px solid #393432}
+.dashboard-sidebar{position:fixed;z-index:6;top:70px;left:0;bottom:0;width:244px;height:calc(100vh - 70px);min-height:0;overflow-y:auto;overflow-x:hidden;padding:25px 15px 18px;background:#242323;color:#f7f1eb;display:flex;flex-direction:column;border-right:1px solid #393432;box-sizing:border-box}
 .dashboard-sidebar-brand{display:flex;align-items:center;gap:11px;padding:2px 8px 25px;border-bottom:1px solid #49413d}
 .dashboard-sidebar-mark{width:34px;height:34px;display:grid;place-items:center;background:#b86b49;color:#fff;font:800 21px Georgia,serif}
 .dashboard-sidebar-brand strong,.dashboard-sidebar-brand small{display:block}
