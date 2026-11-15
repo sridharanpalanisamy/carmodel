@@ -1304,3 +1304,29 @@ body:has(.dashboard-sidebar) .site-footer{width:calc(100% - 244px);margin-left:2
  .az-heritage-section .az-card{grid-template-columns:28px minmax(0,1fr) 60px;min-height:70px;gap:8px;padding:9px}
  .az-heritage-section .az-view-button{width:58px;min-height:30px}
 }
+
+
+/* Tablet-width chronology: preserve readable milestone labels without squeezing
+   ten columns into a narrow viewport. */
+@media (min-width:761px) and (max-width:980px){
+  .heritage-timeline-shell .heritage-timeline-track{
+    display:flex;
+    align-items:flex-start;
+    justify-content:flex-start;
+    gap:0;
+    overflow-x:auto;
+    overscroll-behavior-x:contain;
+    padding:0 0 16px;
+    scrollbar-width:thin;
+  }
+  .heritage-timeline-shell .heritage-timeline-track::before{
+    left:0;
+    right:auto;
+    width:810px;
+  }
+  .heritage-timeline-shell .heritage-year{
+    flex:0 0 90px;
+    width:90px;
+    min-height:58px;
+  }
+}
