@@ -33,7 +33,7 @@ export default function ModelDirectory() {
   const [query,setQuery] = useState("");
   const [selected,setSelected] = useState("");
   const [category,setCategory] = useState("All vehicles");
-  useEffect(() => { setMount(document.getElementById("azArchiveMount")); }, []);
+  useEffect(() => { setMount(document.getElementById("azArchiveMount")); const params = new URLSearchParams(window.location.search); const requested = params.get("category"); const categoryMap = { "Passenger car": "Cars", "SUV / off-road": "SUVs & 4×4", "Pickup / utility": "Trucks & Pickups", "Van / commercial": "Commercial", "Performance / sports": "Performance" }; if (requested && categoryMap[requested]) setCategory(categoryMap[requested]); }, []);
   const filteredModels = useMemo(() => {
     const term=query.trim().toLowerCase();
     return categorizedModels.filter(model => (category === "All vehicles" || model.category === category) && (model.name+" "+model.years+" "+model.period+" "+model.type+" "+model.description).toLowerCase().includes(term));
@@ -45,7 +45,7 @@ export default function ModelDirectory() {
         <div><span className="eyebrow">FORD VEHICLE COLLECTION</span><h2>Explore the <em>lineup.</em></h2><p className="collection-subtitle">Browse Ford cars, SUVs, pickups, tractors, commercial vehicles and performance models. This is the visual gallery; detailed engineering comparisons are on their own page.</p></div>
         <label className="search-wrap"><span>⌕</span><input type="search" placeholder="Search Ford vehicles..." aria-label="Search Ford models" value={query} onChange={event=>setQuery(event.target.value)}/></label>
       </div>
-      <div className="model-category-filter" role="group" aria-label="Filter vehicle category">{["All vehicles","Cars","SUVs & 4×4","Trucks & Pickups","Tractors","Commercial","Electric","Motorsport"].map(item=><button type="button" key={item} className={category===item?"is-active":""} aria-pressed={category===item} onClick={()=>setCategory(item)}>{item}</button>)}</div><div className="model-collection-summary"><span><b>{filteredModels.length.toString().padStart(2,"0")}</b> VEHICLES SHOWN</span><span>VISUAL COLLECTION <i>·</i> MODEL HISTORY</span></div>
+      <div className="model-category-filter" role="group" aria-label="Filter vehicle category">{["All vehicles","Cars","SUVs & 4×4","Trucks & Pickups","Tractors","Commercial","Electric","Motorsport","Performance"].map(item=><button type="button" key={item} className={category===item?"is-active":""} aria-pressed={category===item} onClick={()=>setCategory(item)}>{item}</button>)}</div><div className="model-collection-summary"><span><b>{filteredModels.length.toString().padStart(2,"0")}</b> VEHICLES SHOWN</span><span>VISUAL COLLECTION <i>·</i> MODEL HISTORY</span></div>
       <div className="az-grid az-photo-grid az-photo-grid-upgraded">
         {filteredModels.map((model,index)=>(
           <article className={"az-card az-photo-card az-photo-card-upgraded "+(selected===model.name?"is-selected":"")} key={model.name}>
