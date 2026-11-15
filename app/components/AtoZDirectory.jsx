@@ -89,6 +89,8 @@ export default function ModelDirectory() {
   const [show3D, setShow3D] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const inlineViewerRef = useRef(null);
+  const dialogRef = useRef(null);
+  const openerRef = useRef(null);
 
   useEffect(() => {
     if (!selectedModel || selectedModel.name === "Model T" || !show3D || !inlineViewerRef.current || !window.FordLocal3D) return;
@@ -99,6 +101,28 @@ export default function ModelDirectory() {
   useEffect(() => {
     setMount(document.getElementById("azArchiveMount"));
   }, []);
+
+  useEffect(() => {
+    if (!selectedModel) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = event => {
+      if (event.key === "Escape") setSelectedModel(null);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    dialogRef.current?.focus();
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      openerRef.current?.focus?.();
+    };
+  }, [selectedModel]);
+
+  function openModel(model) {
+    openerRef.current = document.activeElement;
+    setShow3D(false);
+    setSelectedModel(model);
+  }
 
   const filteredModels = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -143,8 +167,8 @@ export default function ModelDirectory() {
             role="button"
             tabIndex={0}
             aria-label={"View Ford " + name + " picture and specifications"}
-            onClick={event => { if (!event.target.closest("[data-local3d]")) setShow3D(false); setSelectedModel({ name, years, description }); }}
-            onKeyDown={event => { if ((event.key === "Enter" || event.key === " ") && event.target === event.currentTarget) { event.preventDefault(); setSelectedModel({ name, years, description }); } }}
+            onClick={() => openModel({ name, years, description })}
+            onKeyDown={event => { if ((event.key === "Enter" || event.key === " ") && event.target === event.currentTarget) { event.preventDefault(); openModel({ name, years, description }); } }}
           >
             <span className="az-initial">{name[0].toUpperCase()}</span>
             <div className="az-card-copy">
@@ -152,14 +176,14 @@ export default function ModelDirectory() {
               <span className="az-years">{years}</span>
               <p>{description}</p>
             </div>
-            <button type="button" className="az-view-button" aria-label={"View " + name + " picture and specifications"} onClick={event => { event.stopPropagation(); setSelectedModel({ name, years, description }); }}>View</button>
+            <button type="button" className="az-view-button" aria-label={"View " + name + " picture and specifications"} onClick={event => { event.stopPropagation(); openModel({ name, years, description }); }}>View</button>
           </article>
         ))}
       </div>
       {!hasActiveFilter && <button type="button" className="az-expand-button" onClick={() => setShowAll(value => !value)}>{showAll ? "Show featured models" : "Browse all " + models.length + " Ford nameplates"} <span>{showAll ? "−" : "+"}</span></button>}
       {selectedModel && (
         <div className="az-detail-backdrop" role="presentation" onMouseDown={event => { if (event.target === event.currentTarget) setSelectedModel(null); }}>
-          <section className="az-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="azDetailTitle">
+          <section ref={dialogRef} className="az-detail-dialog" role="dialog" aria-modal="true" aria-labelledby="azDetailTitle" tabIndex={-1}>
             <button className="az-detail-close" type="button" aria-label="Close model details" onClick={() => setSelectedModel(null)}>×</button>
             <div className="az-detail-media">
               {imageByName[selectedModel.name] ? (
