@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { references } from "./VehicleSpecificationDashboard";
 
 const palette = ["#b85e3b", "#596879", "#c89b69", "#718a7d", "#8b718e"];
-const yearFrom = item => Number((item.year.match(/\\d{4}/) || [])[0]) || null;
+const yearFrom = item => Number((item.year.match(/\d{4}/) || [])[0]) || null;
 const shortName = name => name.length > 13 ? name.slice(0, 12) + "…" : name;
 
 function DonutChart({ data }) {
