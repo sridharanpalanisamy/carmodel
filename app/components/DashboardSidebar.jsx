@@ -17,16 +17,19 @@ const DEFAULT_POSITION = { x: 0, y: 70 };
 export default function DashboardSidebar() {
   const pathname = (usePathname() || "/").replace(/\\/+$/, "");
   const [position, setPosition] = useState(DEFAULT_POSITION);
-  const dragOffset = useRef(null);\n  const positionRef = useRef(DEFAULT_POSITION);
+  const dragOffset = useRef(null);
+  const positionRef = useRef(DEFAULT_POSITION);
 
   useEffect(() => {
     try {
       const saved = JSON.parse(window.localStorage.getItem("ford-workspace-sidebar-position") || "null");
       if (saved && Number.isFinite(saved.x) && Number.isFinite(saved.y)) {
-        setPosition({
+        const restored = {
           x: Math.max(0, Math.min(saved.x, window.innerWidth - 90)),
           y: Math.max(0, Math.min(saved.y, window.innerHeight - 100))
-        });
+        };
+        positionRef.current = restored;
+        setPosition(restored);
       }
     } catch {}
   }, []);
@@ -43,7 +46,9 @@ export default function DashboardSidebar() {
     const width = window.matchMedia("(max-width: 760px)").matches ? Math.min(window.innerWidth * 0.9, 360) : 244;
     const x = Math.max(0, Math.min(event.clientX - dragOffset.current.x, window.innerWidth - width));
     const y = Math.max(0, Math.min(event.clientY - dragOffset.current.y, window.innerHeight - 90));
-    const next = { x, y };\n    positionRef.current = next;\n    setPosition(next);
+    const next = { x, y };
+    positionRef.current = next;
+    setPosition(next);
   }
 
   function endDrag() {
@@ -53,7 +58,8 @@ export default function DashboardSidebar() {
   }
 
   function resetPosition() {
-    positionRef.current = DEFAULT_POSITION;\n    setPosition(DEFAULT_POSITION);
+    positionRef.current = DEFAULT_POSITION;
+    setPosition(DEFAULT_POSITION);
     try { window.localStorage.removeItem("ford-workspace-sidebar-position"); } catch {}
   }
 
