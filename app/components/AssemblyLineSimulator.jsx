@@ -1015,11 +1015,13 @@ export default function AssemblyLineSimulator() {
                     const normalizedFirst = getScenarioProjection({ ...first.snapshot, ...commonConditions });
                     const normalizedSecond = getScenarioProjection({ ...second.snapshot, ...commonConditions });
                     const normalizedDifference = normalizedSecond.good - normalizedFirst.good;
-                    return <>
+                    return <div className="factory-scenario-comparison-print">
+                      <h3>Scenario comparison report</h3>
                       <p><strong>{difference > 0 ? `+${difference}` : difference} good vehicles/shift</strong> for {second.name} compared with {first.name}{percentDifference !== null ? ` (${percentDifference > 0 ? "+" : ""}${percentDifference.toFixed(1)}%)` : ""}.</p>
                       <button type="button" className="line-reset factory-comparison-export" onClick={() => exportScenarioComparisonCsv(first, second)}>Export comparison CSV</button>
                       <button type="button" className="line-reset factory-comparison-export" onClick={() => exportScenarioComparisonJson(first, second)}>Export comparison JSON</button>
                       <button type="button" className="line-reset factory-comparison-export" onClick={() => copyScenarioComparisonSummary(first, second)}>Copy comparison summary</button>
+                      <button type="button" className="line-reset factory-comparison-export" onClick={() => window.print()}>Print comparison report</button>
                       <small className={sameAssumptions ? "factory-scenario-comparison-fair" : "factory-scenario-comparison-warning"} role="status">{sameAssumptions ? "Like-for-like comparison: both scenarios use the same shift and production assumptions." : "Different assumptions detected. Output difference includes changes to shift time, breaks, availability, quality yield or target; compare cycle times separately for a fair line-performance assessment."}</small>
                       <div className="factory-scenario-normalized">
                         <strong>Cycle-time-only comparison</strong>
@@ -1048,7 +1050,7 @@ export default function AssemblyLineSimulator() {
                         </div>
                         <small>Difference is calculated as {second.name} minus {first.name}. A negative value means the second scenario has a faster station cycle.</small>
                       </div>
-                    </>;
+                    </div>;
                   })()}
                 </div>}
                 <p>Up to 10 named scenarios are stored in this browser. They remain separate from the single quick-save slot above.</p>
