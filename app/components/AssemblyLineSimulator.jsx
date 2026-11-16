@@ -30,6 +30,7 @@ export default function AssemblyLineSimulator() {
   const [proposedCycleTimes, setProposedCycleTimes] = useState(initialStations.map(station => station.seconds));
   const [savedScenario, setSavedScenario] = useState(null);
   const [scenarioStorageReady, setScenarioStorageReady] = useState(false);
+  const [scenarioSaveMessage, setScenarioSaveMessage] = useState("");
 
   useEffect(() => {
     try {
@@ -60,8 +61,9 @@ export default function AssemblyLineSimulator() {
     try {
       window.localStorage.setItem("factory-improvement-scenario", JSON.stringify(snapshot));
       setSavedScenario(snapshot);
+      setScenarioSaveMessage("Scenario saved on this device. It will be available in this browser.");
     } catch {
-      setSavedScenario(null);
+      setScenarioSaveMessage("Could not save this scenario. Browser storage may be disabled or unavailable.");
     }
   }
 
@@ -79,6 +81,7 @@ export default function AssemblyLineSimulator() {
   function clearImprovementScenario() {
     try { window.localStorage.removeItem("factory-improvement-scenario"); } catch {}
     setSavedScenario(null);
+    setScenarioSaveMessage("Saved scenario cleared from this device.");
   }
   const [chartVisibility, setChartVisibility] = useState({ radar: true, capacity: true, ratios: true, losses: true });
   const [chartTitles, setChartTitles] = useState({
@@ -401,6 +404,7 @@ export default function AssemblyLineSimulator() {
                   <button type="button" className="line-reset" onClick={() => setProposedCycleTimes(stations.map((station, index) => Math.min(station.seconds, clamp(improvement.requiredCycle, 20, 180))))}>Apply target pace</button>
                 </div>
               </div>
+              {scenarioSaveMessage && <p className="factory-scenario-save-message" role="status">{scenarioSaveMessage}</p>}
               {scenarioStorageReady && <div className="factory-scenario-saved-state" role="status">
                 {savedScenario ? <>
                   <div className="factory-saved-scenario-summary">
