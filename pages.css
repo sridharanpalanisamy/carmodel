@@ -2129,3 +2129,7 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-scenario-library-actions button:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
 .factory-scenario-library-actions button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:420px){.factory-scenario-library-actions{display:grid;grid-template-columns:1fr}.factory-scenario-library-actions button{width:100%;min-height:36px}}
+
+.factory-scenario-comparison>small.factory-scenario-comparison-fair,.factory-scenario-comparison>small.factory-scenario-comparison-warning{display:block;padding:8px 10px;border-radius:7px;line-height:1.5}
+.factory-scenario-comparison>small.factory-scenario-comparison-fair{background:rgba(40,115,79,.08);color:#28734f}
+.factory-scenario-comparison>small.factory-scenario-comparison-warning{background:rgba(154,99,37,.09);color:#8a5a20}
