@@ -152,7 +152,7 @@ export default function AssemblyLineSimulator() {
               </div>
               <p className="factory-chart-caption">Losses are calculated from the simulator's ideal capacity, availability and quality-yield assumptions. They are estimates, not measured factory data.</p>
             </section>
-          </div>iv>
+          </div>
           <p className="line-sim-tip">{result.gap < 0 ? `The ${result.bottleneckName} station limits the line. Reducing its cycle time or improving line balance can increase theoretical output.` : "The estimated good output meets the selected shift target under these assumptions."}</p>
         </aside>
       </div>
