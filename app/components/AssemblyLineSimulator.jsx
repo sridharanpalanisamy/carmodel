@@ -71,6 +71,7 @@ export default function AssemblyLineSimulator() {
   const [scenarioStorageReady, setScenarioStorageReady] = useState(false);
   const [scenarioSaveMessage, setScenarioSaveMessage] = useState("");
   const scenarioFileInput = useRef(null);
+  const scenarioLibraryFileInput = useRef(null);
 
   useEffect(() => {
     try {
@@ -140,6 +141,41 @@ export default function AssemblyLineSimulator() {
     } catch {
       setScenarioSaveMessage("Could not save the named scenario. Browser storage may be unavailable.");
     }
+  }
+
+  function exportScenarioLibraryJson() {
+    const payload = { version: 1, type: "factory-scenario-library", exportedAt: new Date().toISOString(), scenarios: scenarioLibrary };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "factory-scenario-library.json";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setScenarioSaveMessage("Named scenario library exported. Keep this JSON file as a backup or import it in another browser.");
+  }
+
+  async function importScenarioLibraryJson(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      if (file.size > 100 * 1024) throw new Error("Library file is too large");
+      const parsed = JSON.parse(await file.text());
+      if (parsed?.version !== 1 || parsed?.type !== "factory-scenario-library" || !Array.isArray(parsed.scenarios)) throw new Error("Unsupported library format");
+      const valid = parsed.scenarios.filter(item => item && typeof item.name === "string" && item.name.trim().length > 0 && item.name.trim().length <= 48 && isValidSavedScenario(item.snapshot) && item.snapshot.version === 2 && Array.isArray(item.snapshot.stationNames) && item.snapshot.stationNames.length === initialStations.length && item.snapshot.stationNames.every((name, index) => name === initialStations[index].name)).map(item => ({ name: item.name.trim(), snapshot: item.snapshot }));
+      if (valid.length === 0) throw new Error("No valid scenarios found");
+      const merged = [...scenarioLibrary];
+      valid.forEach(item => { const index = merged.findIndex(entry => entry.name.toLowerCase() === item.name.toLowerCase()); if (index >= 0) merged[index] = item; else merged.push(item); });
+      const next = merged.slice(-10);
+      window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
+      setScenarioLibrary(next);
+      setSelectedScenarioNames(current => current.filter(name => next.some(item => item.name === name)));
+      setScenarioSaveMessage("Imported " + valid.length + " valid named scenario(s). Matching names were updated; the library keeps the latest 10.");
+    } catch {
+      setScenarioSaveMessage("Library import failed. Choose a valid scenario-library JSON exported by this planner; files must match the current station layout.");
+    } finally { event.target.value = ""; }
   }
 
   function toggleScenarioComparison(name, checked) {
@@ -584,6 +620,10 @@ export default function AssemblyLineSimulator() {
                 <div className="factory-named-scenario-controls">
                   <input id="factoryScenarioName" type="text" maxLength="48" value={scenarioName} onChange={event => setScenarioName(event.target.value)} placeholder="e.g. Higher output target" />
                   <button type="button" className="line-reset" onClick={saveNamedScenario}>Save named scenario</button>
+                </div>                <div className="factory-scenario-library-actions">
+                  <button type="button" className="line-reset" onClick={exportScenarioLibraryJson} disabled={scenarioLibrary.length === 0}>Export library JSON</button>
+                  <button type="button" className="line-reset" onClick={() => scenarioLibraryFileInput.current?.click()}>Import library JSON</button>
+                  <input ref={scenarioLibraryFileInput} type="file" accept=".json,application/json" aria-label="Import named scenario library JSON" onChange={importScenarioLibraryJson} hidden />
                 </div>
                 {scenarioLibrary.length > 0 && <ul aria-label="Saved named scenarios">
                   {scenarioLibrary.map(item => <li key={item.name}>
