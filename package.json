@@ -13,5 +13,8 @@
     "react-dom": "19.2.0",
     "three": "0.180.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.16",
+    "tailwindcss": "^4.1.16"
+  }
 }
