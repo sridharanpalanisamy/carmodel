@@ -1833,23 +1833,23 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-chart-heading>div>span{font:800 7px var(--sans);letter-spacing:1px;color:#a9c9c4}
 .factory-chart-heading h3{font:700 14px var(--display);color:#fff;margin:5px 0 0}
 .factory-chart-heading>small{font-size:7px;color:#c8c3c5;white-space:nowrap}
-.factory-cycle-chart{display:grid;gap:11px;padding:15px 0 6px}
-.factory-cycle-row{display:grid;grid-template-columns:minmax(90px,1.05fr) minmax(50px,1.5fr) 34px;align-items:center;gap:8px;min-width:0}
-.factory-cycle-row>span{font-size:8px;color:#e5e1e2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.factory-cycle-row>b{font-size:8px;color:#fff;text-align:right}
-.factory-cycle-track{height:8px;background:#ffffff20;overflow:hidden}
-.factory-cycle-track i{display:block;height:100%;background:linear-gradient(90deg,#60a5fa,#14b8a6);border-radius:0 4px 4px 0}
-.factory-cycle-track i.is-bottleneck{background:linear-gradient(90deg,#f59e0b,#f97316)}
-.factory-output-chart{height:176px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:end;gap:13px;padding:14px 5px 0}
-.factory-output-column{height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:7px;min-width:0}
-.factory-output-column>b{font-size:8px;color:#fff;white-space:nowrap}
-.factory-output-track{height:125px;width:min(100%,42px);display:flex;align-items:flex-end;background:#ffffff16}
-.factory-output-track i{display:block;width:100%;min-height:2px}
-.factory-output-track i.ideal{background:#60a5fa}
-.factory-output-track i.available{background:#8b5cf6}
-.factory-output-track i.good{background:#14b8a6}
-.factory-output-track i.target{background:#f59e0b}
-.factory-output-column>span{font-size:7px;color:#d2cccf;text-align:center;white-space:nowrap}
+.factory-radar-wrap{display:grid;place-items:center;padding:8px 0 0;min-height:225px}
+.factory-radar{width:100%;max-width:330px;overflow:visible}
+.factory-radar polygon{fill:none;stroke:#ffffff30;stroke-width:1}
+.factory-radar line{stroke:#ffffff25;stroke-width:1}
+.factory-radar .factory-radar-area{fill:#14b8a633;stroke:#14b8a6;stroke-width:2}
+.factory-radar-point{fill:#60a5fa;stroke:#302d33;stroke-width:2}
+.factory-radar-point.bottleneck{fill:#f59e0b}
+.factory-radar text{fill:#e5e1e2;font-size:8px}
+.factory-capacity-rings{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:23px 2px 8px}
+.factory-capacity-item{display:grid;justify-items:center;gap:8px;min-width:0}
+.factory-capacity-ring{--ring-color:#60a5fa;position:relative;display:grid;place-items:center;width:min(100%,76px);aspect-ratio:1;border-radius:50%;background:conic-gradient(var(--ring-color) 0 var(--ratio),#ffffff20 var(--ratio) 100%)}
+.factory-capacity-ring:before{content:"";position:absolute;inset:7px;border-radius:50%;background:#302d33}
+.factory-capacity-ring strong{position:relative;color:#fff;font-size:9px;font-variant-numeric:tabular-nums}
+.factory-capacity-ring.available{--ring-color:#a78bfa}
+.factory-capacity-ring.good{--ring-color:#14b8a6}
+.factory-capacity-ring.target{--ring-color:#f59e0b}
+.factory-capacity-item>span{font-size:8px;color:#d2cccf;text-align:center}
 .factory-chart-caption{font-size:8px;line-height:1.6;color:#bcb6ba;margin:10px 0 0}
 .factory-ratio-charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;padding:16px 2px 3px}
 .factory-ratio-item{display:flex;align-items:center;gap:12px;min-width:0}
@@ -1914,14 +1914,28 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 }
 
 
-/* Production loss breakdown chart */
-.factory-loss-chart{display:grid;gap:14px;padding:17px 0 5px}
-.factory-loss-row{display:grid;grid-template-columns:minmax(100px,1fr) minmax(70px,2fr) 48px;align-items:center;gap:10px;min-width:0}
-.factory-loss-row>span{font-size:8px;color:#e5e1e2}
-.factory-loss-row>b{font-size:8px;color:#fff;text-align:right;font-variant-numeric:tabular-nums}
-.factory-loss-track{height:11px;background:#ffffff1c;overflow:hidden;border-radius:2px}
-.factory-loss-track i{display:block;height:100%;min-width:0;border-radius:2px;transition:width .2s ease}
-.factory-loss-track i.availability{background:#60a5fa}
-.factory-loss-track i.quality{background:#f59e0b}
-.factory-loss-track i.output{background:#14b8a6}
-@media(max-width:520px){.factory-loss-row{grid-template-columns:minmax(85px,1fr) minmax(55px,1.4fr) 40px;gap:7px}.factory-loss-row>span,.factory-loss-row>b{font-size:7px}}
+/* Production loss doughnut chart */
+.factory-loss-layout{display:grid;grid-template-columns:minmax(120px,.8fr) minmax(0,1.2fr);align-items:center;gap:18px;padding:18px 8px 5px}
+.factory-loss-donut{--availability-share:0%;--quality-share:0%;position:relative;display:grid;place-items:center;width:min(100%,150px);aspect-ratio:1;border-radius:50%;margin:auto;background:conic-gradient(#60a5fa 0 var(--availability-share),#f59e0b var(--availability-share) calc(var(--availability-share) + var(--quality-share)),#14b8a6 calc(var(--availability-share) + var(--quality-share)) 100%)}
+.factory-loss-donut:before{content:"";position:absolute;inset:18px;border-radius:50%;background:#302d33}
+.factory-loss-donut>div{position:relative;display:grid;justify-items:center;gap:3px}
+.factory-loss-donut strong{font:800 18px var(--display);color:#fff}
+.factory-loss-donut span{font-size:8px;color:#c8c3c5}
+.factory-loss-legend{display:grid;gap:13px;min-width:0}
+.factory-loss-legend>div{display:grid;grid-template-columns:10px minmax(0,1fr) auto;align-items:center;gap:8px}
+.factory-loss-legend i{width:9px;height:9px;border-radius:50%}
+.factory-loss-legend i.availability{background:#60a5fa}
+.factory-loss-legend i.quality{background:#f59e0b}
+.factory-loss-legend i.output{background:#14b8a6}
+.factory-loss-legend span{font-size:8px;color:#e5e1e2}
+.factory-loss-legend b{font-size:8px;color:#fff;font-variant-numeric:tabular-nums}
+@media(max-width:520px){
+  .factory-radar-wrap{min-height:190px}
+  .factory-radar text{font-size:7px}
+  .factory-capacity-rings{gap:5px}
+  .factory-capacity-ring strong{font-size:8px}
+  .factory-capacity-item>span{font-size:7px}
+  .factory-loss-layout{grid-template-columns:1fr;gap:12px}
+  .factory-loss-donut{width:125px}
+  .factory-loss-legend{width:100%}
+}
