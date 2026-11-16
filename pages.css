@@ -2182,3 +2182,8 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-scenario-rename input:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
 .factory-scenario-rename>span{display:flex;flex-wrap:wrap;gap:6px}
 @media(max-width:620px){.factory-scenario-rename{max-width:none}.factory-scenario-rename>span button{flex:1}}
+
+.factory-scenario-delete-confirm{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:6px 8px;border:1px solid rgba(190,65,55,.24);border-radius:8px;background:rgba(190,65,55,.055)}
+.factory-scenario-delete-confirm small{width:100%;font-size:10px;font-weight:700;color:var(--muted)}
+.factory-scenario-delete-action{color:#a52d27!important;border-color:rgba(190,65,55,.35)!important}
+@media(max-width:620px){.factory-scenario-delete-confirm{width:100%}.factory-scenario-delete-confirm button{flex:1}}
