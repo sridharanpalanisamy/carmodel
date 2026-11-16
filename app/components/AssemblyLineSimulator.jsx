@@ -297,7 +297,7 @@ export default function AssemblyLineSimulator() {
                   const reduction = Math.max(0, station.seconds - proposed);
                   return <div className="factory-improvement-detail" key={station.name}>
                     <strong>{station.name}</strong>
-                    <span>{reduction > 0 ? `Reduce by ${reduction}s` : station.seconds > improvement.requiredCycle ? `Needs ${station.seconds - Math.max(20, improvement.requiredCycle)}s reduction` : "At or below target pace"}</span>
+                    <span>{proposed > improvement.requiredCycle ? `Still needs ${proposed - Math.max(20, improvement.requiredCycle)}s reduction` : reduction > 0 ? `Scenario reduces cycle by ${reduction}s` : "At or below target pace"}</span>
                   </div>;
                 })}
               </div>
