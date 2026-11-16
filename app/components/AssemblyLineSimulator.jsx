@@ -191,6 +191,24 @@ export default function AssemblyLineSimulator() {
     });
   }
 
+  function exportNamedScenarioJson(item) {
+    if (!item || !isValidSavedScenario(item.snapshot)) {
+      setScenarioSaveMessage("This saved scenario is invalid and cannot be exported.");
+      return;
+    }
+    const blob = new Blob([JSON.stringify(item.snapshot, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const safeName = item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "factory-scenario";
+    link.href = url;
+    link.download = `${safeName}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setScenarioSaveMessage(`Exported “${item.name}” as an individual scenario JSON. You can import it using Import JSON.`);
+  }
+
   function loadNamedScenario(item) {
     if (!item || !isValidSavedScenario(item.snapshot)) return;
     const snapshot = item.snapshot;
@@ -711,6 +729,7 @@ export default function AssemblyLineSimulator() {
                     </span>
                     <label className="factory-scenario-compare-choice"><input type="checkbox" checked={selectedScenarioNames.includes(item.name)} onChange={event => toggleScenarioComparison(item.name, event.target.checked)} aria-label={`Compare ${item.name}`} /> Compare</label>
                     {renamingScenario !== item.name && <button type="button" className="line-reset" onClick={() => { setRenamingScenario(item.name); setRenameScenarioValue(item.name); }}>Rename</button>}
+                    <button type="button" className="line-reset" onClick={() => exportNamedScenarioJson(item)}>Export JSON</button>
                     <button type="button" className="line-reset" onClick={() => loadNamedScenario(item)}>Load</button>
                     <button type="button" className="line-reset" onClick={() => duplicateNamedScenario(item)} disabled={scenarioLibrary.length >= 10} aria-label={`Duplicate ${item.name}`}>Duplicate</button>
                     {pendingDeleteScenario === item.name ? <>
