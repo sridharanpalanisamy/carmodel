@@ -2116,3 +2116,8 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-scenario-comparison>div small{grid-column:1/-1;color:var(--factory-muted,#64748b)}
 .factory-scenario-comparison>p{margin:0;font-size:13px}
 @media(max-width:640px){.factory-scenario-comparison>div{grid-template-columns:1fr}.factory-scenario-comparison>div strong{text-align:left}}
+
+
+.factory-scenario-comparison-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.factory-scenario-comparison-heading .line-reset{padding:5px 9px;font-size:12px}
+@media(max-width:420px){.factory-scenario-comparison-heading{align-items:flex-start;flex-direction:column}}
