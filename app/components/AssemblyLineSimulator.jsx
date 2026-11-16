@@ -94,6 +94,39 @@ export default function AssemblyLineSimulator() {
     ));
   }
 
+  function exportSimulation() {
+    const rows = [
+      ["Factory process simulation report"],
+      ["Metric", "Value"],
+      ["Estimated good vehicles per shift", result.goodUnits],
+      ["Production target", target],
+      ["Output vs target", result.gap],
+      ["Slowest station", result.bottleneckName],
+      ["Bottleneck cycle time (seconds)", result.bottleneck],
+      ["Net production time (minutes)", result.netMinutes],
+      ["Ideal line capacity", result.ideal],
+      ["Available capacity", result.available],
+      ["Line availability (%)", availability],
+      ["Quality yield (%)", yieldRate],
+      [],
+      ["Station", "Cycle time (seconds)", "Bottleneck"],
+      ...stations.map(station => [station.name, station.seconds, station.seconds === result.bottleneck ? "Yes" : "No"])
+    ];
+    const csv = rows.map(row => row.map(value => {
+      const text = String(value ?? "");
+      return /[",\\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
+    }).join(",")).join("\\n");
+    const blob = new Blob(["\\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "factory-process-simulation.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
   function reset() {
     setStations(initialStations);
     setShiftHours(8);
@@ -165,7 +198,10 @@ export default function AssemblyLineSimulator() {
           </div>
           <div className="factory-chart-toolbar">
             <div><span className="eyebrow">LIVE PRODUCTION ANALYTICS</span><p>Four chart views update as you change the simulator settings.</p></div>
-            <button className="line-reset" type="button" aria-expanded={chartEditMode} onClick={() => setChartEditMode(value => !value)}>{chartEditMode ? "Done editing ✓" : "Edit charts ⚙"}</button>
+            <div className="factory-chart-actions">
+              <button className="line-reset" type="button" onClick={exportSimulation}>Export CSV ↓</button>
+              <button className="line-reset" type="button" aria-expanded={chartEditMode} onClick={() => setChartEditMode(value => !value)}>{chartEditMode ? "Done editing ✓" : "Edit charts ⚙"}</button>
+            </div>
           </div>
           {chartEditMode && (
             <div className="factory-chart-editor" aria-label="Edit chart visibility and titles">
