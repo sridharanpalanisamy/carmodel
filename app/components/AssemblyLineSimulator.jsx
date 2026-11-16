@@ -410,6 +410,7 @@ export default function AssemblyLineSimulator() {
                     <span className={savedScenarioSummary.meetsTarget ? "is-on-target" : "is-below-target"}>{savedScenarioSummary.meetsTarget ? `Target met · ${savedScenarioSummary.gap} above target` : `${Math.abs(savedScenarioSummary.gap)} below target`}</span>
                       <small>Target: {savedScenario.target} · Shift: {savedScenario.shiftHours}h · Availability: {savedScenario.availability}% · Quality: {savedScenario.yieldRate}%</small>
                     <span className={savedScenarioChanged ? "factory-saved-change" : "factory-saved-current"}>{savedScenarioChanged ? "Planner has unsaved changes" : "Planner matches saved scenario"}</span>
+                    <span className={improvement.good - savedScenarioSummary.good > 0 ? "factory-saved-delta-up" : improvement.good - savedScenarioSummary.good < 0 ? "factory-saved-delta-down" : "factory-saved-delta-even"}>Current planner vs saved: {improvement.good - savedScenarioSummary.good > 0 ? "+" : ""}{(improvement.good - savedScenarioSummary.good).toLocaleString("en-IN")} good vehicles / shift</span>
                   </div>
                   <button type="button" onClick={clearImprovementScenario}>Clear saved scenario</button>
                 </> : <span>No saved scenario yet. Save proposed cycle times and shift assumptions to reuse them later on this device.</span>}
