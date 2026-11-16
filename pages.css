@@ -1955,3 +1955,8 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-chart-editor-row>input{width:100%;min-width:0;padding:9px 10px;border:1px solid var(--line);background:#faf9f8;color:var(--ink);font:11px var(--sans);outline-offset:2px}
 .factory-chart-editor-row>input:focus{border-color:var(--orange)}
 @media(max-width:600px){.factory-chart-toolbar{align-items:flex-start;flex-direction:column}.factory-chart-toolbar button{width:100%}.factory-chart-editor-row{grid-template-columns:1fr;gap:7px}}
+
+/* Factory analytics actions stay usable on narrow screens. */
+.factory-chart-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+.factory-chart-actions .line-reset{white-space:nowrap}
+@media(max-width:600px){.factory-chart-toolbar{align-items:flex-start;flex-direction:column;gap:10px}.factory-chart-actions{width:100%;justify-content:flex-start}.factory-chart-actions .line-reset{flex:1 1 auto}}
