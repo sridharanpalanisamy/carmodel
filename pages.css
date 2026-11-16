@@ -1960,3 +1960,22 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-chart-actions{display:flex;align-items:center;justify-content:flex-end;gap:7px;flex-wrap:wrap}
 .factory-chart-actions .line-reset{white-space:nowrap}
 @media(max-width:600px){.factory-chart-toolbar{align-items:flex-start;flex-direction:column;gap:10px}.factory-chart-actions{width:100%;justify-content:flex-start}.factory-chart-actions .line-reset{flex:1 1 auto}}
+
+
+/* Expandable, mobile-friendly factory simulation data tables */
+.factory-data-table-wrap{margin-top:16px;padding:16px;background:#f2eff1;border:1px solid var(--line);min-width:0}
+.factory-data-table-heading{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:10px}
+.factory-data-table-heading>div{display:flex;flex-direction:column;gap:4px}
+.factory-data-table-heading span{font-size:7px;letter-spacing:1.2px;font-weight:800;color:var(--orange)}
+.factory-data-table-heading strong{font:700 16px var(--display)}
+.factory-data-table-heading small{font-size:8px;color:var(--muted);text-align:right}
+.factory-data-table-scroll{width:100%;overflow-x:auto;border:1px solid var(--line);background:#f8f6f6}
+.factory-data-table{width:100%;min-width:510px;border-collapse:collapse;font-size:9px;text-align:left}
+.factory-data-table th,.factory-data-table td{padding:10px 12px;border-bottom:1px solid #d9d3d8;vertical-align:top}
+.factory-data-table thead th{background:#e9e5e8;color:#514c52;font-size:8px;letter-spacing:.5px;text-transform:uppercase}
+.factory-data-table tbody th{font-weight:700;width:28%}
+.factory-data-table tbody td{color:#5f5960}
+.factory-data-table tbody tr:last-child th,.factory-data-table tbody tr:last-child td{border-bottom:0}
+.factory-station-table-heading{margin-top:18px}
+.factory-bottleneck-label{display:inline-block;padding:3px 7px;background:#fce7df;color:#b43a16;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+@media(max-width:600px){.factory-data-table-wrap{padding:11px}.factory-data-table-heading{align-items:flex-start;flex-direction:column;gap:4px}.factory-data-table-heading small{text-align:left}.factory-data-table{min-width:480px}}
