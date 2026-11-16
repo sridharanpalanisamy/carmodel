@@ -37,6 +37,20 @@ function isValidSavedScenario(value) {
     Number.isFinite(Date.parse(value.savedAt));
 }
 
+function getScenarioProjection(snapshot) {
+  const bottleneck = Math.max(...snapshot.cycleTimes);
+  const netMinutes = Math.max(0, snapshot.shiftHours * 60 - snapshot.breakMinutes);
+  const ideal = bottleneck > 0 ? Math.floor(netMinutes * 60 / bottleneck) : 0;
+  const available = Math.floor(ideal * snapshot.availability / 100);
+  const good = Math.floor(available * snapshot.yieldRate / 100);
+  return {
+    good,
+    bottleneck,
+    bottleneckName: initialStations[snapshot.cycleTimes.indexOf(bottleneck)]?.name || "—",
+    gap: good - snapshot.target
+  };
+}
+
 export default function AssemblyLineSimulator() {
   const [mount, setMount] = useState(null);
   useEffect(() => { setMount(document.getElementById("lineSimulatorMount")); }, []);
@@ -563,7 +577,7 @@ export default function AssemblyLineSimulator() {
                 </div>
                 {scenarioLibrary.length > 0 && <ul aria-label="Saved named scenarios">
                   {scenarioLibrary.map(item => <li key={item.name}>
-                    <span><strong>{item.name}</strong><small>{new Date(item.snapshot.savedAt).toLocaleString()} · target {item.snapshot.target}/shift</small></span>
+                    <span><strong>{item.name}</strong><small>{new Date(item.snapshot.savedAt).toLocaleString()} · target {item.snapshot.target}/shift</small><small>{getScenarioProjection(item.snapshot).good.toLocaleString("en-IN")} good vehicles/shift · bottleneck {getScenarioProjection(item.snapshot).bottleneckName} ({getScenarioProjection(item.snapshot).bottleneck}s)</small><small className={getScenarioProjection(item.snapshot).gap >= 0 ? "factory-named-on-target" : "factory-named-below-target"}>{getScenarioProjection(item.snapshot).gap >= 0 ? `Target met · ${getScenarioProjection(item.snapshot).gap} above` : `${Math.abs(getScenarioProjection(item.snapshot).gap)} below target`}</small></span>
                     <button type="button" className="line-reset" onClick={() => loadNamedScenario(item)}>Load</button>
                     <button type="button" className="line-reset" onClick={() => deleteNamedScenario(item.name)} aria-label={`Delete ${item.name}`}>Delete</button>
                   </li>)}
