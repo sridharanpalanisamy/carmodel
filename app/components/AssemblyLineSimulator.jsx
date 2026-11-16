@@ -70,6 +70,8 @@ export default function AssemblyLineSimulator() {
   const [scenarioName, setScenarioName] = useState("Baseline improvement");
   const [scenarioSearch, setScenarioSearch] = useState("");
   const [scenarioSort, setScenarioSort] = useState("recent");
+  const [renamingScenario, setRenamingScenario] = useState("");
+  const [renameScenarioValue, setRenameScenarioValue] = useState("");
   const [scenarioStorageReady, setScenarioStorageReady] = useState(false);
   const [scenarioSaveMessage, setScenarioSaveMessage] = useState("");
   const scenarioFileInput = useRef(null);
@@ -198,6 +200,34 @@ export default function AssemblyLineSimulator() {
     setYieldRate(snapshot.yieldRate);
     setTarget(snapshot.target);
     setScenarioSaveMessage(`Loaded “${item.name}”. Review the projection before saving changes.`);
+  }
+
+  function renameNamedScenario(oldName) {
+    const nextName = renameScenarioValue.trim();
+    if (!nextName) {
+      setScenarioSaveMessage("Enter a name before renaming this scenario.");
+      return;
+    }
+    if (nextName.length > 48) {
+      setScenarioSaveMessage("Scenario names must be 48 characters or fewer.");
+      return;
+    }
+    if (scenarioLibrary.some(item => item.name.toLowerCase() === nextName.toLowerCase() && item.name !== oldName)) {
+      setScenarioSaveMessage("A scenario with that name already exists. Choose a different name.");
+      return;
+    }
+    const next = scenarioLibrary.map(item => item.name === oldName ? { ...item, name: nextName } : item);
+    try {
+      window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
+      setScenarioLibrary(next);
+      setSelectedScenarioNames(current => current.map(name => name === oldName ? nextName : name));
+      setScenarioName(current => current === oldName ? nextName : current);
+      setRenamingScenario("");
+      setRenameScenarioValue("");
+      setScenarioSaveMessage(`Renamed “${oldName}” to “${nextName}”.`);
+    } catch {
+      setScenarioSaveMessage("Could not rename this scenario. Browser storage may be unavailable.");
+    }
   }
 
   function duplicateNamedScenario(item) {
@@ -674,8 +704,11 @@ export default function AssemblyLineSimulator() {
                   </div>
                   <ul aria-label="Saved named scenarios">
                   {visibleScenarioLibrary.map(item => <li key={item.name}>
-                    <span><strong>{item.name}</strong><small>{new Date(item.snapshot.savedAt).toLocaleString()} · target {item.snapshot.target}/shift</small><small>{getScenarioProjection(item.snapshot).good.toLocaleString("en-IN")} good vehicles/shift · bottleneck {getScenarioProjection(item.snapshot).bottleneckName} ({getScenarioProjection(item.snapshot).bottleneck}s)</small><small className={getScenarioProjection(item.snapshot).gap >= 0 ? "factory-named-on-target" : "factory-named-below-target"}>{getScenarioProjection(item.snapshot).gap >= 0 ? `Target met · ${getScenarioProjection(item.snapshot).gap} above` : `${Math.abs(getScenarioProjection(item.snapshot).gap)} below target`}</small></span>
+                    <span className="factory-scenario-item-details">
+                      {renamingScenario === item.name ? <span className="factory-scenario-rename"><label htmlFor={`rename-${item.name}`}>New scenario name</label><input id={`rename-${item.name}`} value={renameScenarioValue} maxLength={48} onChange={event => setRenameScenarioValue(event.target.value)} onKeyDown={event => { if (event.key === "Enter") renameNamedScenario(item.name); if (event.key === "Escape") setRenamingScenario(""); }} /><span><button type="button" className="line-reset" onClick={() => renameNamedScenario(item.name)}>Save name</button><button type="button" className="line-reset" onClick={() => setRenamingScenario("")}>Cancel</button></span></span> : <><strong>{item.name}</strong><small>{new Date(item.snapshot.savedAt).toLocaleString()} · target {item.snapshot.target}/shift</small><small>{getScenarioProjection(item.snapshot).good.toLocaleString("en-IN")} good vehicles/shift · bottleneck {getScenarioProjection(item.snapshot).bottleneckName} ({getScenarioProjection(item.snapshot).bottleneck}s)</small><small className={getScenarioProjection(item.snapshot).gap >= 0 ? "factory-named-on-target" : "factory-named-below-target"}>{getScenarioProjection(item.snapshot).gap >= 0 ? `Target met · ${getScenarioProjection(item.snapshot).gap} above` : `${Math.abs(getScenarioProjection(item.snapshot).gap)} below target`}</small></>}
+                    </span>
                     <label className="factory-scenario-compare-choice"><input type="checkbox" checked={selectedScenarioNames.includes(item.name)} onChange={event => toggleScenarioComparison(item.name, event.target.checked)} aria-label={`Compare ${item.name}`} /> Compare</label>
+                    {renamingScenario !== item.name && <button type="button" className="line-reset" onClick={() => { setRenamingScenario(item.name); setRenameScenarioValue(item.name); }}>Rename</button>}
                     <button type="button" className="line-reset" onClick={() => loadNamedScenario(item)}>Load</button>
                     <button type="button" className="line-reset" onClick={() => duplicateNamedScenario(item)} disabled={scenarioLibrary.length >= 10} aria-label={`Duplicate ${item.name}`}>Duplicate</button>
                     <button type="button" className="line-reset" onClick={() => deleteNamedScenario(item.name)} aria-label={`Delete ${item.name}`}>Delete</button>
