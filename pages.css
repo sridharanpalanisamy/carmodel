@@ -1841,6 +1841,7 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-radar-point{fill:#60a5fa;stroke:#302d33;stroke-width:2}
 .factory-radar-point.bottleneck{fill:#f59e0b}
 .factory-radar text{fill:#e5e1e2;font-size:8px}
+.factory-radar .factory-radar-scale{fill:#aaa3a8;font-size:7px}
 .factory-capacity-rings{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:23px 2px 8px}
 .factory-capacity-item{display:grid;justify-items:center;gap:8px;min-width:0}
 .factory-capacity-ring{--ring-color:#60a5fa;position:relative;display:grid;place-items:center;width:min(100%,76px);aspect-ratio:1;border-radius:50%;background:conic-gradient(var(--ring-color) 0 var(--ratio),#ffffff20 var(--ratio) 100%)}
