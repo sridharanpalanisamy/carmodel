@@ -68,6 +68,7 @@ export default function AssemblyLineSimulator() {
   const [scenarioLibrary, setScenarioLibrary] = useState([]);
   const [selectedScenarioNames, setSelectedScenarioNames] = useState([]);
   const [scenarioName, setScenarioName] = useState("Baseline improvement");
+  const [scenarioSearch, setScenarioSearch] = useState("");
   const [scenarioStorageReady, setScenarioStorageReady] = useState(false);
   const [scenarioSaveMessage, setScenarioSaveMessage] = useState("");
   const scenarioFileInput = useRef(null);
@@ -625,14 +626,22 @@ export default function AssemblyLineSimulator() {
                   <button type="button" className="line-reset" onClick={() => scenarioLibraryFileInput.current?.click()}>Import library JSON</button>
                   <input ref={scenarioLibraryFileInput} type="file" accept=".json,application/json" aria-label="Import named scenario library JSON" onChange={importScenarioLibraryJson} hidden />
                 </div>
-                {scenarioLibrary.length > 0 && <ul aria-label="Saved named scenarios">
-                  {scenarioLibrary.map(item => <li key={item.name}>
+                {scenarioLibrary.length > 0 && <>
+                  <div className="factory-scenario-library-filter">
+                    <label htmlFor="factoryScenarioSearch">Find a saved scenario</label>
+                    <input id="factoryScenarioSearch" type="search" value={scenarioSearch} onChange={event => setScenarioSearch(event.target.value)} placeholder="Search scenario names..." />
+                    <small>Showing {scenarioLibrary.filter(item => item.name.toLowerCase().includes(scenarioSearch.trim().toLowerCase())).length} of {scenarioLibrary.length} saved scenarios</small>
+                  </div>
+                  <ul aria-label="Saved named scenarios">
+                  {scenarioLibrary.filter(item => item.name.toLowerCase().includes(scenarioSearch.trim().toLowerCase())).map(item => <li key={item.name}>
                     <span><strong>{item.name}</strong><small>{new Date(item.snapshot.savedAt).toLocaleString()} · target {item.snapshot.target}/shift</small><small>{getScenarioProjection(item.snapshot).good.toLocaleString("en-IN")} good vehicles/shift · bottleneck {getScenarioProjection(item.snapshot).bottleneckName} ({getScenarioProjection(item.snapshot).bottleneck}s)</small><small className={getScenarioProjection(item.snapshot).gap >= 0 ? "factory-named-on-target" : "factory-named-below-target"}>{getScenarioProjection(item.snapshot).gap >= 0 ? `Target met · ${getScenarioProjection(item.snapshot).gap} above` : `${Math.abs(getScenarioProjection(item.snapshot).gap)} below target`}</small></span>
                     <label className="factory-scenario-compare-choice"><input type="checkbox" checked={selectedScenarioNames.includes(item.name)} onChange={event => toggleScenarioComparison(item.name, event.target.checked)} aria-label={`Compare ${item.name}`} /> Compare</label>
                     <button type="button" className="line-reset" onClick={() => loadNamedScenario(item)}>Load</button>
                     <button type="button" className="line-reset" onClick={() => deleteNamedScenario(item.name)} aria-label={`Delete ${item.name}`}>Delete</button>
                   </li>)}
-                </ul>}
+                </ul>
+                  {scenarioLibrary.every(item => !item.name.toLowerCase().includes(scenarioSearch.trim().toLowerCase())) && <p className="factory-scenario-empty-search">No saved scenarios match “{scenarioSearch}”. Try another name.</p>}
+                </>}
                 {selectedScenarioNames.length > 0 && <div className="factory-scenario-comparison" aria-live="polite">
                   <div className="factory-scenario-comparison-heading"><strong>Scenario comparison ({selectedScenarioNames.length}/2)</strong><button type="button" className="line-reset" onClick={() => setSelectedScenarioNames([])}>Clear comparison</button></div>
                   {selectedScenarioNames.map(name => {
