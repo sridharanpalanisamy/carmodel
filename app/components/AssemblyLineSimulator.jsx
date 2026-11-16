@@ -72,6 +72,7 @@ export default function AssemblyLineSimulator() {
   const [scenarioSort, setScenarioSort] = useState("recent");
   const [renamingScenario, setRenamingScenario] = useState("");
   const [renameScenarioValue, setRenameScenarioValue] = useState("");
+  const [pendingDeleteScenario, setPendingDeleteScenario] = useState("");
   const [scenarioStorageReady, setScenarioStorageReady] = useState(false);
   const [scenarioSaveMessage, setScenarioSaveMessage] = useState("");
   const scenarioFileInput = useRef(null);
@@ -265,6 +266,7 @@ export default function AssemblyLineSimulator() {
       window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
       setScenarioLibrary(next);
       setSelectedScenarioNames(current => current.filter(item => item !== name));
+      setPendingDeleteScenario("");
       setScenarioSaveMessage(`“${name}” removed from the named scenario library.`);
     } catch {
       setScenarioSaveMessage("Could not update the named scenario library.");
@@ -711,7 +713,13 @@ export default function AssemblyLineSimulator() {
                     {renamingScenario !== item.name && <button type="button" className="line-reset" onClick={() => { setRenamingScenario(item.name); setRenameScenarioValue(item.name); }}>Rename</button>}
                     <button type="button" className="line-reset" onClick={() => loadNamedScenario(item)}>Load</button>
                     <button type="button" className="line-reset" onClick={() => duplicateNamedScenario(item)} disabled={scenarioLibrary.length >= 10} aria-label={`Duplicate ${item.name}`}>Duplicate</button>
-                    <button type="button" className="line-reset" onClick={() => deleteNamedScenario(item.name)} aria-label={`Delete ${item.name}`}>Delete</button>
+                    {pendingDeleteScenario === item.name ? <>
+                      <span className="factory-scenario-delete-confirm" role="group" aria-label={`Confirm deletion of ${item.name}`}>
+                        <small>Delete this saved scenario?</small>
+                        <button type="button" className="line-reset factory-scenario-delete-action" onClick={() => deleteNamedScenario(item.name)}>Confirm delete</button>
+                        <button type="button" className="line-reset" onClick={() => setPendingDeleteScenario("")}>Cancel</button>
+                      </span>
+                    </> : <button type="button" className="line-reset" onClick={() => { setPendingDeleteScenario(item.name); setRenamingScenario(""); }}>Delete</button>}
                   </li>)}
                 </ul>
                   {scenarioLibrary.every(item => !item.name.toLowerCase().includes(scenarioSearch.trim().toLowerCase())) && <p className="factory-scenario-empty-search">No saved scenarios match “{scenarioSearch}”. Try another name.</p>}
