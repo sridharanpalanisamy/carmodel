@@ -2075,3 +2075,6 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-saved-scenario-summary>span.is-below-target{color:#9a6325}
 .factory-saved-scenario-summary small{width:100%;color:var(--muted);font:400 8px/1.4 var(--sans)}
 @media(max-width:520px){.factory-saved-scenario-summary{gap:6px 10px}.factory-scenario-saved-state{align-items:flex-start}}
+
+.factory-saved-scenario-summary>span.factory-saved-change{color:#9a6325}
+.factory-saved-scenario-summary>span.factory-saved-current{color:#28734f}
