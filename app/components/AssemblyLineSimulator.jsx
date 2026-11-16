@@ -161,9 +161,23 @@ export default function AssemblyLineSimulator() {
               <div className={`line-station-row${isBottleneck ? " is-bottleneck" : ""}`} key={station.name}>
                 <div className="line-station-top">
                   <label htmlFor={`station-${index}`}>{station.name}</label>
-                  <strong>{station.seconds}s {isBottleneck ? <span>BOTTLENECK</span> : null}</strong>
+                  <div className="line-station-value">
+                    <input
+                      aria-label={`${station.name} cycle time in seconds`}
+                      type="number"
+                      min="20"
+                      max="180"
+                      step="1"
+                      value={station.seconds}
+                      onChange={event => {
+                        const value = event.target.value;
+                        if (value !== "" && Number(value) >= 20 && Number(value) <= 180) updateStation(index, value);
+                      }}
+                    />
+                    {isBottleneck ? <strong>BOTTLENECK</strong> : null}
+                  </div>
                 </div>
-                <input id={`station-${index}`} type="range" min="20" max="180" step="1" value={station.seconds} onChange={event => updateStation(index, event.target.value)} />
+                <input id={`station-${index}`} aria-label={`${station.name} cycle time slider`} type="range" min="20" max="180" step="1" value={station.seconds} onChange={event => updateStation(index, event.target.value)} />
                 <div className="line-station-scale"><span>20s</span><span>180s</span></div>
               </div>
             );
