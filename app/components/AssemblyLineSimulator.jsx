@@ -111,6 +111,16 @@ export default function AssemblyLineSimulator() {
     };
   }, [proposedCycleTimes, result.netMinutes, result.goodUnits, availability, yieldRate, stations, target]);
 
+  const improvementPriorities = useMemo(() => stations
+    .map((station, index) => ({
+      ...station,
+      index,
+      reductionNeeded: Math.max(0, station.seconds - improvement.requiredCycle),
+      proposedReduction: Math.max(0, station.seconds - (proposedCycleTimes[index] ?? station.seconds))
+    }))
+    .sort((a, b) => b.reductionNeeded - a.reductionNeeded || b.seconds - a.seconds), 
+  [stations, improvement.requiredCycle, proposedCycleTimes]);
+
   function updateStation(index, seconds) {
     setStations(current => current.map((station, i) =>
       i === index ? { ...station, seconds: clamp(Number(seconds) || 1, 20, 180) } : station
@@ -324,6 +334,18 @@ export default function AssemblyLineSimulator() {
               <div className="factory-improvement-guidance">
                 <div><span>Required bottleneck cycle to meet target</span><strong>{improvement.requiredCycle > 0 ? improvement.requiredCycle : "—"} sec</strong></div>
                 <p>{improvement.feasible ? "Stations above this cycle time need improvement to reach the selected good-output target." : "The selected target cannot be reached within the simulator's 20-second minimum cycle time under the current shift, availability and quality settings."}</p>
+              </div>
+              <div className="factory-improvement-priority" aria-label="Station improvement priority ranking">
+                <div className="factory-improvement-guidance-title"><strong>Improvement priority</strong><span>Ranked by cycle-time gap against the target pace</span></div>
+                <ol>
+                  {improvementPriorities.map((station, rank) => (
+                    <li key={station.name}>
+                      <span className="factory-priority-rank">{String(rank + 1).padStart(2, "0")}</span>
+                      <div><strong>{station.name}</strong><small>Current {station.seconds}s · Proposed {proposedCycleTimes[station.index] ?? station.seconds}s</small></div>
+                      <b>{station.reductionNeeded > 0 ? `${station.reductionNeeded}s above target pace` : "At target pace"}</b>
+                    </li>
+                  ))}
+                </ol>
               </div>
               <div className="factory-improvement-grid factory-improvement-detail-grid">
                 {stations.map((station, index) => {
