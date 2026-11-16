@@ -2121,3 +2121,11 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-scenario-comparison-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .factory-scenario-comparison-heading .line-reset{padding:5px 9px;font-size:12px}
 @media(max-width:420px){.factory-scenario-comparison-heading{align-items:flex-start;flex-direction:column}}
+
+/* Named scenario library backup controls. */
+.factory-scenario-library-actions{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 10px}
+.factory-scenario-library-actions button{padding:7px 10px;border:1px solid var(--line);background:#fff;color:var(--ink);font:700 8px var(--sans);cursor:pointer}
+.factory-scenario-library-actions button:hover:not(:disabled){border-color:var(--orange);color:var(--orange)}
+.factory-scenario-library-actions button:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.factory-scenario-library-actions button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:420px){.factory-scenario-library-actions{display:grid;grid-template-columns:1fr}.factory-scenario-library-actions button{width:100%;min-height:36px}}
