@@ -18,7 +18,14 @@ const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 function isValidSavedScenario(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const inRange = (number, min, max) => Number.isFinite(number) && number >= min && number <= max;
-  return Array.isArray(value.cycleTimes) &&
+  const supportedVersion = value.version === undefined || value.version === 1 || value.version === 2;
+  const stationOrderMatches = value.stationNames === undefined ||
+    (Array.isArray(value.stationNames) &&
+      value.stationNames.length === initialStations.length &&
+      value.stationNames.every((name, index) => name === initialStations[index].name));
+  return supportedVersion &&
+    stationOrderMatches &&
+    Array.isArray(value.cycleTimes) &&
     value.cycleTimes.length === initialStations.length &&
     value.cycleTimes.every(seconds => inRange(seconds, 20, 180)) &&
     inRange(value.shiftHours, 4, 12) &&
@@ -85,7 +92,7 @@ export default function AssemblyLineSimulator() {
   }
 
   function exportScenarioJson() {
-    const snapshot = { version: 1, cycleTimes: proposedCycleTimes, target, shiftHours, breakMinutes, availability, yieldRate, savedAt: new Date().toISOString() };
+    const snapshot = { version: 2, stationNames: initialStations.map(station => station.name), cycleTimes: proposedCycleTimes, target, shiftHours, breakMinutes, availability, yieldRate, savedAt: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -102,6 +109,7 @@ export default function AssemblyLineSimulator() {
     const file = event.target.files?.[0];
     if (!file) return;
     try {
+      if (file.size > 100 * 1024) throw new Error("Scenario file is too large");
       const parsed = JSON.parse(await file.text());
       if (!isValidSavedScenario(parsed)) throw new Error("Invalid scenario format");
       setProposedCycleTimes([...parsed.cycleTimes]);
