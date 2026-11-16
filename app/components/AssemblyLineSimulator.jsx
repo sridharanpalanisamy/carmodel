@@ -377,7 +377,7 @@ export default function AssemblyLineSimulator() {
                 </div>
               </div>
               {scenarioStorageReady && <div className="factory-scenario-saved-state" role="status">
-                {savedScenario ? <><span>Saved scenario available · target {savedScenario.target} vehicles · {new Date(savedScenario.savedAt).toLocaleString()}</span><button type="button" onClick={clearImprovementScenario}>Clear saved scenario</button></> : <span>No saved scenario yet. Save your proposed cycle times to reuse them later on this device.</span>}
+                {savedScenario ? <><span>Saved scenario available · target {savedScenario.target} vehicles · {new Date(savedScenario.savedAt).toLocaleString()}</span><button type="button" onClick={clearImprovementScenario}>Clear saved scenario</button></> : <span>No saved scenario yet. Save proposed cycle times and shift assumptions to reuse them later on this device.</span>}
               </div>}
               <div className="factory-improvement-grid">
                 {stations.map((station, index) => (
