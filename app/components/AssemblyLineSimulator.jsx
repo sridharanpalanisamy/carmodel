@@ -165,6 +165,16 @@ export default function AssemblyLineSimulator() {
     };
   }, [proposedCycleTimes, result.netMinutes, result.goodUnits, availability, yieldRate, stations, target]);
 
+  const savedScenarioChanged = useMemo(() => {
+    if (!savedScenario) return false;
+    return savedScenario.cycleTimes.some((value, index) => value !== proposedCycleTimes[index]) ||
+      savedScenario.target !== target ||
+      savedScenario.shiftHours !== shiftHours ||
+      savedScenario.breakMinutes !== breakMinutes ||
+      savedScenario.availability !== availability ||
+      savedScenario.yieldRate !== yieldRate;
+  }, [savedScenario, proposedCycleTimes, target, shiftHours, breakMinutes, availability, yieldRate]);
+
   const savedScenarioSummary = useMemo(() => {
     if (!savedScenario) return null;
     const savedBottleneck = Math.max(...savedScenario.cycleTimes);
@@ -398,7 +408,8 @@ export default function AssemblyLineSimulator() {
                     <span>{savedScenarioSummary.good.toLocaleString("en-IN")} good vehicles / shift</span>
                     <span>{savedScenarioSummary.bottleneck}s bottleneck cycle</span>
                     <span className={savedScenarioSummary.meetsTarget ? "is-on-target" : "is-below-target"}>{savedScenarioSummary.meetsTarget ? `Target met · ${savedScenarioSummary.gap} above target` : `${Math.abs(savedScenarioSummary.gap)} below target`}</span>
-                    <small>Target: {savedScenario.target} · Shift: {savedScenario.shiftHours}h · Availability: {savedScenario.availability}% · Quality: {savedScenario.yieldRate}%</small>
+                      <small>Target: {savedScenario.target} · Shift: {savedScenario.shiftHours}h · Availability: {savedScenario.availability}% · Quality: {savedScenario.yieldRate}%</small>
+                    <span className={savedScenarioChanged ? "factory-saved-change" : "factory-saved-current"}>{savedScenarioChanged ? "Planner has unsaved changes" : "Planner matches saved scenario"}</span>
                   </div>
                   <button type="button" onClick={clearImprovementScenario}>Clear saved scenario</button>
                 </> : <span>No saved scenario yet. Save proposed cycle times and shift assumptions to reuse them later on this device.</span>}
