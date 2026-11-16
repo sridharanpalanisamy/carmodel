@@ -60,7 +60,7 @@ export default function AssemblyLineSimulator() {
 
   if (!mount) return null;
   return createPortal(
-    <section className="line-simulator" aria-labelledby="lineSimulatorTitle">
+    <section className="line-simulator w-full max-w-[1440px] mx-auto px-3 sm:px-5 lg:px-8" aria-labelledby="lineSimulatorTitle">
       <div className="line-simulator-heading">
         <div>
           <span className="eyebrow">JAVASCRIPT PROJECT / 09</span>
