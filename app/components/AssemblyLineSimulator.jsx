@@ -91,6 +91,28 @@ export default function AssemblyLineSimulator() {
     }
   }
 
+  async function copyScenarioSummary() {
+    const lines = [
+      "Factory line improvement scenario",
+      `Projected good output: ${improvement.good} vehicles / shift`,
+      `Current output: ${result.goodUnits} vehicles / shift`,
+      `Change vs current: ${improvement.gain > 0 ? "+" : ""}${improvement.gain} vehicles / shift`,
+      `Target: ${target} vehicles / shift — ${improvement.meetsTarget ? "Achieved" : `Short by ${Math.abs(improvement.targetGap)}`}`,
+      `Projected bottleneck: ${improvement.bottleneckName} (${improvement.bottleneck}s)`,
+      `Shift: ${shiftHours}h; break: ${breakMinutes} min; availability: ${availability}%; quality yield: ${yieldRate}%`,
+      "",
+      "Station cycle times (current → proposed)",
+      ...stations.map((station, index) => `${station.name}: ${station.seconds}s → ${proposedCycleTimes[index] ?? station.seconds}s`)
+    ].join("\\n");
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
+      await navigator.clipboard.writeText(lines);
+      setScenarioSaveMessage("Scenario summary copied. You can paste it into a report or message.");
+    } catch {
+      setScenarioSaveMessage("Could not copy automatically. Use Export scenario CSV or Export JSON instead.");
+    }
+  }
+
   function exportScenarioJson() {
     const snapshot = { version: 2, stationNames: initialStations.map(station => station.name), cycleTimes: proposedCycleTimes, target, shiftHours, breakMinutes, availability, yieldRate, savedAt: new Date().toISOString() };
     const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: "application/json" });
@@ -463,6 +485,7 @@ export default function AssemblyLineSimulator() {
                 <div><span>WHAT-IF ANALYSIS / LINE BALANCING</span><h3>Test station improvements</h3><p>Enter a proposed cycle time for each station. Compare the projected shift output with the current simulation.</p></div>
                 <div className="factory-improvement-actions">
                   <button type="button" className="line-reset" onClick={exportImprovementScenario}>Export scenario CSV ↓</button>
+                  <button type="button" className="line-reset" onClick={copyScenarioSummary}>Copy summary</button>
                   <button type="button" className="line-reset" onClick={exportScenarioJson}>Export JSON ↓</button>
                   <button type="button" className="line-reset" onClick={() => scenarioFileInput.current?.click()}>Import JSON ↑</button>
                   <input ref={scenarioFileInput} type="file" accept=".json,application/json" onChange={importScenarioJson} className="sr-only" aria-label="Import factory improvement scenario JSON" />
