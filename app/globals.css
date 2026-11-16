@@ -1,1 +1,4 @@
-/* Legacy design styles are linked from the public asset directory in app/layout.jsx. */
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities);
+
+/* Tailwind utilities are enabled without global preflight resets so the existing heritage site remains intact. */
