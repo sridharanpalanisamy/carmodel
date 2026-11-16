@@ -2036,3 +2036,14 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-improvement-priority li div small{font:400 8px var(--sans);color:var(--muted)}
 .factory-improvement-priority li>b{font:600 8px var(--sans);color:var(--orange);text-align:right}
 @media(max-width:700px){.factory-improvement-priority ol{grid-template-columns:1fr}.factory-improvement-priority li{grid-template-columns:22px minmax(0,1fr) auto}}
+
+/* Clear target attainment feedback for proposed line scenarios. */
+.factory-scenario-target{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4px 12px;margin-top:10px;padding:12px 14px;background:#fff;border:1px solid var(--line);border-left:4px solid #b65a31;min-width:0}
+.factory-scenario-target>div{display:flex;flex-direction:column;gap:3px}
+.factory-scenario-target>div>span{font:700 7px var(--sans);letter-spacing:1px;color:var(--muted)}
+.factory-scenario-target>div>strong{font:700 13px var(--display);color:var(--ink)}
+.factory-scenario-target>b{font:700 18px var(--display);color:#b65a31;font-variant-numeric:tabular-nums}
+.factory-scenario-target>small{grid-column:1/-1;font:400 8px/1.5 var(--sans);color:var(--muted)}
+.factory-scenario-target.is-met{border-left-color:#398363}
+.factory-scenario-target.is-met>b{color:#398363}
+@media(max-width:430px){.factory-scenario-target{grid-template-columns:1fr;gap:5px}.factory-scenario-target>small{grid-column:auto}}
