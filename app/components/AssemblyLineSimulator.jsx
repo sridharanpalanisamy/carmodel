@@ -171,6 +171,8 @@ export default function AssemblyLineSimulator() {
       ["Bottleneck station", result.bottleneckName, improvement.bottleneckName],
       ["Bottleneck cycle time (seconds)", result.bottleneck, improvement.bottleneck],
       ["Production change (good vehicles)", 0, improvement.gain],
+      ["Target status", "Current simulation", improvement.meetsTarget ? "Target achieved" : "Target not yet achieved"],
+      ["Good vehicles above / below target", result.gap, improvement.targetGap],
       ["Shift target", target, target],
       ["Availability (%)", availability, availability],
       ["Quality yield (%)", yieldRate, yieldRate],
