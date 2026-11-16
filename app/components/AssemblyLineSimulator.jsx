@@ -763,6 +763,7 @@ export default function AssemblyLineSimulator() {
                   <div className="factory-scenario-library-filter">
                     <label htmlFor="factoryScenarioSearch">Find a saved scenario</label>
                     <input id="factoryScenarioSearch" type="search" value={scenarioSearch} onChange={event => setScenarioSearch(event.target.value)} placeholder="Search scenario names..." />
+                    {scenarioSearch && <button type="button" className="line-reset factory-scenario-clear-search" onClick={() => setScenarioSearch("")}>Clear search</button>}
                     <small>Showing {visibleScenarioLibrary.length} of {scenarioLibrary.length} saved scenarios</small>
                     <label className="factory-scenario-sort"><span>Sort</span><select value={scenarioSort} onChange={event => setScenarioSort(event.target.value)} aria-label="Sort saved scenarios"><option value="recent">Recently saved</option><option value="output">Highest output</option><option value="target">Best target result</option><option value="name">Name A–Z</option></select></label>
                   </div>
@@ -785,7 +786,7 @@ export default function AssemblyLineSimulator() {
                     </> : <button type="button" className="line-reset" onClick={() => { setPendingDeleteScenario(item.name); setRenamingScenario(""); }}>Delete</button>}
                   </li>)}
                 </ul>
-                  {scenarioLibrary.every(item => !item.name.toLowerCase().includes(scenarioSearch.trim().toLowerCase())) && <p className="factory-scenario-empty-search">No saved scenarios match “{scenarioSearch}”. Try another name.</p>}
+                  {scenarioLibrary.every(item => !item.name.toLowerCase().includes(scenarioSearch.trim().toLowerCase())) && <div className="factory-scenario-empty-search" role="status"><p>No saved scenarios match “{scenarioSearch}”.</p><button type="button" className="line-reset" onClick={() => setScenarioSearch("")}>Clear search and show all scenarios</button></div>}
                 </>}
                 {selectedScenarioNames.length > 0 && <div className="factory-scenario-comparison" aria-live="polite">
                   <div className="factory-scenario-comparison-heading"><strong>Scenario comparison ({selectedScenarioNames.length}/2)</strong><button type="button" className="line-reset" onClick={() => setSelectedScenarioNames([])}>Clear comparison</button></div>
