@@ -2078,3 +2078,7 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 
 .factory-saved-scenario-summary>span.factory-saved-change{color:#9a6325}
 .factory-saved-scenario-summary>span.factory-saved-current{color:#28734f}
+
+.factory-saved-scenario-summary>span.factory-saved-delta-up{color:#28734f}
+.factory-saved-scenario-summary>span.factory-saved-delta-down{color:#a34b38}
+.factory-saved-scenario-summary>span.factory-saved-delta-even{color:var(--muted)}
