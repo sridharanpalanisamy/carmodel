@@ -2162,3 +2162,9 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-scenario-library-filter small{font-size:10px;color:var(--muted);white-space:nowrap}
 .factory-scenario-empty-search{padding:12px;border:1px dashed var(--line);border-radius:8px;color:var(--muted);font-size:11px}
 @media(max-width:620px){.factory-scenario-library-filter{grid-template-columns:1fr;gap:6px}.factory-scenario-library-filter small{white-space:normal}}
+
+.factory-named-scenarios li{display:flex;flex-wrap:wrap;align-items:center;gap:7px}
+.factory-named-scenarios li>span{flex:1 1 180px;min-width:160px}
+.factory-named-scenarios li .factory-scenario-compare-choice{font-size:10px}
+.factory-named-scenarios li button:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:480px){.factory-named-scenarios li{align-items:center;gap:6px}.factory-named-scenarios li>span{flex-basis:100%}.factory-named-scenarios li .factory-scenario-compare-choice{margin-right:auto}}
