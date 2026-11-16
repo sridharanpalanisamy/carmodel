@@ -247,6 +247,38 @@ export default function AssemblyLineSimulator() {
     });
   }
 
+  async function copyNamedScenarioSummary(item) {
+    if (!item || !isValidSavedScenario(item.snapshot)) {
+      setScenarioSaveMessage("This saved scenario is invalid and cannot be copied.");
+      return;
+    }
+    const snapshot = item.snapshot;
+    const projection = getScenarioProjection(snapshot);
+    const lines = [
+      "Factory improvement scenario",
+      `Scenario: ${item.name}`,
+      `Saved: ${new Date(snapshot.savedAt).toLocaleString()}`,
+      `Projected good output: ${projection.good} vehicles / shift`,
+      `Shift target: ${snapshot.target} vehicles / shift`,
+      `Target status: ${projection.gap >= 0 ? "Achieved" : "Below target"}`,
+      `Target gap: ${projection.gap > 0 ? "+" : ""}${projection.gap} vehicles`,
+      `Bottleneck: ${projection.bottleneckName} (${projection.bottleneck}s)`,
+      `Shift assumptions: ${snapshot.shiftHours}h; breaks ${snapshot.breakMinutes} min; availability ${snapshot.availability}%; quality yield ${snapshot.yieldRate}%`,
+      "",
+      "Station cycle times",
+      ...initialStations.map((station, index) => `${station.name}: ${snapshot.cycleTimes[index]} seconds`),
+      "",
+      "Planning estimate only. Validate against actual factory production data."
+    ].join("\\n");
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
+      await navigator.clipboard.writeText(lines);
+      setScenarioSaveMessage(`Copied “${item.name}” summary. You can paste it into a report or message.`);
+    } catch {
+      setScenarioSaveMessage("Could not copy automatically. Use Export Markdown, CSV or report instead.");
+    }
+  }
+
   function exportNamedScenarioJson(item) {
     if (!item || !isValidSavedScenario(item.snapshot)) {
       setScenarioSaveMessage("This saved scenario is invalid and cannot be exported.");
@@ -1254,7 +1286,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                     <button type="button" className="line-reset" onClick={() => exportNamedScenarioJson(item)}>Export JSON</button>
                     <button type="button" className="line-reset" onClick={() => exportNamedScenarioCsv(item)}>Export CSV</button>
                     <button type="button" className="line-reset" onClick={() => exportNamedScenarioHtml(item)}>Export report</button>
-                    <button type="button" className="line-reset" onClick={() => exportNamedScenarioMarkdown(item)}>Export Markdown</button>
+                    <button type="button" className="line-reset" onClick={() => exportNamedScenarioMarkdown(item)}>Export Markdown</button>\n                    <button type="button" className="line-reset" onClick={() => copyNamedScenarioSummary(item)}>Copy summary</button>
                     <button type="button" className="line-reset" onClick={() => loadNamedScenario(item)}>Load</button>
                     <button type="button" className="line-reset" onClick={() => duplicateNamedScenario(item)} disabled={scenarioLibrary.length >= 10} aria-label={`Duplicate ${item.name}`}>Duplicate</button>
                     {pendingDeleteScenario === item.name ? <>
