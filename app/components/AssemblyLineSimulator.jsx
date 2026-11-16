@@ -235,7 +235,10 @@ export default function AssemblyLineSimulator() {
             <div className="factory-chart-actions">
               <button className="line-reset" type="button" onClick={exportSimulation}>Export CSV ↓</button>
               <button className="line-reset" type="button" aria-expanded={showDataTable} onClick={() => setShowDataTable(value => !value)}>{showDataTable ? "Hide data table −" : "View data table ≡"}</button>
-              <button className="line-reset" type="button" aria-expanded={showImprovementPlanner} onClick={() => setShowImprovementPlanner(value => !value)}>{showImprovementPlanner ? "Hide improvement planner −" : "Improve line ↗"}</button>
+              <button className="line-reset" type="button" aria-expanded={showImprovementPlanner} onClick={() => {
+                if (!showImprovementPlanner) setProposedCycleTimes(stations.map(station => station.seconds));
+                setShowImprovementPlanner(value => !value);
+              }}>{showImprovementPlanner ? "Hide improvement planner −" : "Improve line ↗"}</button>
               <button className="line-reset" type="button" aria-expanded={chartEditMode} onClick={() => setChartEditMode(value => !value)}>{chartEditMode ? "Done editing ✓" : "Edit charts ⚙"}</button>
             </div>
           </div>
