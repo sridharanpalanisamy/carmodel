@@ -305,6 +305,50 @@ export default function AssemblyLineSimulator() {
     setScenarioSaveMessage(`Exported “${item.name}” with production assumptions and all station cycle times as CSV.`);
   }
 
+  function exportScenarioComparisonCsv(first, second) {
+    if (!first || !second || !isValidSavedScenario(first.snapshot) || !isValidSavedScenario(second.snapshot)) {
+      setScenarioSaveMessage("Select two valid saved scenarios before exporting their comparison.");
+      return;
+    }
+    const firstProjection = getScenarioProjection(first.snapshot);
+    const secondProjection = getScenarioProjection(second.snapshot);
+    const normalizedFirst = getScenarioProjection({ ...first.snapshot, shiftHours: first.snapshot.shiftHours, breakMinutes: first.snapshot.breakMinutes, availability: first.snapshot.availability, yieldRate: first.snapshot.yieldRate, target: first.snapshot.target });
+    const normalizedSecond = getScenarioProjection({ ...second.snapshot, shiftHours: first.snapshot.shiftHours, breakMinutes: first.snapshot.breakMinutes, availability: first.snapshot.availability, yieldRate: first.snapshot.yieldRate, target: first.snapshot.target });
+    const rows = [
+      ["Factory scenario comparison"],
+      ["Metric", first.name, second.name, "Second minus first"],
+      ["Good vehicles / shift", firstProjection.good, secondProjection.good, secondProjection.good - firstProjection.good],
+      ["Target", first.snapshot.target, second.snapshot.target, second.snapshot.target - first.snapshot.target],
+      ["Target gap", firstProjection.gap, secondProjection.gap, secondProjection.gap - firstProjection.gap],
+      ["Bottleneck station", firstProjection.bottleneckName, secondProjection.bottleneckName, ""],
+      ["Bottleneck cycle (sec)", firstProjection.bottleneck, secondProjection.bottleneck, secondProjection.bottleneck - firstProjection.bottleneck],
+      ["Shift hours", first.snapshot.shiftHours, second.snapshot.shiftHours, second.snapshot.shiftHours - first.snapshot.shiftHours],
+      ["Break minutes", first.snapshot.breakMinutes, second.snapshot.breakMinutes, second.snapshot.breakMinutes - first.snapshot.breakMinutes],
+      ["Availability (%)", first.snapshot.availability, second.snapshot.availability, second.snapshot.availability - first.snapshot.availability],
+      ["Quality yield (%)", first.snapshot.yieldRate, second.snapshot.yieldRate, second.snapshot.yieldRate - first.snapshot.yieldRate],
+      ["Normalized good vehicles / shift (first scenario conditions)", normalizedFirst.good, normalizedSecond.good, normalizedSecond.good - normalizedFirst.good],
+      [],
+      ["Station cycle-time comparison (seconds)", first.name, second.name, "Second minus first"],
+      ...initialStations.map((station, index) => [station.name, first.snapshot.cycleTimes[index], second.snapshot.cycleTimes[index], second.snapshot.cycleTimes[index] - first.snapshot.cycleTimes[index]])
+    ];
+    const csv = rows.map(row => row.map(value => {
+      const cell = String(value ?? "");
+      return /[",\\n]/.test(cell) ? '"' + cell.replace(/"/g, '""') + '"' : cell;
+    }).join(",")).join("\\n");
+    const blob = new Blob(["\\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const safeFirst = first.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "scenario-a";
+    const safeSecond = second.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "scenario-b";
+    link.href = url;
+    link.download = `factory-comparison-${safeFirst}-vs-${safeSecond}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(link.href);
+    setScenarioSaveMessage(`Exported the comparison between “${first.name}” and “${second.name}” as CSV.`);
+  }
+
   function loadNamedScenario(item) {
     if (!item || !isValidSavedScenario(item.snapshot)) return;
     const snapshot = item.snapshot;
@@ -873,6 +917,7 @@ export default function AssemblyLineSimulator() {
                     const normalizedDifference = normalizedSecond.good - normalizedFirst.good;
                     return <>
                       <p><strong>{difference > 0 ? `+${difference}` : difference} good vehicles/shift</strong> for {second.name} compared with {first.name}{percentDifference !== null ? ` (${percentDifference > 0 ? "+" : ""}${percentDifference.toFixed(1)}%)` : ""}.</p>
+                      <button type="button" className="line-reset factory-comparison-export" onClick={() => exportScenarioComparisonCsv(first, second)}>Export comparison CSV</button>
                       <small className={sameAssumptions ? "factory-scenario-comparison-fair" : "factory-scenario-comparison-warning"} role="status">{sameAssumptions ? "Like-for-like comparison: both scenarios use the same shift and production assumptions." : "Different assumptions detected. Output difference includes changes to shift time, breaks, availability, quality yield or target; compare cycle times separately for a fair line-performance assessment."}</small>
                       <div className="factory-scenario-normalized">
                         <strong>Cycle-time-only comparison</strong>
