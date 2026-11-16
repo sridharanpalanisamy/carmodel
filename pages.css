@@ -2047,3 +2047,11 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-scenario-target.is-met{border-left-color:#398363}
 .factory-scenario-target.is-met>b{color:#398363}
 @media(max-width:430px){.factory-scenario-target{grid-template-columns:1fr;gap:5px}.factory-scenario-target>small{grid-column:auto}}
+
+/* Paired slider and exact-value input for proposed station cycle times. */
+.factory-proposed-cycle-control{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;min-width:0}
+.factory-proposed-cycle-slider{width:100%;min-width:0;accent-color:var(--orange);cursor:pointer}
+.factory-proposed-cycle-number{display:flex;align-items:center;gap:5px}
+.factory-proposed-cycle-number input{width:64px;min-width:0;padding:6px 7px;border:1px solid #cfc8cd;border-radius:3px;background:#fff;color:var(--ink);font:700 11px var(--sans);font-variant-numeric:tabular-nums;text-align:right}
+.factory-proposed-cycle-number input:focus-visible,.factory-proposed-cycle-slider:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+@media(max-width:380px){.factory-proposed-cycle-control{grid-template-columns:minmax(0,1fr) auto;gap:6px}.factory-proposed-cycle-number input{width:56px}}
