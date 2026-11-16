@@ -115,7 +115,7 @@ export default function AssemblyLineSimulator() {
             <div><span>OUTPUT VS TARGET</span><strong>{target > 0 ? Math.min(100, result.goodUnits / target * 100).toFixed(0) : 0}%</strong></div>
             <div className="line-target-track"><i style={{ width: `${target > 0 ? clamp(result.goodUnits / target * 100, 0, 100) : 0}%` }}/></div>
           </div>
-          <div className="factory-live-charts grid grid-cols-1 xl:grid-cols-2 gap-3 mt-5">
+          <div className="factory-live-charts grid grid-cols-1 2xl:grid-cols-2 gap-3 mt-5">
             <section className="factory-chart-card min-w-0" aria-label="Station cycle time radar chart">
               <div className="factory-chart-heading"><div><span>CHART 01 / LINE BALANCE</span><h3>Station cycle times</h3></div><small>Seconds / vehicle</small></div>
               <div className="factory-radar-wrap">
@@ -135,14 +135,14 @@ export default function AssemblyLineSimulator() {
               </div>
               <p className="factory-chart-caption">Each ring shows its value relative to the larger of ideal capacity and the selected target.</p>
             </section>
-            <section className="factory-chart-card factory-efficiency-card min-w-0 xl:col-span-2" aria-label="Availability and quality yield chart">
+            <section className="factory-chart-card factory-efficiency-card min-w-0 2xl:col-span-2" aria-label="Availability and quality yield chart">
               <div className="factory-chart-heading"><div><span>CHART 03 / OPERATING CONDITIONS</span><h3>Availability & quality yield</h3></div><small>Current assumptions</small></div>
               <div className="factory-ratio-charts">
                 <div className="factory-ratio-item"><div className="factory-ratio-ring availability" role="img" aria-label={`Line availability ${availability} percent`} style={{"--ratio":availability+"%"}}><strong>{availability}%</strong></div><div><b>Line availability</b><p>Share of scheduled production time assumed available to run.</p></div></div>
                 <div className="factory-ratio-item"><div className="factory-ratio-ring yield" role="img" aria-label={`Quality yield ${yieldRate} percent`} style={{"--ratio":yieldRate+"%"}}><strong>{yieldRate}%</strong></div><div><b>Quality yield</b><p>Share of produced units assumed to pass quality checks.</p></div></div>
               </div>
             </section>
-            <section className="factory-chart-card factory-loss-card min-w-0 xl:col-span-2" aria-label="Production loss doughnut chart">
+            <section className="factory-chart-card factory-loss-card min-w-0 2xl:col-span-2" aria-label="Production loss doughnut chart">
               <div className="factory-chart-heading"><div><span>CHART 04 / LOSS ANALYSIS</span><h3>Where does capacity go?</h3></div><small>Vehicles / shift</small></div>
               <div className="factory-loss-layout">
                 <div className="factory-loss-donut" role="img" aria-label={`Capacity split: ${Math.max(0,result.ideal-result.available)} availability loss, ${Math.max(0,result.available-result.goodUnits)} quality loss, ${result.goodUnits} good output`} style={{"--availability-share":(result.ideal>0?Math.max(0,result.ideal-result.available)/result.ideal*100:0)+"%","--quality-share":(result.ideal>0?Math.max(0,result.available-result.goodUnits)/result.ideal*100:0)+"%"}}><div><strong>{result.ideal.toLocaleString("en-IN")}</strong><span>ideal units</span></div></div>
