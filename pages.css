@@ -2187,3 +2187,8 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-scenario-delete-confirm small{width:100%;font-size:10px;font-weight:700;color:var(--muted)}
 .factory-scenario-delete-action{color:#a52d27!important;border-color:rgba(190,65,55,.35)!important}
 @media(max-width:620px){.factory-scenario-delete-confirm{width:100%}.factory-scenario-delete-confirm button{flex:1}}
+
+.factory-scenario-clear-search{justify-self:start;min-height:32px;padding:6px 10px;font-size:10px}
+.factory-scenario-empty-search{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin:10px 0;padding:12px;border:1px dashed var(--line);border-radius:8px;color:var(--muted);font-size:12px}
+.factory-scenario-empty-search p{margin:0}
+@media(max-width:620px){.factory-scenario-empty-search{align-items:stretch;flex-direction:column}.factory-scenario-empty-search button{width:100%}}
