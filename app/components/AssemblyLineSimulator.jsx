@@ -85,7 +85,8 @@ export default function AssemblyLineSimulator() {
       available,
       goodUnits,
       gap: goodUnits - target,
-      hourly: netMinutes > 0 ? goodUnits / (netMinutes / 60) : 0
+      hourly: netMinutes > 0 ? goodUnits / (netMinutes / 60) : 0,
+      taktSeconds: target > 0 ? netMinutes * 60 / target : 0
     };
   }, [stations, shiftHours, breakMinutes, availability, yieldRate, target]);
 
@@ -109,9 +110,10 @@ export default function AssemblyLineSimulator() {
       ["Available capacity", result.available],
       ["Line availability (%)", availability],
       ["Quality yield (%)", yieldRate],
+      ["Target takt time (seconds per vehicle)", result.taktSeconds.toFixed(1)],
       [],
-      ["Station", "Cycle time (seconds)", "Bottleneck"],
-      ...stations.map(station => [station.name, station.seconds, station.seconds === result.bottleneck ? "Yes" : "No"])
+      ["Station", "Cycle time (seconds)", "Bottleneck", "Target takt status"],
+      ...stations.map(station => [station.name, station.seconds, station.seconds === result.bottleneck ? "Yes" : "No", station.seconds <= result.taktSeconds ? "Within takt" : "Exceeds takt"])
     ];
     const csv = rows.map(row => row.map(value => {
       const text = String(value ?? "");
@@ -206,6 +208,7 @@ export default function AssemblyLineSimulator() {
             <div><span>Ideal line capacity</span><strong>{result.ideal} vehicles</strong></div>
             <div><span>After availability</span><strong>{result.available} vehicles</strong></div>
             <div><span>Good output per hour</span><strong>{result.hourly.toFixed(1)} vehicles</strong></div>
+            <div><span>Target takt time</span><strong>{result.taktSeconds.toFixed(1)} sec / vehicle</strong></div>
           </div>
           <div className="line-target-meter">
             <div><span>OUTPUT VS TARGET</span><strong>{target > 0 ? Math.min(100, result.goodUnits / target * 100).toFixed(0) : 0}%</strong></div>
@@ -287,19 +290,20 @@ export default function AssemblyLineSimulator() {
                     <tr><th scope="row">Availability loss</th><td>{Math.max(0,result.ideal-result.available).toLocaleString("en-IN")} vehicles</td><td>Ideal capacity − available capacity</td></tr>
                     <tr><th scope="row">Quality loss</th><td>{Math.max(0,result.available-result.goodUnits).toLocaleString("en-IN")} vehicles</td><td>Available capacity − good output</td></tr>
                     <tr><th scope="row">Target variance</th><td>{result.gap > 0 ? "+" : ""}{result.gap.toLocaleString("en-IN")} vehicles</td><td>Estimated good output − shift target</td></tr>
+                    <tr><th scope="row">Target takt time</th><td>{result.taktSeconds.toFixed(1)} seconds / vehicle</td><td>Net production seconds ÷ shift target; required pace to meet demand</td></tr>
                   </tbody>
                 </table>
               </div>
               <div className="factory-data-table-heading factory-station-table-heading"><div><span>STATION DETAIL</span><strong>Cycle-time comparison</strong></div><small>Longest cycle time sets line pace</small></div>
               <div className="factory-data-table-scroll" role="region" aria-label="Scrollable station cycle time table" tabIndex="0">
                 <table className="factory-data-table">
-                  <thead><tr><th scope="col">Station</th><th scope="col">Cycle time</th><th scope="col">Line status</th></tr></thead>
-                  <tbody>{stations.map(station => <tr key={station.name}><th scope="row">{station.name}</th><td>{station.seconds} sec / vehicle</td><td>{station.seconds === result.bottleneck ? <span className="factory-bottleneck-label">Bottleneck</span> : "Within current line pace"}</td></tr>)}</tbody>
+                  <thead><tr><th scope="col">Station</th><th scope="col">Cycle time</th><th scope="col">Target pace check</th></tr></thead>
+                  <tbody>{stations.map(station => <tr key={station.name}><th scope="row">{station.name}</th><td>{station.seconds} sec / vehicle</td><td>{station.seconds > result.taktSeconds ? <span className="factory-bottleneck-label">Exceeds takt</span> : station.seconds === result.bottleneck ? <span className="factory-bottleneck-label">Bottleneck · within takt</span> : "Within takt"}</td></tr>)}</tbody>
                 </table>
               </div>
             </section>
           )}
-          <p className="line-sim-tip">{result.gap < 0 ? `The ${result.bottleneckName} station limits the line. Reducing its cycle time or improving line balance can increase theoretical output.` : "The estimated good output meets the selected shift target under these assumptions."}</p>
+          <p className="line-sim-tip">{result.taktSeconds > 0 && result.bottleneck > result.taktSeconds ? `The bottleneck cycle time is ${(result.bottleneck - result.taktSeconds).toFixed(1)} seconds slower than target takt. The line needs a faster cycle or more net production time to meet the selected target.` : "All station cycle times are at or below target takt under the current assumptions."}</p>
         </aside>
       </div>
       <p className="line-sim-disclaimer">Simplified educational model. It assumes a serial line whose throughput is limited by the slowest station. Real factories also account for buffers, parallel workstations, changeovers, downtime patterns, material shortages, rework, staffing and product mix. Results are estimates, not Ford plant data or production guarantees.</p>
