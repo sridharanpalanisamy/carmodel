@@ -116,25 +116,24 @@ export default function AssemblyLineSimulator() {
             <div className="line-target-track"><i style={{ width: `${target > 0 ? clamp(result.goodUnits / target * 100, 0, 100) : 0}%` }}/></div>
           </div>
           <div className="factory-live-charts grid grid-cols-1 xl:grid-cols-2 gap-3 mt-5">
-            <section className="factory-chart-card min-w-0" aria-label="Station cycle time bar chart">
+            <section className="factory-chart-card min-w-0" aria-label="Station cycle time radar chart">
               <div className="factory-chart-heading"><div><span>CHART 01 / LINE BALANCE</span><h3>Station cycle times</h3></div><small>Seconds / vehicle</small></div>
-              <div className="factory-cycle-chart">
-                {stations.map((station,index)=><div className="factory-cycle-row" key={station.name}>
-                  <span title={station.name}>{station.name}</span>
-                  <div className="factory-cycle-track"><i className={station.seconds===result.bottleneck?"is-bottleneck":""} style={{width:(station.seconds/180*100)+"%"}} /></div>
-                  <b>{station.seconds}s</b>
-                </div>)}
+              <div className="factory-radar-wrap">
+                <svg className="factory-radar" viewBox="0 0 320 250" role="img" aria-label="Radar plot comparing the cycle time of each production station">
+                  {[25,50,75,100].map(level=><polygon key={level} points={stations.map((_,i)=>{const a=(-Math.PI/2)+(i*2*Math.PI/stations.length);const r=level*0.78;return (160+Math.cos(a)*r)+","+(118+Math.sin(a)*r)}).join(" ")} />)}
+                  {stations.map((station,i)=>{const a=(-Math.PI/2)+(i*2*Math.PI/stations.length);return <line key={station.name} x1="160" y1="118" x2={160+Math.cos(a)*78} y2={118+Math.sin(a)*78}/>})}
+                  <polygon className="factory-radar-area" points={stations.map((station,i)=>{const a=(-Math.PI/2)+(i*2*Math.PI/stations.length);const r=station.seconds/180*78;return (160+Math.cos(a)*r)+","+(118+Math.sin(a)*r)}).join(" ")}/>
+                  {stations.map((station,i)=>{const a=(-Math.PI/2)+(i*2*Math.PI/stations.length);const r=station.seconds/180*78;const x=160+Math.cos(a)*r;const y=118+Math.sin(a)*r;const lx=160+Math.cos(a)*105;const ly=118+Math.sin(a)*105;return <g key={station.name}><circle className={station.seconds===result.bottleneck?"factory-radar-point bottleneck":"factory-radar-point"} cx={x} cy={y} r="4"/><text x={lx} y={ly} textAnchor={Math.abs(Math.cos(a))<.25?"middle":Math.cos(a)>0?"start":"end"}>{station.name}</text></g>})}
+                </svg>
               </div>
-              <p className="factory-chart-caption">The longest cycle time sets the theoretical pace of this simplified serial line.</p>
+              <p className="factory-chart-caption">Each axis represents one station. Points farther from the centre have longer cycle times; the highlighted point is the bottleneck.</p>
             </section>
-            <section className="factory-chart-card min-w-0" aria-label="Production output comparison chart">
-              <div className="factory-chart-heading"><div><span>CHART 02 / OUTPUT CAPACITY</span><h3>Production funnel</h3></div><small>Vehicles / shift</small></div>
-              <div className="factory-output-chart">
-                {[{label:"Ideal",value:result.ideal,color:"ideal"},{label:"Available",value:result.available,color:"available"},{label:"Good units",value:result.goodUnits,color:"good"},{label:"Target",value:target,color:"target"}].map(item=><div className="factory-output-column" key={item.label}>
-                  <b>{item.value.toLocaleString("en-IN")}</b><div className="factory-output-track"><i className={item.color} style={{height:(Math.max(item.value,target,result.ideal,1)>0?item.value/Math.max(item.value,target,result.ideal,1)*100:0)+"%"}} /></div><span>{item.label}</span>
-                </div>)}
+            <section className="factory-chart-card min-w-0" aria-label="Production capacity radial comparison">
+              <div className="factory-chart-heading"><div><span>CHART 02 / OUTPUT CAPACITY</span><h3>Capacity indicators</h3></div><small>Vehicles / shift</small></div>
+              <div className="factory-capacity-rings">
+                {[{label:"Ideal",value:result.ideal,color:"ideal"},{label:"Available",value:result.available,color:"available"},{label:"Good units",value:result.goodUnits,color:"good"},{label:"Target",value:target,color:"target"}].map(item=><div className="factory-capacity-item" key={item.label}><div className={`factory-capacity-ring ${item.color}`} style={{"--ratio":(Math.max(result.ideal,target,1)>0?clamp(item.value/Math.max(result.ideal,target,1)*100,0,100):0)+"%"}}><strong>{item.value.toLocaleString("en-IN")}</strong></div><span>{item.label}</span></div>)}
               </div>
-              <p className="factory-chart-caption">Compare ideal capacity with availability losses, quality yield and the selected target.</p>
+              <p className="factory-chart-caption">Each ring shows its value relative to the larger of ideal capacity and the selected target.</p>
             </section>
             <section className="factory-chart-card factory-efficiency-card min-w-0 xl:col-span-2" aria-label="Availability and quality yield chart">
               <div className="factory-chart-heading"><div><span>CHART 03 / OPERATING CONDITIONS</span><h3>Availability & quality yield</h3></div><small>Current assumptions</small></div>
@@ -143,22 +142,17 @@ export default function AssemblyLineSimulator() {
                 <div className="factory-ratio-item"><div className="factory-ratio-ring yield" role="img" aria-label={`Quality yield ${yieldRate} percent`} style={{"--ratio":yieldRate+"%"}}><strong>{yieldRate}%</strong></div><div><b>Quality yield</b><p>Share of produced units assumed to pass quality checks.</p></div></div>
               </div>
             </section>
-            <section className="factory-chart-card factory-loss-card min-w-0 xl:col-span-2" aria-label="Production loss breakdown chart">
+            <section className="factory-chart-card factory-loss-card min-w-0 xl:col-span-2" aria-label="Production loss doughnut chart">
               <div className="factory-chart-heading"><div><span>CHART 04 / LOSS ANALYSIS</span><h3>Where does capacity go?</h3></div><small>Vehicles / shift</small></div>
-              <div className="factory-loss-chart">
-                {[
-                  {label:"Availability loss",value:Math.max(0,result.ideal-result.available),tone:"availability"},
-                  {label:"Quality loss",value:Math.max(0,result.available-result.goodUnits),tone:"quality"},
-                  {label:"Good output",value:result.goodUnits,tone:"output"}
-                ].map(item=><div className="factory-loss-row" key={item.label}>
-                  <span>{item.label}</span>
-                  <div className="factory-loss-track"><i className={item.tone} style={{width:(result.ideal>0?item.value/result.ideal*100:0)+"%"}} /></div>
-                  <b>{item.value.toLocaleString("en-IN")}</b>
-                </div>)}
+              <div className="factory-loss-layout">
+                <div className="factory-loss-donut" role="img" aria-label={`Capacity split: ${Math.max(0,result.ideal-result.available)} availability loss, ${Math.max(0,result.available-result.goodUnits)} quality loss, ${result.goodUnits} good output`} style={{"--availability-share":(result.ideal>0?Math.max(0,result.ideal-result.available)/result.ideal*100:0)+"%","--quality-share":(result.ideal>0?Math.max(0,result.available-result.goodUnits)/result.ideal*100:0)+"%"}}><div><strong>{result.ideal.toLocaleString("en-IN")}</strong><span>ideal units</span></div></div>
+                <div className="factory-loss-legend">
+                  {[{label:"Availability loss",value:Math.max(0,result.ideal-result.available),tone:"availability"},{label:"Quality loss",value:Math.max(0,result.available-result.goodUnits),tone:"quality"},{label:"Good output",value:result.goodUnits,tone:"output"}].map(item=><div key={item.label}><i className={item.tone}/><span>{item.label}</span><b>{item.value.toLocaleString("en-IN")}</b></div>)}
+                </div>
               </div>
               <p className="factory-chart-caption">Losses are calculated from the simulator's ideal capacity, availability and quality-yield assumptions. They are estimates, not measured factory data.</p>
             </section>
-          </div>
+          </div>iv>
           <p className="line-sim-tip">{result.gap < 0 ? `The ${result.bottleneckName} station limits the line. Reducing its cycle time or improving line balance can increase theoretical output.` : "The estimated good output meets the selected shift target under these assumptions."}</p>
         </aside>
       </div>
