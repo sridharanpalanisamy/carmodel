@@ -305,6 +305,60 @@ export default function AssemblyLineSimulator() {
     setScenarioSaveMessage(`Exported “${item.name}” with production assumptions and all station cycle times as CSV.`);
   }
 
+
+  function exportNamedScenarioHtml(item) {
+    if (!item || !isValidSavedScenario(item.snapshot)) {
+      setScenarioSaveMessage("This saved scenario is invalid and cannot be exported.");
+      return;
+    }
+    const snapshot = item.snapshot;
+    const projection = getScenarioProjection(snapshot);
+    const escapeHtml = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    const stationRows = initialStations.map((station, index) => `<tr><th scope="row">${escapeHtml(station.name)}</th><td>${snapshot.cycleTimes[index]} s</td></tr>`).join("");
+    const html = `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${escapeHtml(item.name)} · Factory scenario</title>
+<style>
+:root{color-scheme:light;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#172b3a;background:#f4f7f8}
+body{margin:0;padding:32px 16px}.report{max-width:820px;margin:auto;background:#fff;border:1px solid #dce5e8;border-radius:16px;padding:clamp(20px,4vw,40px);box-shadow:0 8px 28px #17334412}
+h1{font-size:clamp(24px,4vw,34px);margin:0 0 8px;overflow-wrap:anywhere}h2{font-size:19px;margin:30px 0 12px;color:#245c62}
+.meta,.notice{color:#526672;font-size:14px;line-height:1.6}.notice{padding:12px 14px;background:#f0f6f6;border-radius:9px;margin:18px 0}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.metric{border:1px solid #dce5e8;border-radius:12px;padding:16px}.metric span{display:block;color:#60727b;font-size:13px}.metric strong{display:block;font-size:25px;margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #e5ecee}.print{border:0;background:#245c62;color:white;border-radius:8px;padding:10px 16px;font:inherit;cursor:pointer;margin:0 0 20px}
+.table-wrap{overflow-x:auto}.foot{margin-top:28px;color:#667780;font-size:12px}
+@media(max-width:600px){body{padding:12px 8px}.report{padding:18px 14px}.cards{grid-template-columns:1fr}}
+@media print{body{padding:0;background:white}.report{border:0;box-shadow:none;max-width:none;padding:0}.print{display:none}h2{break-after:avoid}tr{break-inside:avoid}}
+</style></head><body><main class="report">
+<button class="print" type="button" onclick="window.print()">Print report</button>
+<h1>${escapeHtml(item.name)}</h1>
+<p class="meta">Factory improvement scenario · Saved ${escapeHtml(new Date(snapshot.savedAt).toLocaleString())}</p>
+<div class="notice">${projection.gap >= 0 ? `Target achieved: ${projection.gap} good vehicles above the shift target.` : `Projected output is ${Math.abs(projection.gap)} good vehicles below the shift target.`}</div>
+<div class="cards">
+<div class="metric"><span>Projected good vehicles / shift</span><strong>${projection.good.toLocaleString("en-IN")}</strong></div>
+<div class="metric"><span>Production target / shift</span><strong>${snapshot.target.toLocaleString("en-IN")}</strong></div>
+<div class="metric"><span>Bottleneck station</span><strong style="font-size:19px">${escapeHtml(projection.bottleneckName)}</strong></div>
+<div class="metric"><span>Bottleneck cycle time</span><strong>${projection.bottleneck} s</strong></div>
+</div>
+<h2>Operating assumptions</h2><div class="table-wrap"><table><tbody>
+<tr><th>Shift hours</th><td>${snapshot.shiftHours}</td></tr><tr><th>Break minutes</th><td>${snapshot.breakMinutes}</td></tr>
+<tr><th>Availability</th><td>${snapshot.availability}%</td></tr><tr><th>Quality yield</th><td>${snapshot.yieldRate}%</td></tr>
+</tbody></table></div>
+<h2>Station cycle times</h2><div class="table-wrap"><table><thead><tr><th>Station</th><th>Cycle time</th></tr></thead><tbody>${stationRows}</tbody></table></div>
+<p class="foot">Educational planning estimate only. Validate projections against actual factory production data before making operational decisions.</p>
+</main></body></html>`;
+    const blob = new Blob(["\\uFEFF", html], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const safeName = item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "factory-scenario";
+    link.href = url;
+    link.download = `${safeName}-report.html`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setScenarioSaveMessage(`Exported “${item.name}” as a standalone HTML scenario report.`);
+  }
+
   function exportScenarioComparisonCsv(first, second) {
     if (!first || !second || !isValidSavedScenario(first.snapshot) || !isValidSavedScenario(second.snapshot)) {
       setScenarioSaveMessage("Select two valid saved scenarios before exporting their comparison.");
@@ -1142,6 +1196,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                     {renamingScenario !== item.name && <button type="button" className="line-reset" onClick={() => { setRenamingScenario(item.name); setRenameScenarioValue(item.name); }}>Rename</button>}
                     <button type="button" className="line-reset" onClick={() => exportNamedScenarioJson(item)}>Export JSON</button>
                     <button type="button" className="line-reset" onClick={() => exportNamedScenarioCsv(item)}>Export CSV</button>
+                    <button type="button" className="line-reset" onClick={() => exportNamedScenarioHtml(item)}>Export report</button>
                     <button type="button" className="line-reset" onClick={() => loadNamedScenario(item)}>Load</button>
                     <button type="button" className="line-reset" onClick={() => duplicateNamedScenario(item)} disabled={scenarioLibrary.length >= 10} aria-label={`Duplicate ${item.name}`}>Duplicate</button>
                     {pendingDeleteScenario === item.name ? <>
