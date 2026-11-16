@@ -61,7 +61,7 @@ export default function FactoryProcessExplorer() {
       </div>
       <div className="factory-flow-header"><span>PRODUCTION FLOW MAP</span><small>Select any node to inspect that manufacturing unit</small></div>
       <div className="factory-flow-scroll">
-        <div className="factory-flow-track" role="group" aria-label="Choose a vehicle manufacturing stage">
+        <div className="factory-flow-track grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-7 gap-x-2 gap-y-5 min-w-0" role="group" aria-label="Choose a vehicle manufacturing stage">
           <svg className="factory-flow-connectors" viewBox="0 0 1000 272" preserveAspectRatio="none" aria-hidden="true">
             <defs><marker id="factoryFlowArrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1L7 4.5L1 8" fill="none" stroke="#9a8981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></marker></defs>
             <g fill="none" stroke="#b8aaa4" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" markerEnd="url(#factoryFlowArrow)">
