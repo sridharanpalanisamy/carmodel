@@ -530,6 +530,92 @@ export default function AssemblyLineSimulator() {
     setScenarioSaveMessage(`Exported the comparison between “${first.name}” and “${second.name}” as a Markdown report.`);
   }
 
+
+  function exportScenarioComparisonHtml(first, second) {
+    if (!first || !second || !isValidSavedScenario(first.snapshot) || !isValidSavedScenario(second.snapshot)) {
+      setScenarioSaveMessage("Select two valid saved scenarios before exporting their comparison.");
+      return;
+    }
+    const a = first.snapshot;
+    const b = second.snapshot;
+    const projectionA = getScenarioProjection(a);
+    const projectionB = getScenarioProjection(b);
+    const conditions = { shiftHours: a.shiftHours, breakMinutes: a.breakMinutes, availability: a.availability, yieldRate: a.yieldRate, target: a.target };
+    const normalizedA = getScenarioProjection({ ...a, ...conditions });
+    const normalizedB = getScenarioProjection({ ...b, ...conditions });
+    const sameAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate", "target"].every(key => a[key] === b[key]);
+    const escapeHtml = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    const signed = value => `${value > 0 ? "+" : ""}${value}`;
+    const stationRows = initialStations.map((station, index) => {
+      const delta = b.cycleTimes[index] - a.cycleTimes[index];
+      return `<tr><th scope="row">${escapeHtml(station.name)}</th><td>${a.cycleTimes[index]} s</td><td>${b.cycleTimes[index]} s</td><td class="${delta < 0 ? "better" : delta > 0 ? "worse" : ""}">${signed(delta)} s</td></tr>`;
+    }).join("");
+    const html = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Factory scenario comparison</title>
+<style>
+:root{color-scheme:light;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:#172b3a;background:#f4f7f8}
+body{margin:0;padding:32px 16px}.report{max-width:960px;margin:auto;background:#fff;border:1px solid #dce5e8;border-radius:16px;padding:clamp(20px,4vw,40px);box-shadow:0 8px 28px #17334412}
+h1{font-size:clamp(24px,4vw,34px);margin:0 0 8px}h2{font-size:19px;margin:30px 0 12px;color:#245c62}
+.meta,.notice{color:#526672;font-size:14px;line-height:1.6}.notice{padding:12px 14px;background:#f0f6f6;border-radius:9px;margin:18px 0}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.metric{border:1px solid #dce5e8;border-radius:12px;padding:16px}.metric span{display:block;color:#60727b;font-size:13px}.metric strong{display:block;font-size:25px;margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #e5ecee}thead th{background:#f2f6f7;color:#405661}.better{color:#087b62;font-weight:700}.worse{color:#b4533c;font-weight:700}
+.table-wrap{overflow-x:auto}.foot{margin-top:28px;color:#667780;font-size:12px}.print{border:0;background:#245c62;color:white;border-radius:8px;padding:10px 16px;font:inherit;cursor:pointer;margin:0 0 20px}
+@media(max-width:600px){body{padding:12px 8px}.report{padding:18px 14px}.cards{grid-template-columns:1fr}table{min-width:520px}}
+@media print{body{padding:0;background:white}.report{border:0;box-shadow:none;max-width:none;padding:0}.print{display:none}h2{break-after:avoid}tr{break-inside:avoid}}
+</style>
+</head>
+<body><main class="report">
+<button class="print" type="button" onclick="window.print()">Print report</button>
+<h1>Factory Scenario Comparison</h1>
+<p class="meta">Exported ${escapeHtml(new Date().toLocaleString())}<br>Scenario A: <strong>${escapeHtml(first.name)}</strong> · Scenario B: <strong>${escapeHtml(second.name)}</strong></p>
+<div class="notice">${sameAssumptions ? "Like-for-like comparison: both scenarios use the same operating assumptions." : "Different operating assumptions detected. The overall output difference includes changes to shift time, breaks, availability, quality yield or target."}</div>
+<h2>Production summary</h2>
+<div class="cards">
+<div class="metric"><span>${escapeHtml(first.name)} · Good vehicles / shift</span><strong>${projectionA.good.toLocaleString("en-IN")}</strong></div>
+<div class="metric"><span>${escapeHtml(second.name)} · Good vehicles / shift</span><strong>${projectionB.good.toLocaleString("en-IN")}</strong></div>
+</div>
+<div class="table-wrap"><table><thead><tr><th>Metric</th><th>Scenario A</th><th>Scenario B</th><th>B − A</th></tr></thead><tbody>
+<tr><th>Good vehicles / shift</th><td>${projectionA.good}</td><td>${projectionB.good}</td><td>${signed(projectionB.good-projectionA.good)}</td></tr>
+<tr><th>Target</th><td>${a.target}</td><td>${b.target}</td><td>${signed(b.target-a.target)}</td></tr>
+<tr><th>Target gap</th><td>${projectionA.good-a.target}</td><td>${projectionB.good-b.target}</td><td>${signed((projectionB.good-b.target)-(projectionA.good-a.target))}</td></tr>
+<tr><th>Bottleneck cycle</th><td>${projectionA.bottleneck} s</td><td>${projectionB.bottleneck} s</td><td>${signed(projectionB.bottleneck-projectionA.bottleneck)} s</td></tr>
+</tbody></table></div>
+<h2>Operating assumptions</h2>
+<div class="table-wrap"><table><thead><tr><th>Setting</th><th>Scenario A</th><th>Scenario B</th></tr></thead><tbody>
+<tr><th>Shift hours</th><td>${a.shiftHours}</td><td>${b.shiftHours}</td></tr>
+<tr><th>Break minutes</th><td>${a.breakMinutes}</td><td>${b.breakMinutes}</td></tr>
+<tr><th>Availability</th><td>${a.availability}%</td><td>${b.availability}%</td></tr>
+<tr><th>Quality yield</th><td>${a.yieldRate}%</td><td>${b.yieldRate}%</td></tr>
+</tbody></table></div>
+<h2>Cycle-time-only comparison</h2>
+<p class="meta">Both scenarios recalculated using Scenario A conditions: ${conditions.shiftHours} h shift, ${conditions.breakMinutes} min breaks, ${conditions.availability}% availability and ${conditions.yieldRate}% quality yield.</p>
+<div class="cards">
+<div class="metric"><span>Scenario A normalized output</span><strong>${normalizedA.good.toLocaleString("en-IN")}</strong></div>
+<div class="metric"><span>Scenario B normalized output</span><strong>${normalizedB.good.toLocaleString("en-IN")}</strong></div>
+</div>
+<p><strong>Normalized difference (B − A): ${signed(normalizedB.good-normalizedA.good)} good vehicles / shift</strong></p>
+<h2>Station cycle-time details</h2>
+<div class="table-wrap"><table><thead><tr><th>Station</th><th>Scenario A</th><th>Scenario B</th><th>B − A</th></tr></thead><tbody>${stationRows}</tbody></table></div>
+<p class="foot">Educational planning estimate only. Validate projections against actual factory production data before making operational decisions.</p>
+</main></body></html>`;
+    const blob = new Blob(["\\uFEFF", html], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const safeFirst = first.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "scenario-a";
+    const safeSecond = second.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "scenario-b";
+    link.href = url;
+    link.download = `factory-comparison-${safeFirst}-vs-${safeSecond}.html`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setScenarioSaveMessage(`Exported the comparison between “${first.name}” and “${second.name}” as a standalone HTML report.`);
+  }
+
   function loadNamedScenario(item) {
     if (!item || !isValidSavedScenario(item.snapshot)) return;
     const snapshot = item.snapshot;
@@ -1102,6 +1188,7 @@ export default function AssemblyLineSimulator() {
                       <button type="button" className="line-reset factory-comparison-export" onClick={() => exportScenarioComparisonCsv(first, second)}>Export comparison CSV</button>
                       <button type="button" className="line-reset factory-comparison-export" onClick={() => exportScenarioComparisonJson(first, second)}>Export comparison JSON</button>
                       <button type="button" className="line-reset factory-comparison-export" onClick={() => exportScenarioComparisonMarkdown(first, second)}>Export comparison Markdown</button>
+                      <button type="button" className="line-reset factory-comparison-export" onClick={() => exportScenarioComparisonHtml(first, second)}>Export comparison HTML</button>
                       <button type="button" className="line-reset factory-comparison-export" onClick={() => copyScenarioComparisonSummary(first, second)}>Copy comparison summary</button>
                       <button type="button" className="line-reset factory-comparison-export" onClick={() => window.print()}>Print comparison report</button>
                       <small className={sameAssumptions ? "factory-scenario-comparison-fair" : "factory-scenario-comparison-warning"} role="status">{sameAssumptions ? "Like-for-like comparison: both scenarios use the same shift and production assumptions." : "Different assumptions detected. Output difference includes changes to shift time, breaks, availability, quality yield or target; compare cycle times separately for a fair line-performance assessment."}</small>
