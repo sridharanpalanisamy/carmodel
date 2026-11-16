@@ -1140,6 +1140,10 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
       if (scenarioSort === "name") return a.name.localeCompare(b.name);
       if (scenarioSort === "output") return getScenarioProjection(b.snapshot).good - getScenarioProjection(a.snapshot).good;
       if (scenarioSort === "target") return getScenarioProjection(b.snapshot).gap - getScenarioProjection(a.snapshot).gap;
+      if (scenarioSort === "attainment") {
+        const attainmentDifference = getScenarioProjection(b.snapshot).attainmentPercent - getScenarioProjection(a.snapshot).attainmentPercent;
+        return attainmentDifference || getScenarioProjection(b.snapshot).good - getScenarioProjection(a.snapshot).good;
+      }
       return Date.parse(b.snapshot.savedAt) - Date.parse(a.snapshot.savedAt);
     });
 
@@ -1280,7 +1284,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                     <input id="factoryScenarioSearch" type="search" value={scenarioSearch} onChange={event => setScenarioSearch(event.target.value)} placeholder="Search scenario names..." />
                     {scenarioSearch && <button type="button" className="line-reset factory-scenario-clear-search" onClick={() => setScenarioSearch("")}>Clear search</button>}
                     <small>Showing {visibleScenarioLibrary.length} of {scenarioLibrary.length} saved scenarios</small>
-                    <label className="factory-scenario-sort"><span>Sort</span><select value={scenarioSort} onChange={event => setScenarioSort(event.target.value)} aria-label="Sort saved scenarios"><option value="recent">Recently saved</option><option value="output">Highest output</option><option value="target">Best target result</option><option value="name">Name A–Z</option></select></label>
+                    <label className="factory-scenario-sort"><span>Sort</span><select value={scenarioSort} onChange={event => setScenarioSort(event.target.value)} aria-label="Sort saved scenarios"><option value="recent">Recently saved</option><option value="output">Highest output</option><option value="target">Best target result</option><option value="attainment">Highest target attainment</option><option value="name">Name A–Z</option></select></label>
                   </div>
                   <ul aria-label="Saved named scenarios">
                   {visibleScenarioLibrary.map(item => <li key={item.name}>
