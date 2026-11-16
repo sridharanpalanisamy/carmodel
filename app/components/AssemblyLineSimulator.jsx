@@ -165,6 +165,21 @@ export default function AssemblyLineSimulator() {
     };
   }, [proposedCycleTimes, result.netMinutes, result.goodUnits, availability, yieldRate, stations, target]);
 
+  const savedScenarioSummary = useMemo(() => {
+    if (!savedScenario) return null;
+    const savedBottleneck = Math.max(...savedScenario.cycleTimes);
+    const savedNetMinutes = Math.max(0, savedScenario.shiftHours * 60 - savedScenario.breakMinutes);
+    const savedIdeal = savedBottleneck > 0 ? Math.floor(savedNetMinutes * 60 / savedBottleneck) : 0;
+    const savedAvailable = Math.floor(savedIdeal * savedScenario.availability / 100);
+    const savedGood = Math.floor(savedAvailable * savedScenario.yieldRate / 100);
+    return {
+      bottleneck: savedBottleneck,
+      good: savedGood,
+      gap: savedGood - savedScenario.target,
+      meetsTarget: savedGood >= savedScenario.target
+    };
+  }, [savedScenario]);
+
   const improvementPriorities = useMemo(() => stations
     .map((station, index) => ({
       ...station,
@@ -377,7 +392,16 @@ export default function AssemblyLineSimulator() {
                 </div>
               </div>
               {scenarioStorageReady && <div className="factory-scenario-saved-state" role="status">
-                {savedScenario ? <><span>Saved scenario available · target {savedScenario.target} vehicles · {new Date(savedScenario.savedAt).toLocaleString()}</span><button type="button" onClick={clearImprovementScenario}>Clear saved scenario</button></> : <span>No saved scenario yet. Save proposed cycle times and shift assumptions to reuse them later on this device.</span>}
+                {savedScenario ? <>
+                  <div className="factory-saved-scenario-summary">
+                    <strong>Saved scenario · {new Date(savedScenario.savedAt).toLocaleString()}</strong>
+                    <span>{savedScenarioSummary.good.toLocaleString("en-IN")} good vehicles / shift</span>
+                    <span>{savedScenarioSummary.bottleneck}s bottleneck cycle</span>
+                    <span className={savedScenarioSummary.meetsTarget ? "is-on-target" : "is-below-target"}>{savedScenarioSummary.meetsTarget ? `Target met · ${savedScenarioSummary.gap} above target` : `${Math.abs(savedScenarioSummary.gap)} below target`}</span>
+                    <small>Target: {savedScenario.target} · Shift: {savedScenario.shiftHours}h · Availability: {savedScenario.availability}% · Quality: {savedScenario.yieldRate}%</small>
+                  </div>
+                  <button type="button" onClick={clearImprovementScenario}>Clear saved scenario</button>
+                </> : <span>No saved scenario yet. Save proposed cycle times and shift assumptions to reuse them later on this device.</span>}
               </div>}
               <div className="factory-improvement-grid">
                 {stations.map((station, index) => (
