@@ -69,6 +69,7 @@ export default function AssemblyLineSimulator() {
   const [selectedScenarioNames, setSelectedScenarioNames] = useState([]);
   const [scenarioName, setScenarioName] = useState("Baseline improvement");
   const [scenarioSearch, setScenarioSearch] = useState("");
+  const [scenarioSort, setScenarioSort] = useState("recent");
   const [scenarioStorageReady, setScenarioStorageReady] = useState(false);
   const [scenarioSaveMessage, setScenarioSaveMessage] = useState("");
   const scenarioFileInput = useRef(null);
@@ -544,7 +545,16 @@ export default function AssemblyLineSimulator() {
           <div className="line-sim-section-title"><span>01 / STATION CYCLE TIMES</span><small>SECONDS PER VEHICLE</small></div>
           {stations.map((station, index) => {
             const isBottleneck = station.seconds === result.bottleneck;
-            return (
+            const visibleScenarioLibrary = scenarioLibrary
+    .filter(item => item.name.toLowerCase().includes(scenarioSearch.trim().toLowerCase()))
+    .sort((a, b) => {
+      if (scenarioSort === "name") return a.name.localeCompare(b.name);
+      if (scenarioSort === "output") return getScenarioProjection(b.snapshot).good - getScenarioProjection(a.snapshot).good;
+      if (scenarioSort === "target") return getScenarioProjection(b.snapshot).gap - getScenarioProjection(a.snapshot).gap;
+      return Date.parse(b.snapshot.savedAt) - Date.parse(a.snapshot.savedAt);
+    });
+
+  return (
               <div className={`line-station-row${isBottleneck ? " is-bottleneck" : ""}`} key={station.name}>
                 <div className="line-station-top">
                   <label htmlFor={`station-${index}`}>{station.name}</label>
@@ -659,10 +669,11 @@ export default function AssemblyLineSimulator() {
                   <div className="factory-scenario-library-filter">
                     <label htmlFor="factoryScenarioSearch">Find a saved scenario</label>
                     <input id="factoryScenarioSearch" type="search" value={scenarioSearch} onChange={event => setScenarioSearch(event.target.value)} placeholder="Search scenario names..." />
-                    <small>Showing {scenarioLibrary.filter(item => item.name.toLowerCase().includes(scenarioSearch.trim().toLowerCase())).length} of {scenarioLibrary.length} saved scenarios</small>
+                    <small>Showing {visibleScenarioLibrary.length} of {scenarioLibrary.length} saved scenarios</small>
+                    <label className="factory-scenario-sort"><span>Sort</span><select value={scenarioSort} onChange={event => setScenarioSort(event.target.value)} aria-label="Sort saved scenarios"><option value="recent">Recently saved</option><option value="output">Highest output</option><option value="target">Best target result</option><option value="name">Name A–Z</option></select></label>
                   </div>
                   <ul aria-label="Saved named scenarios">
-                  {scenarioLibrary.filter(item => item.name.toLowerCase().includes(scenarioSearch.trim().toLowerCase())).map(item => <li key={item.name}>
+                  {visibleScenarioLibrary.map(item => <li key={item.name}>
                     <span><strong>{item.name}</strong><small>{new Date(item.snapshot.savedAt).toLocaleString()} · target {item.snapshot.target}/shift</small><small>{getScenarioProjection(item.snapshot).good.toLocaleString("en-IN")} good vehicles/shift · bottleneck {getScenarioProjection(item.snapshot).bottleneckName} ({getScenarioProjection(item.snapshot).bottleneck}s)</small><small className={getScenarioProjection(item.snapshot).gap >= 0 ? "factory-named-on-target" : "factory-named-below-target"}>{getScenarioProjection(item.snapshot).gap >= 0 ? `Target met · ${getScenarioProjection(item.snapshot).gap} above` : `${Math.abs(getScenarioProjection(item.snapshot).gap)} below target`}</small></span>
                     <label className="factory-scenario-compare-choice"><input type="checkbox" checked={selectedScenarioNames.includes(item.name)} onChange={event => toggleScenarioComparison(item.name, event.target.checked)} aria-label={`Compare ${item.name}`} /> Compare</label>
                     <button type="button" className="line-reset" onClick={() => loadNamedScenario(item)}>Load</button>
