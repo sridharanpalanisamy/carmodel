@@ -137,12 +137,21 @@ export default function AssemblyLineSimulator() {
       setScenarioSaveMessage("Enter a name before saving this scenario.");
       return;
     }
+    if (name.length > 48) {
+      setScenarioSaveMessage("Scenario names must be 48 characters or fewer.");
+      return;
+    }
+    const existing = scenarioLibrary.some(item => item.name.toLowerCase() === name.toLowerCase());
+    if (!existing && scenarioLibrary.length >= 10) {
+      setScenarioSaveMessage("The scenario library is full (10 of 10). Delete an existing scenario before saving a new one, or use the same name to update it.");
+      return;
+    }
     const snapshot = { version: 2, stationNames: initialStations.map(station => station.name), cycleTimes: [...proposedCycleTimes], target, shiftHours, breakMinutes, availability, yieldRate, savedAt: new Date().toISOString() };
-    const next = [...scenarioLibrary.filter(item => item.name.toLowerCase() !== name.toLowerCase()), { name, snapshot }].slice(-10);
+    const next = [...scenarioLibrary.filter(item => item.name.toLowerCase() !== name.toLowerCase()), { name, snapshot }];
     try {
       window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
       setScenarioLibrary(next);
-      setScenarioSaveMessage(`“${name}” saved to the named scenario library on this device.`);
+      setScenarioSaveMessage(existing ? `“${name}” updated in the named scenario library.` : `“${name}” saved to the named scenario library on this device.`);
     } catch {
       setScenarioSaveMessage("Could not save the named scenario. Browser storage may be unavailable.");
     }
@@ -753,7 +762,9 @@ export default function AssemblyLineSimulator() {
                 <div className="factory-named-scenario-controls">
                   <input id="factoryScenarioName" type="text" maxLength="48" value={scenarioName} onChange={event => setScenarioName(event.target.value)} placeholder="e.g. Higher output target" />
                   <button type="button" className="line-reset" onClick={saveNamedScenario}>Save named scenario</button>
-                </div>                <div className="factory-scenario-library-actions">
+                </div>
+                <small className="factory-scenario-capacity" aria-live="polite">{scenarioLibrary.length} of 10 named scenarios saved{scenarioLibrary.length >= 10 ? " · Library full — delete one to add another" : " · You can save up to 10"}</small>
+                <div className="factory-scenario-library-actions">
                   <button type="button" className="line-reset" onClick={exportScenarioLibraryJson} disabled={scenarioLibrary.length === 0}>Export library JSON</button>
                   <button type="button" className="line-reset" onClick={exportScenarioLibraryCsv} disabled={scenarioLibrary.length === 0}>Export library CSV</button>
                   <button type="button" className="line-reset" onClick={() => scenarioLibraryFileInput.current?.click()}>Import library JSON</button>
