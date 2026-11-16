@@ -38,6 +38,37 @@ export default function AssemblyLineSimulator() {
     ratios: "Availability & quality yield",
     losses: "Where does capacity go?"
   };
+  const [chartSettingsLoaded, setChartSettingsLoaded] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("factory-chart-preferences");
+      if (saved) {
+        const preferences = JSON.parse(saved);
+        if (preferences.visibility && typeof preferences.visibility === "object") {
+          setChartVisibility(current => ({ ...current, ...preferences.visibility }));
+        }
+        if (preferences.titles && typeof preferences.titles === "object") {
+          setChartTitles(current => ({ ...current, ...preferences.titles }));
+        }
+      }
+    } catch {
+      // Keep the default chart preferences if saved browser data is unavailable.
+    }
+    setChartSettingsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!chartSettingsLoaded) return;
+    try {
+      window.localStorage.setItem("factory-chart-preferences", JSON.stringify({
+        visibility: chartVisibility,
+        titles: chartTitles
+      }));
+    } catch {
+      // Chart editing remains available for this visit if storage is blocked.
+    }
+  }, [chartSettingsLoaded, chartVisibility, chartTitles]);
 
   const result = useMemo(() => {
     const bottleneck = Math.max(...stations.map(station => station.seconds));
