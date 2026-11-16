@@ -106,6 +106,8 @@ export default function AssemblyLineSimulator() {
       ideal: proposedIdeal,
       good: proposedGood,
       gain: proposedGood - result.goodUnits,
+      targetGap: proposedGood - target,
+      meetsTarget: proposedGood >= target,
       requiredCycle,
       feasible: target === 0 || requiredCycle >= 20
     };
@@ -361,6 +363,11 @@ export default function AssemblyLineSimulator() {
                 <div><span>Projected good output</span><strong>{improvement.good.toLocaleString("en-IN")}</strong><small>vehicles / shift</small></div>
                 <div><span>Projected bottleneck</span><strong>{improvement.bottleneckName}</strong><small>{improvement.bottleneck}s per vehicle</small></div>
                 <div className={improvement.gain > 0 ? "is-positive" : improvement.gain < 0 ? "is-negative" : ""}><span>Change vs current</span><strong>{improvement.gain > 0 ? "+" : ""}{improvement.gain.toLocaleString("en-IN")}</strong><small>good vehicles / shift</small></div>
+              </div>
+              <div className={`factory-scenario-target ${improvement.meetsTarget ? "is-met" : "is-short"}`} role="status" aria-live="polite">
+                <div><span>SCENARIO TARGET CHECK</span><strong>{improvement.meetsTarget ? "Target achieved" : "Target not yet achieved"}</strong></div>
+                <b>{improvement.targetGap > 0 ? "+" : ""}{improvement.targetGap.toLocaleString("en-IN")} vehicles</b>
+                <small>{improvement.meetsTarget ? "Projected good output meets or exceeds the selected shift target." : "Additional good vehicles are needed to reach the selected shift target."}</small>
               </div>
               <p className="factory-chart-caption">Target cycle time is calculated from net shift seconds, availability, quality yield and the selected good-output target. Apply target pace creates a what-if scenario; it does not change the live station settings.</p>
             </section>
