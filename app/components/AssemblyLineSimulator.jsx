@@ -139,8 +139,8 @@ export default function AssemblyLineSimulator() {
             <section className="factory-chart-card factory-efficiency-card min-w-0 xl:col-span-2" aria-label="Availability and quality yield chart">
               <div className="factory-chart-heading"><div><span>CHART 03 / OPERATING CONDITIONS</span><h3>Availability & quality yield</h3></div><small>Current assumptions</small></div>
               <div className="factory-ratio-charts">
-                <div className="factory-ratio-item"><div className="factory-ratio-ring availability" style={{"--ratio":availability+"%"}}><strong>{availability}%</strong></div><div><b>Line availability</b><p>Share of scheduled production time assumed available to run.</p></div></div>
-                <div className="factory-ratio-item"><div className="factory-ratio-ring yield" style={{"--ratio":yieldRate+"%"}}><strong>{yieldRate}%</strong></div><div><b>Quality yield</b><p>Share of produced units assumed to pass quality checks.</p></div></div>
+                <div className="factory-ratio-item"><div className="factory-ratio-ring availability" role="img" aria-label={`Line availability ${availability} percent`} style={{"--ratio":availability+"%"}}><strong>{availability}%</strong></div><div><b>Line availability</b><p>Share of scheduled production time assumed available to run.</p></div></div>
+                <div className="factory-ratio-item"><div className="factory-ratio-ring yield" role="img" aria-label={`Quality yield ${yieldRate} percent`} style={{"--ratio":yieldRate+"%"}}><strong>{yieldRate}%</strong></div><div><b>Quality yield</b><p>Share of produced units assumed to pass quality checks.</p></div></div>
               </div>
             </section>
             <section className="factory-chart-card factory-loss-card min-w-0 xl:col-span-2" aria-label="Production loss breakdown chart">
