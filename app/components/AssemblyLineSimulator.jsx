@@ -650,9 +650,26 @@ export default function AssemblyLineSimulator() {
                     const difference = secondProjection.good - firstProjection.good;
                     const percentDifference = firstProjection.good > 0 ? (difference / firstProjection.good) * 100 : null;
                     const sameAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate", "target"].every(key => first.snapshot[key] === second.snapshot[key]);
+                    const commonConditions = {
+                      shiftHours: first.snapshot.shiftHours,
+                      breakMinutes: first.snapshot.breakMinutes,
+                      availability: first.snapshot.availability,
+                      yieldRate: first.snapshot.yieldRate,
+                      target: first.snapshot.target
+                    };
+                    const normalizedFirst = getScenarioProjection({ ...first.snapshot, ...commonConditions });
+                    const normalizedSecond = getScenarioProjection({ ...second.snapshot, ...commonConditions });
+                    const normalizedDifference = normalizedSecond.good - normalizedFirst.good;
                     return <>
                       <p><strong>{difference > 0 ? `+${difference}` : difference} good vehicles/shift</strong> for {second.name} compared with {first.name}{percentDifference !== null ? ` (${percentDifference > 0 ? "+" : ""}${percentDifference.toFixed(1)}%)` : ""}.</p>
                       <small className={sameAssumptions ? "factory-scenario-comparison-fair" : "factory-scenario-comparison-warning"} role="status">{sameAssumptions ? "Like-for-like comparison: both scenarios use the same shift and production assumptions." : "Different assumptions detected. Output difference includes changes to shift time, breaks, availability, quality yield or target; compare cycle times separately for a fair line-performance assessment."}</small>
+                      <div className="factory-scenario-normalized">
+                        <strong>Cycle-time-only comparison</strong>
+                        <p>Both cycle-time sets are recalculated using <b>{first.name}</b> conditions: {commonConditions.shiftHours}h shift, {commonConditions.breakMinutes} min breaks, {commonConditions.availability}% availability and {commonConditions.yieldRate}% quality.</p>
+                        <div><span>{first.name}</span><strong>{normalizedFirst.good.toLocaleString("en-IN")} good/shift</strong></div>
+                        <div><span>{second.name}</span><strong>{normalizedSecond.good.toLocaleString("en-IN")} good/shift</strong></div>
+                        <small className={normalizedDifference > 0 ? "factory-cycle-faster" : normalizedDifference < 0 ? "factory-cycle-slower" : ""}>{normalizedDifference > 0 ? "+" : ""}{normalizedDifference} good vehicles/shift for {second.name} on the same operating assumptions.</small>
+                      </div>
                       <div className="factory-scenario-station-compare">
                         <strong>Station cycle-time comparison</strong>
                         <div className="factory-scenario-station-compare-scroll" role="region" aria-label="Side-by-side station cycle time comparison" tabIndex="0">
