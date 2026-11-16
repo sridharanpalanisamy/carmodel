@@ -24,6 +24,20 @@ export default function AssemblyLineSimulator() {
   const [availability, setAvailability] = useState(90);
   const [yieldRate, setYieldRate] = useState(97);
   const [target, setTarget] = useState(350);
+  const [chartEditMode, setChartEditMode] = useState(false);
+  const [chartVisibility, setChartVisibility] = useState({ radar: true, capacity: true, ratios: true, losses: true });
+  const [chartTitles, setChartTitles] = useState({
+    radar: "Station cycle times",
+    capacity: "Capacity indicators",
+    ratios: "Availability & quality yield",
+    losses: "Where does capacity go?"
+  });
+  const defaultChartTitles = {
+    radar: "Station cycle times",
+    capacity: "Capacity indicators",
+    ratios: "Availability & quality yield",
+    losses: "Where does capacity go?"
+  };
 
   const result = useMemo(() => {
     const bottleneck = Math.max(...stations.map(station => station.seconds));
@@ -56,6 +70,9 @@ export default function AssemblyLineSimulator() {
     setAvailability(90);
     setYieldRate(97);
     setTarget(350);
+    setChartVisibility({ radar: true, capacity: true, ratios: true, losses: true });
+    setChartTitles(defaultChartTitles);
+    setChartEditMode(false);
   }
 
   if (!mount) return null;
@@ -115,9 +132,30 @@ export default function AssemblyLineSimulator() {
             <div><span>OUTPUT VS TARGET</span><strong>{target > 0 ? Math.min(100, result.goodUnits / target * 100).toFixed(0) : 0}%</strong></div>
             <div className="line-target-track"><i style={{ width: `${target > 0 ? clamp(result.goodUnits / target * 100, 0, 100) : 0}%` }}/></div>
           </div>
+          <div className="factory-chart-toolbar">
+            <div><span className="eyebrow">LIVE PRODUCTION ANALYTICS</span><p>Four chart views update as you change the simulator settings.</p></div>
+            <button className="line-reset" type="button" aria-expanded={chartEditMode} onClick={() => setChartEditMode(value => !value)}>{chartEditMode ? "Done editing ✓" : "Edit charts ⚙"}</button>
+          </div>
+          {chartEditMode && (
+            <div className="factory-chart-editor" aria-label="Edit chart visibility and titles">
+              <div className="factory-chart-editor-heading"><strong>Customize chart view</strong><small>Show or hide charts and rename their headings.</small></div>
+              {[
+                ["radar", "01 / Radar chart"],
+                ["capacity", "02 / Capacity rings"],
+                ["ratios", "03 / Operating conditions"],
+                ["losses", "04 / Loss analysis"]
+              ].map(([key, label]) => (
+                <div className="factory-chart-editor-row" key={key}>
+                  <label className="factory-chart-toggle"><input type="checkbox" checked={chartVisibility[key]} onChange={event => setChartVisibility(current => ({ ...current, [key]: event.target.checked }))} /><span>{label}</span></label>
+                  <input aria-label={label + " title"} type="text" maxLength={48} value={chartTitles[key]} onChange={event => setChartTitles(current => ({ ...current, [key]: event.target.value }))} />
+                </div>
+              ))}
+              <button type="button" className="line-reset" onClick={() => { setChartVisibility({ radar: true, capacity: true, ratios: true, losses: true }); setChartTitles(defaultChartTitles); }}>Restore chart defaults</button>
+            </div>
+          )}
           <div className="factory-live-charts grid grid-cols-1 2xl:grid-cols-2 gap-3 mt-5">
-            <section className="factory-chart-card min-w-0" aria-label="Station cycle time radar chart">
-              <div className="factory-chart-heading"><div><span>CHART 01 / LINE BALANCE</span><h3>Station cycle times</h3></div><small>Seconds / vehicle</small></div>
+            {chartVisibility.radar && (<section className="factory-chart-card min-w-0" aria-label="Station cycle time radar chart">
+              <div className="factory-chart-heading"><div><span>CHART 01 / LINE BALANCE</span><h3>{chartTitles.radar || defaultChartTitles.radar}</h3></div><small>Seconds / vehicle</small></div>
               <div className="factory-radar-wrap">
                 <svg className="factory-radar" viewBox="0 0 320 250" role="img" aria-label="Radar plot comparing the cycle time of each production station">
                   {[25,50,75,100].map(level=>{const r=level*0.78;return <g key={level}><polygon points={stations.map((_,i)=>{const a=(-Math.PI/2)+(i*2*Math.PI/stations.length);return (160+Math.cos(a)*r)+","+(118+Math.sin(a)*r)}).join(" ")} /><text className="factory-radar-scale" x="164" y={118-r-3}>{Math.round(level*1.8)}s</text></g>})}
@@ -127,23 +165,23 @@ export default function AssemblyLineSimulator() {
                 </svg>
               </div>
               <p className="factory-chart-caption">Each axis represents one station. Points farther from the centre have longer cycle times; the highlighted point is the bottleneck.</p>
-            </section>
-            <section className="factory-chart-card min-w-0" aria-label="Production capacity radial comparison">
-              <div className="factory-chart-heading"><div><span>CHART 02 / OUTPUT CAPACITY</span><h3>Capacity indicators</h3></div><small>Vehicles / shift</small></div>
+            </section>)}
+            {chartVisibility.capacity && (<section className="factory-chart-card min-w-0" aria-label="Production capacity radial comparison">
+              <div className="factory-chart-heading"><div><span>CHART 02 / OUTPUT CAPACITY</span><h3>{chartTitles.capacity || defaultChartTitles.capacity}</h3></div><small>Vehicles / shift</small></div>
               <div className="factory-capacity-rings">
                 {[{label:"Ideal",value:result.ideal,color:"ideal"},{label:"Available",value:result.available,color:"available"},{label:"Good units",value:result.goodUnits,color:"good"},{label:"Target",value:target,color:"target"}].map(item=><div className="factory-capacity-item" key={item.label}><div className={`factory-capacity-ring ${item.color}`} style={{"--ratio":(Math.max(result.ideal,target,1)>0?clamp(item.value/Math.max(result.ideal,target,1)*100,0,100):0)+"%"}}><strong>{item.value.toLocaleString("en-IN")}</strong></div><span>{item.label}</span></div>)}
               </div>
               <p className="factory-chart-caption">Each ring shows its value relative to the larger of ideal capacity and the selected target.</p>
-            </section>
-            <section className="factory-chart-card factory-efficiency-card min-w-0 2xl:col-span-2" aria-label="Availability and quality yield chart">
-              <div className="factory-chart-heading"><div><span>CHART 03 / OPERATING CONDITIONS</span><h3>Availability & quality yield</h3></div><small>Current assumptions</small></div>
+            </section>)}
+            {chartVisibility.ratios && (<section className="factory-chart-card factory-efficiency-card min-w-0 2xl:col-span-2" aria-label="Availability and quality yield chart">
+              <div className="factory-chart-heading"><div><span>CHART 03 / OPERATING CONDITIONS</span><h3>{chartTitles.ratios || defaultChartTitles.ratios}</h3></div><small>Current assumptions</small></div>
               <div className="factory-ratio-charts">
                 <div className="factory-ratio-item"><div className="factory-ratio-ring availability" role="img" aria-label={`Line availability ${availability} percent`} style={{"--ratio":availability+"%"}}><strong>{availability}%</strong></div><div><b>Line availability</b><p>Share of scheduled production time assumed available to run.</p></div></div>
                 <div className="factory-ratio-item"><div className="factory-ratio-ring yield" role="img" aria-label={`Quality yield ${yieldRate} percent`} style={{"--ratio":yieldRate+"%"}}><strong>{yieldRate}%</strong></div><div><b>Quality yield</b><p>Share of produced units assumed to pass quality checks.</p></div></div>
               </div>
-            </section>
-            <section className="factory-chart-card factory-loss-card min-w-0 2xl:col-span-2" aria-label="Production loss doughnut chart">
-              <div className="factory-chart-heading"><div><span>CHART 04 / LOSS ANALYSIS</span><h3>Where does capacity go?</h3></div><small>Vehicles / shift</small></div>
+            </section>)}
+            {chartVisibility.losses && (<section className="factory-chart-card factory-loss-card min-w-0 2xl:col-span-2" aria-label="Production loss doughnut chart">
+              <div className="factory-chart-heading"><div><span>CHART 04 / LOSS ANALYSIS</span><h3>{chartTitles.losses || defaultChartTitles.losses}</h3></div><small>Vehicles / shift</small></div>
               <div className="factory-loss-layout">
                 <div className="factory-loss-donut" role="img" aria-label={`Capacity split: ${Math.max(0,result.ideal-result.available)} availability loss, ${Math.max(0,result.available-result.goodUnits)} quality loss, ${result.goodUnits} good output`} style={{"--availability-share":(result.ideal>0?Math.max(0,result.ideal-result.available)/result.ideal*100:0)+"%","--quality-share":(result.ideal>0?Math.max(0,result.available-result.goodUnits)/result.ideal*100:0)+"%"}}><div><strong>{result.ideal.toLocaleString("en-IN")}</strong><span>ideal units</span></div></div>
                 <div className="factory-loss-legend">
@@ -151,7 +189,7 @@ export default function AssemblyLineSimulator() {
                 </div>
               </div>
               <p className="factory-chart-caption">Losses are calculated from the simulator's ideal capacity, availability and quality-yield assumptions. They are estimates, not measured factory data.</p>
-            </section>
+            </section>)}
           </div>
           <p className="line-sim-tip">{result.gap < 0 ? `The ${result.bottleneckName} station limits the line. Reducing its cycle time or improving line balance can increase theoretical output.` : "The estimated good output meets the selected shift target under these assumptions."}</p>
         </aside>
