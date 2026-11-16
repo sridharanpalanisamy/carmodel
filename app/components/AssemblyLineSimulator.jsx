@@ -97,14 +97,19 @@ export default function AssemblyLineSimulator() {
     const proposedIdeal = proposedBottleneck > 0 ? Math.floor(result.netMinutes * 60 / proposedBottleneck) : 0;
     const proposedAvailable = Math.floor(proposedIdeal * availability / 100);
     const proposedGood = Math.floor(proposedAvailable * yieldRate / 100);
+    const requiredAvailable = target > 0 ? Math.ceil(target / (yieldRate / 100)) : 0;
+    const requiredIdeal = target > 0 ? Math.ceil(requiredAvailable / (availability / 100)) : 0;
+    const requiredCycle = requiredIdeal > 0 ? Math.floor(result.netMinutes * 60 / requiredIdeal) : 180;
     return {
       bottleneck: proposedBottleneck,
       bottleneckName: stations[proposedCycleTimes.indexOf(proposedBottleneck)]?.name || "—",
       ideal: proposedIdeal,
       good: proposedGood,
-      gain: proposedGood - result.goodUnits
+      gain: proposedGood - result.goodUnits,
+      requiredCycle,
+      feasible: target === 0 || requiredCycle >= 20
     };
-  }, [proposedCycleTimes, result.netMinutes, result.goodUnits, availability, yieldRate, stations]);
+  }, [proposedCycleTimes, result.netMinutes, result.goodUnits, availability, yieldRate, stations, target]);
 
   function updateStation(index, seconds) {
     setStations(current => current.map((station, i) =>
@@ -263,7 +268,10 @@ export default function AssemblyLineSimulator() {
             <section className="factory-improvement-planner" aria-label="Station improvement planner">
               <div className="factory-improvement-heading">
                 <div><span>WHAT-IF ANALYSIS / LINE BALANCING</span><h3>Test station improvements</h3><p>Enter a proposed cycle time for each station. Compare the projected shift output with the current simulation.</p></div>
-                <button type="button" className="line-reset" onClick={() => setProposedCycleTimes(stations.map(station => station.seconds))}>Copy current times</button>
+                <div className="factory-improvement-actions">
+                  <button type="button" className="line-reset" onClick={() => setProposedCycleTimes(stations.map(station => station.seconds))}>Copy current times</button>
+                  <button type="button" className="line-reset" onClick={() => setProposedCycleTimes(stations.map((station, index) => Math.min(station.seconds, clamp(improvement.requiredCycle, 20, 180))))}>Apply target pace</button>
+                </div>
               </div>
               <div className="factory-improvement-grid">
                 {stations.map((station, index) => (
@@ -279,12 +287,26 @@ export default function AssemblyLineSimulator() {
                   </label>
                 ))}
               </div>
+              <div className="factory-improvement-guidance">
+                <div><span>Required bottleneck cycle to meet target</span><strong>{improvement.requiredCycle > 0 ? improvement.requiredCycle : "—"} sec</strong></div>
+                <p>{improvement.feasible ? "Stations above this cycle time need improvement to reach the selected good-output target." : "The selected target cannot be reached within the simulator's 20-second minimum cycle time under the current shift, availability and quality settings."}</p>
+              </div>
+              <div className="factory-improvement-grid factory-improvement-detail-grid">
+                {stations.map((station, index) => {
+                  const proposed = proposedCycleTimes[index] ?? station.seconds;
+                  const reduction = Math.max(0, station.seconds - proposed);
+                  return <div className="factory-improvement-detail" key={station.name}>
+                    <strong>{station.name}</strong>
+                    <span>{reduction > 0 ? `Reduce by ${reduction}s` : station.seconds > improvement.requiredCycle ? `Needs ${station.seconds - Math.max(20, improvement.requiredCycle)}s reduction` : "At or below target pace"}</span>
+                  </div>;
+                })}
+              </div>
               <div className="factory-improvement-results">
                 <div><span>Projected good output</span><strong>{improvement.good.toLocaleString("en-IN")}</strong><small>vehicles / shift</small></div>
                 <div><span>Projected bottleneck</span><strong>{improvement.bottleneckName}</strong><small>{improvement.bottleneck}s per vehicle</small></div>
                 <div className={improvement.gain > 0 ? "is-positive" : improvement.gain < 0 ? "is-negative" : ""}><span>Change vs current</span><strong>{improvement.gain > 0 ? "+" : ""}{improvement.gain.toLocaleString("en-IN")}</strong><small>good vehicles / shift</small></div>
               </div>
-              <p className="factory-chart-caption">This is a scenario estimate using the same shift, availability and quality assumptions. It assumes the line remains serial and the slowest proposed station sets the pace.</p>
+              <p className="factory-chart-caption">Target cycle time is calculated from net shift seconds, availability, quality yield and the selected good-output target. Apply target pace creates a what-if scenario; it does not change the live station settings.</p>
             </section>
           )}
           <div className="factory-live-charts grid grid-cols-1 2xl:grid-cols-2 gap-3 mt-5">
