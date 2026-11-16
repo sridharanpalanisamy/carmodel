@@ -198,6 +198,7 @@ export default function AssemblyLineSimulator() {
 
   function reset() {
     setStations(initialStations);
+    setProposedCycleTimes(initialStations.map(station => station.seconds));
     setShiftHours(8);
     setBreakMinutes(40);
     setAvailability(90);
