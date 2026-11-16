@@ -1979,3 +1979,10 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-station-table-heading{margin-top:18px}
 .factory-bottleneck-label{display:inline-block;padding:3px 7px;background:#fce7df;color:#b43a16;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
 @media(max-width:600px){.factory-data-table-wrap{padding:11px}.factory-data-table-heading{align-items:flex-start;flex-direction:column;gap:4px}.factory-data-table-heading small{text-align:left}.factory-data-table{min-width:480px}}
+
+/* Exact cycle-time entry paired with the station slider. */
+.line-station-value{display:flex;align-items:center;justify-content:flex-end;gap:7px;min-width:0}
+.line-station-value input[type="number"]{width:66px;min-width:0;margin:0;padding:6px 7px;border:1px solid #cfc8cd;border-radius:3px;background:#fff;color:var(--ink);font:700 10px var(--sans);font-variant-numeric:tabular-nums;text-align:right}
+.line-station-value input[type="number"]:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.line-station-value strong{font:700 7px var(--sans);color:var(--orange);letter-spacing:.6px;white-space:nowrap}
+@media(max-width:380px){.line-station-value{gap:4px}.line-station-value input[type="number"]{width:58px;padding:5px}}
