@@ -2067,3 +2067,11 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-scenario-saved-state button:hover{color:var(--orange)}
 .factory-improvement-actions button:disabled{opacity:.4;cursor:not-allowed}
 @media(max-width:520px){.factory-scenario-saved-state{align-items:flex-start;flex-direction:column}}
+
+.factory-saved-scenario-summary{display:flex;flex-wrap:wrap;align-items:center;gap:5px 12px;min-width:0;flex:1}
+.factory-saved-scenario-summary strong{width:100%;color:var(--ink);font:700 9px var(--sans)}
+.factory-saved-scenario-summary>span{font:700 9px var(--sans);font-variant-numeric:tabular-nums}
+.factory-saved-scenario-summary>span.is-on-target{color:#28734f}
+.factory-saved-scenario-summary>span.is-below-target{color:#9a6325}
+.factory-saved-scenario-summary small{width:100%;color:var(--muted);font:400 8px/1.4 var(--sans)}
+@media(max-width:520px){.factory-saved-scenario-summary{gap:6px 10px}.factory-scenario-saved-state{align-items:flex-start}}
