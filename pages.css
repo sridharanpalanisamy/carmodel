@@ -2168,3 +2168,9 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-named-scenarios li .factory-scenario-compare-choice{font-size:10px}
 .factory-named-scenarios li button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:480px){.factory-named-scenarios li{align-items:center;gap:6px}.factory-named-scenarios li>span{flex-basis:100%}.factory-named-scenarios li .factory-scenario-compare-choice{margin-right:auto}}
+
+.factory-scenario-library-filter{grid-template-columns:minmax(0,1fr) minmax(180px,1.2fr) auto;align-items:end}
+.factory-scenario-sort{display:grid;gap:4px;min-width:145px;color:var(--muted);font-size:10px;font-weight:700}
+.factory-scenario-sort select{width:100%;min-width:0;padding:8px 9px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font:inherit;font-size:11px}
+.factory-scenario-sort select:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+@media(max-width:620px){.factory-scenario-library-filter{grid-template-columns:1fr}.factory-scenario-sort{min-width:0}}
