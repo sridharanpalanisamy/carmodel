@@ -2133,3 +2133,16 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-scenario-comparison>small.factory-scenario-comparison-fair,.factory-scenario-comparison>small.factory-scenario-comparison-warning{display:block;padding:8px 10px;border-radius:7px;line-height:1.5}
 .factory-scenario-comparison>small.factory-scenario-comparison-fair{background:rgba(40,115,79,.08);color:#28734f}
 .factory-scenario-comparison>small.factory-scenario-comparison-warning{background:rgba(154,99,37,.09);color:#8a5a20}
+
+.factory-scenario-station-compare{display:grid;gap:8px;margin-top:5px;min-width:0}
+.factory-scenario-station-compare>strong{font-size:12px;color:var(--ink)}
+.factory-scenario-station-compare-scroll{width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+.factory-scenario-station-compare table{width:100%;min-width:460px;border-collapse:collapse;font-size:11px}
+.factory-scenario-station-compare th,.factory-scenario-station-compare td{padding:8px 9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+.factory-scenario-station-compare thead th{background:#f4f6f5;color:var(--muted);font-size:9px}
+.factory-scenario-station-compare tbody th{font-weight:700;color:var(--ink)}
+.factory-scenario-station-compare tbody tr:last-child th,.factory-scenario-station-compare tbody tr:last-child td{border-bottom:0}
+.factory-scenario-station-compare td.factory-cycle-faster{color:#28734f;font-weight:700}
+.factory-scenario-station-compare td.factory-cycle-slower{color:#a34b38;font-weight:700}
+.factory-scenario-station-compare>small{font-size:10px;line-height:1.5;color:var(--muted)}
+.factory-scenario-station-compare-scroll:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
