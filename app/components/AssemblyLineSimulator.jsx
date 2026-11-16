@@ -15,6 +15,21 @@ const initialStations = [
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
+function isValidSavedScenario(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const inRange = (number, min, max) => Number.isFinite(number) && number >= min && number <= max;
+  return Array.isArray(value.cycleTimes) &&
+    value.cycleTimes.length === initialStations.length &&
+    value.cycleTimes.every(seconds => inRange(seconds, 20, 180)) &&
+    inRange(value.shiftHours, 4, 12) &&
+    inRange(value.breakMinutes, 0, 120) &&
+    inRange(value.availability, 50, 100) &&
+    inRange(value.yieldRate, 70, 100) &&
+    inRange(value.target, 50, 700) &&
+    typeof value.savedAt === "string" &&
+    Number.isFinite(Date.parse(value.savedAt));
+}
+
 export default function AssemblyLineSimulator() {
   const [mount, setMount] = useState(null);
   useEffect(() => { setMount(document.getElementById("lineSimulatorMount")); }, []);
@@ -37,9 +52,10 @@ export default function AssemblyLineSimulator() {
       const raw = window.localStorage.getItem("factory-improvement-scenario");
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed.cycleTimes) && parsed.cycleTimes.length === initialStations.length &&
-            parsed.cycleTimes.every(value => Number.isFinite(value) && value >= 20 && value <= 180)) {
+        if (isValidSavedScenario(parsed)) {
           setSavedScenario(parsed);
+        } else {
+          setScenarioSaveMessage("A saved scenario was found but its data is incomplete or invalid. Save a new scenario to replace it.");
         }
       }
     } catch {
