@@ -2174,3 +2174,11 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-scenario-sort select{width:100%;min-width:0;padding:8px 9px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font:inherit;font-size:11px}
 .factory-scenario-sort select:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
 @media(max-width:620px){.factory-scenario-library-filter{grid-template-columns:1fr}.factory-scenario-sort{min-width:0}}
+
+.factory-scenario-item-details{display:grid;gap:4px;min-width:0}
+.factory-scenario-rename{display:grid;gap:7px;max-width:320px}
+.factory-scenario-rename label{font-size:10px;font-weight:700;color:var(--muted)}
+.factory-scenario-rename input{width:100%;min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font:inherit;font-size:12px}
+.factory-scenario-rename input:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.factory-scenario-rename>span{display:flex;flex-wrap:wrap;gap:6px}
+@media(max-width:620px){.factory-scenario-rename{max-width:none}.factory-scenario-rename>span button{flex:1}}
