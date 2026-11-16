@@ -2060,3 +2060,10 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-improvement-detail .factory-detail-loss{color:#a34b38;font-weight:700}
 .factory-improvement-detail .factory-detail-on-pace{color:#28734f;font-weight:700}
 .factory-improvement-detail .factory-detail-over-pace{color:#9a6325;font-weight:700}
+
+.factory-scenario-saved-state{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin:8px 0 12px;padding:9px 11px;border:1px solid var(--line);background:#f7f8f6;color:var(--muted);font:400 9px/1.45 var(--sans)}
+.factory-scenario-saved-state button{border:0;background:transparent;color:var(--ink);font:700 9px var(--sans);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.factory-scenario-saved-state button:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
+.factory-scenario-saved-state button:hover{color:var(--orange)}
+.factory-improvement-actions button:disabled{opacity:.4;cursor:not-allowed}
+@media(max-width:520px){.factory-scenario-saved-state{align-items:flex-start;flex-direction:column}}
