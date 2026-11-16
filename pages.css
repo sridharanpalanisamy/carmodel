@@ -2082,3 +2082,21 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-saved-scenario-summary>span.factory-saved-delta-up{color:#28734f}
 .factory-saved-scenario-summary>span.factory-saved-delta-down{color:#a34b38}
 .factory-saved-scenario-summary>span.factory-saved-delta-even{color:var(--muted)}
+
+
+/* Named what-if scenarios: compact, responsive local scenario library. */
+.factory-named-scenarios{display:grid;gap:8px;margin:10px 0 14px;padding:12px;border:1px solid var(--line);background:#f7f8f6;min-width:0}
+.factory-named-scenarios>label{font:700 9px var(--sans);letter-spacing:.5px;color:var(--ink)}
+.factory-named-scenario-controls{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;min-width:0}
+.factory-named-scenario-controls input{width:100%;min-width:0;padding:8px 10px;border:1px solid #cfc8cd;border-radius:3px;background:#fff;color:var(--ink);font:400 10px var(--sans)}
+.factory-named-scenario-controls input:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.factory-named-scenarios ul{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.factory-named-scenarios li{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:7px;padding:8px 0;border-top:1px solid var(--line)}
+.factory-named-scenarios li>span{display:grid;gap:3px;min-width:0}
+.factory-named-scenarios li strong{overflow-wrap:anywhere;color:var(--ink);font:700 9px var(--sans)}
+.factory-named-scenarios li small{color:var(--muted);font:400 8px var(--sans)}
+.factory-named-scenarios li button{padding:5px 8px;border:1px solid var(--line);background:#fff;color:var(--ink);font:700 8px var(--sans);cursor:pointer}
+.factory-named-scenarios li button:hover{border-color:var(--orange);color:var(--orange)}
+.factory-named-scenarios li button:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.factory-named-scenarios>p{margin:0;color:var(--muted);font:400 8px/1.5 var(--sans)}
+@media(max-width:480px){.factory-named-scenario-controls{grid-template-columns:1fr}.factory-named-scenarios li{grid-template-columns:minmax(0,1fr) auto auto;gap:5px}.factory-named-scenarios li button{padding:6px}}
