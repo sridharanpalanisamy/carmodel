@@ -306,6 +306,63 @@ export default function AssemblyLineSimulator() {
   }
 
 
+
+  function exportNamedScenarioMarkdown(item) {
+    if (!item || !isValidSavedScenario(item.snapshot)) {
+      setScenarioSaveMessage("This saved scenario is invalid and cannot be exported.");
+      return;
+    }
+    const snapshot = item.snapshot;
+    const projection = getScenarioProjection(snapshot);
+    const safeCell = value => String(value).replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
+    const rows = initialStations.map((station, index) =>
+      \`| \${safeCell(station.name)} | \${snapshot.cycleTimes[index]} s |\`
+    );
+    const markdown = [
+      \`# \${safeCell(item.name)}\`,
+      "",
+      \`- Report type: Factory improvement scenario\`,
+      \`- Saved: \${new Date(snapshot.savedAt).toLocaleString()}\`,
+      "",
+      "## Production projection",
+      "",
+      \`- Good vehicles per shift: **\${projection.good.toLocaleString("en-IN")}**\`,
+      \`- Shift target: **\${snapshot.target.toLocaleString("en-IN")}**\`,
+      \`- Target status: **\${projection.gap >= 0 ? "Achieved" : "Below target"}**\`,
+      \`- Target gap: **\${projection.gap > 0 ? "+" : ""}\${projection.gap} vehicles**\`,
+      \`- Bottleneck station: **\${safeCell(projection.bottleneckName)}**\`,
+      \`- Bottleneck cycle time: **\${projection.bottleneck} seconds**\`,
+      "",
+      "## Operating assumptions",
+      "",
+      "| Setting | Value |",
+      "|---|---:|",
+      \`| Shift hours | \${snapshot.shiftHours} |\`,
+      \`| Break minutes | \${snapshot.breakMinutes} |\`,
+      \`| Availability | \${snapshot.availability}% |\`,
+      \`| Quality yield | \${snapshot.yieldRate}% |\`,
+      "",
+      "## Station cycle times",
+      "",
+      "| Station | Cycle time |",
+      "|---|---:|",
+      ...rows,
+      "",
+      "> Educational planning estimate only. Validate projections against actual factory production data before making operational decisions."
+    ].join("\n");
+    const blob = new Blob(["\uFEFF", markdown], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const safeName = item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "factory-scenario";
+    link.href = url;
+    link.download = \`\${safeName}-report.md\`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setScenarioSaveMessage(\`Exported “\${item.name}” as a Markdown scenario report.\`);
+  }
+
   function exportNamedScenarioHtml(item) {
     if (!item || !isValidSavedScenario(item.snapshot)) {
       setScenarioSaveMessage("This saved scenario is invalid and cannot be exported.");
@@ -1197,6 +1254,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                     <button type="button" className="line-reset" onClick={() => exportNamedScenarioJson(item)}>Export JSON</button>
                     <button type="button" className="line-reset" onClick={() => exportNamedScenarioCsv(item)}>Export CSV</button>
                     <button type="button" className="line-reset" onClick={() => exportNamedScenarioHtml(item)}>Export report</button>
+                    <button type="button" className="line-reset" onClick={() => exportNamedScenarioMarkdown(item)}>Export Markdown</button>
                     <button type="button" className="line-reset" onClick={() => loadNamedScenario(item)}>Load</button>
                     <button type="button" className="line-reset" onClick={() => duplicateNamedScenario(item)} disabled={scenarioLibrary.length >= 10} aria-label={`Duplicate ${item.name}`}>Duplicate</button>
                     {pendingDeleteScenario === item.name ? <>
