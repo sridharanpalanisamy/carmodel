@@ -316,31 +316,31 @@ export default function AssemblyLineSimulator() {
     const projection = getScenarioProjection(snapshot);
     const safeCell = value => String(value).replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
     const rows = initialStations.map((station, index) =>
-      \`| \${safeCell(station.name)} | \${snapshot.cycleTimes[index]} s |\`
+      `| ${safeCell(station.name)} | ${snapshot.cycleTimes[index]} s |`
     );
     const markdown = [
-      \`# \${safeCell(item.name)}\`,
+      `# ${safeCell(item.name)}`,
       "",
-      \`- Report type: Factory improvement scenario\`,
-      \`- Saved: \${new Date(snapshot.savedAt).toLocaleString()}\`,
+      `- Report type: Factory improvement scenario`,
+      `- Saved: ${new Date(snapshot.savedAt).toLocaleString()}`,
       "",
       "## Production projection",
       "",
-      \`- Good vehicles per shift: **\${projection.good.toLocaleString("en-IN")}**\`,
-      \`- Shift target: **\${snapshot.target.toLocaleString("en-IN")}**\`,
-      \`- Target status: **\${projection.gap >= 0 ? "Achieved" : "Below target"}**\`,
-      \`- Target gap: **\${projection.gap > 0 ? "+" : ""}\${projection.gap} vehicles**\`,
-      \`- Bottleneck station: **\${safeCell(projection.bottleneckName)}**\`,
-      \`- Bottleneck cycle time: **\${projection.bottleneck} seconds**\`,
+      `- Good vehicles per shift: **${projection.good.toLocaleString("en-IN")}**`,
+      `- Shift target: **${snapshot.target.toLocaleString("en-IN")}**`,
+      `- Target status: **${projection.gap >= 0 ? "Achieved" : "Below target"}**`,
+      `- Target gap: **${projection.gap > 0 ? "+" : ""}${projection.gap} vehicles**`,
+      `- Bottleneck station: **${safeCell(projection.bottleneckName)}**`,
+      `- Bottleneck cycle time: **${projection.bottleneck} seconds**`,
       "",
       "## Operating assumptions",
       "",
       "| Setting | Value |",
       "|---|---:|",
-      \`| Shift hours | \${snapshot.shiftHours} |\`,
-      \`| Break minutes | \${snapshot.breakMinutes} |\`,
-      \`| Availability | \${snapshot.availability}% |\`,
-      \`| Quality yield | \${snapshot.yieldRate}% |\`,
+      `| Shift hours | ${snapshot.shiftHours} |`,
+      `| Break minutes | ${snapshot.breakMinutes} |`,
+      `| Availability | ${snapshot.availability}% |`,
+      `| Quality yield | ${snapshot.yieldRate}% |`,
       "",
       "## Station cycle times",
       "",
@@ -355,12 +355,12 @@ export default function AssemblyLineSimulator() {
     const link = document.createElement("a");
     const safeName = item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "factory-scenario";
     link.href = url;
-    link.download = \`\${safeName}-report.md\`;
+    link.download = `${safeName}-report.md`;
     document.body.appendChild(link);
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
-    setScenarioSaveMessage(\`Exported “\${item.name}” as a Markdown scenario report.\`);
+    setScenarioSaveMessage(`Exported “${item.name}” as a Markdown scenario report.`);
   }
 
   function exportNamedScenarioHtml(item) {
