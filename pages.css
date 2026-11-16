@@ -2100,3 +2100,7 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-named-scenarios li button:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
 .factory-named-scenarios>p{margin:0;color:var(--muted);font:400 8px/1.5 var(--sans)}
 @media(max-width:480px){.factory-named-scenario-controls{grid-template-columns:1fr}.factory-named-scenarios li{grid-template-columns:minmax(0,1fr) auto auto;gap:5px}.factory-named-scenarios li button{padding:6px}}
+
+
+.factory-named-scenarios li small.factory-named-on-target{color:#28734f;font-weight:700}
+.factory-named-scenarios li small.factory-named-below-target{color:#9a6325;font-weight:700}
