@@ -265,6 +265,46 @@ export default function AssemblyLineSimulator() {
     setScenarioSaveMessage(`Exported “${item.name}” as an individual scenario JSON. You can import it using Import JSON.`);
   }
 
+  function exportNamedScenarioCsv(item) {
+    if (!item || !isValidSavedScenario(item.snapshot)) {
+      setScenarioSaveMessage("This saved scenario is invalid and cannot be exported.");
+      return;
+    }
+    const projection = getScenarioProjection(item.snapshot);
+    const rows = [
+      ["Factory improvement scenario", item.name],
+      ["Saved at", item.snapshot.savedAt],
+      ["Good vehicles / shift", projection.good],
+      ["Target", item.snapshot.target],
+      ["Vehicles above / below target", projection.gap],
+      ["Target status", projection.gap >= 0 ? "Target achieved" : "Below target"],
+      ["Bottleneck station", projection.bottleneckName],
+      ["Bottleneck cycle (sec)", projection.bottleneck],
+      ["Shift hours", item.snapshot.shiftHours],
+      ["Break minutes", item.snapshot.breakMinutes],
+      ["Availability (%)", item.snapshot.availability],
+      ["Quality yield (%)", item.snapshot.yieldRate],
+      [],
+      ["Station", "Cycle time (seconds)"],
+      ...initialStations.map((station, index) => [station.name, item.snapshot.cycleTimes[index]])
+    ];
+    const csv = rows.map(row => row.map(value => {
+      const cell = String(value ?? "");
+      return /[",\\n]/.test(cell) ? '"' + cell.replace(/"/g, '""') + '"' : cell;
+    }).join(",")).join("\\n");
+    const blob = new Blob(["\\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const safeName = item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "factory-scenario";
+    link.href = url;
+    link.download = `${safeName}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setScenarioSaveMessage(`Exported “${item.name}” with production assumptions and all station cycle times as CSV.`);
+  }
+
   function loadNamedScenario(item) {
     if (!item || !isValidSavedScenario(item.snapshot)) return;
     const snapshot = item.snapshot;
@@ -790,6 +830,7 @@ export default function AssemblyLineSimulator() {
                     <label className="factory-scenario-compare-choice"><input type="checkbox" checked={selectedScenarioNames.includes(item.name)} onChange={event => toggleScenarioComparison(item.name, event.target.checked)} aria-label={`Compare ${item.name}`} /> Compare</label>
                     {renamingScenario !== item.name && <button type="button" className="line-reset" onClick={() => { setRenamingScenario(item.name); setRenameScenarioValue(item.name); }}>Rename</button>}
                     <button type="button" className="line-reset" onClick={() => exportNamedScenarioJson(item)}>Export JSON</button>
+                    <button type="button" className="line-reset" onClick={() => exportNamedScenarioCsv(item)}>Export CSV</button>
                     <button type="button" className="line-reset" onClick={() => loadNamedScenario(item)}>Load</button>
                     <button type="button" className="line-reset" onClick={() => duplicateNamedScenario(item)} disabled={scenarioLibrary.length >= 10} aria-label={`Duplicate ${item.name}`}>Duplicate</button>
                     {pendingDeleteScenario === item.name ? <>
