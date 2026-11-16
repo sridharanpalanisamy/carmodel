@@ -28,6 +28,52 @@ export default function AssemblyLineSimulator() {
   const [showDataTable, setShowDataTable] = useState(false);
   const [showImprovementPlanner, setShowImprovementPlanner] = useState(false);
   const [proposedCycleTimes, setProposedCycleTimes] = useState(initialStations.map(station => station.seconds));
+  const [savedScenario, setSavedScenario] = useState(null);
+  const [scenarioStorageReady, setScenarioStorageReady] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("factory-improvement-scenario");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed.cycleTimes) && parsed.cycleTimes.length === initialStations.length &&
+            parsed.cycleTimes.every(value => Number.isFinite(value) && value >= 20 && value <= 180)) {
+          setSavedScenario(parsed);
+        }
+      }
+    } catch {
+      // Keep scenario saving optional when browser storage is unavailable.
+    }
+    setScenarioStorageReady(true);
+  }, []);
+
+  function saveImprovementScenario() {
+    const snapshot = {
+      cycleTimes: proposedCycleTimes,
+      target,
+      shiftHours,
+      breakMinutes,
+      availability,
+      yieldRate,
+      savedAt: new Date().toISOString()
+    };
+    try {
+      window.localStorage.setItem("factory-improvement-scenario", JSON.stringify(snapshot));
+      setSavedScenario(snapshot);
+    } catch {
+      setSavedScenario(null);
+    }
+  }
+
+  function loadImprovementScenario() {
+    if (!savedScenario) return;
+    setProposedCycleTimes([...savedScenario.cycleTimes]);
+  }
+
+  function clearImprovementScenario() {
+    try { window.localStorage.removeItem("factory-improvement-scenario"); } catch {}
+    setSavedScenario(null);
+  }
   const [chartVisibility, setChartVisibility] = useState({ radar: true, capacity: true, ratios: true, losses: true });
   const [chartTitles, setChartTitles] = useState({
     radar: "Station cycle times",
@@ -318,10 +364,15 @@ export default function AssemblyLineSimulator() {
                 <div><span>WHAT-IF ANALYSIS / LINE BALANCING</span><h3>Test station improvements</h3><p>Enter a proposed cycle time for each station. Compare the projected shift output with the current simulation.</p></div>
                 <div className="factory-improvement-actions">
                   <button type="button" className="line-reset" onClick={exportImprovementScenario}>Export scenario CSV ↓</button>
+                  <button type="button" className="line-reset" onClick={saveImprovementScenario}>Save scenario</button>
+                  <button type="button" className="line-reset" onClick={loadImprovementScenario} disabled={!savedScenario}>Load saved</button>
                   <button type="button" className="line-reset" onClick={() => setProposedCycleTimes(stations.map(station => station.seconds))}>Copy current times</button>
                   <button type="button" className="line-reset" onClick={() => setProposedCycleTimes(stations.map((station, index) => Math.min(station.seconds, clamp(improvement.requiredCycle, 20, 180))))}>Apply target pace</button>
                 </div>
               </div>
+              {scenarioStorageReady && <div className="factory-scenario-saved-state" role="status">
+                {savedScenario ? <><span>Saved scenario available · target {savedScenario.target} vehicles · {new Date(savedScenario.savedAt).toLocaleString()}</span><button type="button" onClick={clearImprovementScenario}>Clear saved scenario</button></> : <span>No saved scenario yet. Save your proposed cycle times to reuse them later on this device.</span>}
+              </div>}
               <div className="factory-improvement-grid">
                 {stations.map((station, index) => (
                   <label className="factory-improvement-row" key={station.name}>
