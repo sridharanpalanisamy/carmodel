@@ -2194,3 +2194,6 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 @media(max-width:620px){.factory-scenario-empty-search{align-items:stretch;flex-direction:column}.factory-scenario-empty-search button{width:100%}}
 
 .factory-scenario-capacity{display:block;margin:7px 0 10px;color:var(--muted);font-size:10px;line-height:1.5}
+
+.factory-comparison-export{justify-self:start;min-height:34px;margin:8px 0;padding:7px 11px;font-size:11px}
+@media(max-width:620px){.factory-comparison-export{width:100%}}
