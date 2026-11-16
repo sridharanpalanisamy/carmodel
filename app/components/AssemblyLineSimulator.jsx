@@ -349,6 +349,61 @@ export default function AssemblyLineSimulator() {
     setScenarioSaveMessage(`Exported the comparison between “${first.name}” and “${second.name}” as CSV.`);
   }
 
+  function exportScenarioComparisonJson(first, second) {
+    if (!first || !second || !isValidSavedScenario(first.snapshot) || !isValidSavedScenario(second.snapshot)) {
+      setScenarioSaveMessage("Select two valid saved scenarios before exporting their comparison.");
+      return;
+    }
+    const firstProjection = getScenarioProjection(first.snapshot);
+    const secondProjection = getScenarioProjection(second.snapshot);
+    const sharedConditions = {
+      shiftHours: first.snapshot.shiftHours,
+      breakMinutes: first.snapshot.breakMinutes,
+      availability: first.snapshot.availability,
+      yieldRate: first.snapshot.yieldRate,
+      target: first.snapshot.target
+    };
+    const normalizedFirst = getScenarioProjection({ ...first.snapshot, ...sharedConditions });
+    const normalizedSecond = getScenarioProjection({ ...second.snapshot, ...sharedConditions });
+    const sameAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate", "target"].every(key => first.snapshot[key] === second.snapshot[key]);
+    const payload = {
+      version: 1,
+      type: "factory-scenario-comparison",
+      exportedAt: new Date().toISOString(),
+      comparisonOrder: "second-minus-first",
+      sameOperatingAssumptions: sameAssumptions,
+      scenarios: [
+        { name: first.name, snapshot: first.snapshot, projection: firstProjection },
+        { name: second.name, snapshot: second.snapshot, projection: secondProjection }
+      ],
+      normalizedComparison: {
+        conditionsFromScenario: first.name,
+        conditions: sharedConditions,
+        firstGoodVehiclesPerShift: normalizedFirst.good,
+        secondGoodVehiclesPerShift: normalizedSecond.good,
+        differenceGoodVehiclesPerShift: normalizedSecond.good - normalizedFirst.good
+      },
+      stationCycleDifferences: initialStations.map((station, index) => ({
+        station: station.name,
+        firstCycleSeconds: first.snapshot.cycleTimes[index],
+        secondCycleSeconds: second.snapshot.cycleTimes[index],
+        differenceSeconds: second.snapshot.cycleTimes[index] - first.snapshot.cycleTimes[index]
+      }))
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    const safeFirst = first.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "scenario-a";
+    const safeSecond = second.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "scenario-b";
+    link.href = url;
+    link.download = `factory-comparison-${safeFirst}-vs-${safeSecond}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setScenarioSaveMessage(`Exported the structured comparison between “${first.name}” and “${second.name}” as JSON.`);
+  }
+
   function loadNamedScenario(item) {
     if (!item || !isValidSavedScenario(item.snapshot)) return;
     const snapshot = item.snapshot;
@@ -918,6 +973,7 @@ export default function AssemblyLineSimulator() {
                     return <>
                       <p><strong>{difference > 0 ? `+${difference}` : difference} good vehicles/shift</strong> for {second.name} compared with {first.name}{percentDifference !== null ? ` (${percentDifference > 0 ? "+" : ""}${percentDifference.toFixed(1)}%)` : ""}.</p>
                       <button type="button" className="line-reset factory-comparison-export" onClick={() => exportScenarioComparisonCsv(first, second)}>Export comparison CSV</button>
+                      <button type="button" className="line-reset factory-comparison-export" onClick={() => exportScenarioComparisonJson(first, second)}>Export comparison JSON</button>
                       <small className={sameAssumptions ? "factory-scenario-comparison-fair" : "factory-scenario-comparison-warning"} role="status">{sameAssumptions ? "Like-for-like comparison: both scenarios use the same shift and production assumptions." : "Different assumptions detected. Output difference includes changes to shift time, breaks, availability, quality yield or target; compare cycle times separately for a fair line-performance assessment."}</small>
                       <div className="factory-scenario-normalized">
                         <strong>Cycle-time-only comparison</strong>
