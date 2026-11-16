@@ -151,6 +151,39 @@ export default function AssemblyLineSimulator() {
     URL.revokeObjectURL(url);
   }
 
+  function exportImprovementScenario() {
+    const rows = [
+      ["Factory line improvement scenario"],
+      ["Metric", "Current", "Proposed"],
+      ["Good vehicles per shift", result.goodUnits, improvement.good],
+      ["Bottleneck station", result.bottleneckName, improvement.bottleneckName],
+      ["Bottleneck cycle time (seconds)", result.bottleneck, improvement.bottleneck],
+      ["Production change (good vehicles)", 0, improvement.gain],
+      ["Shift target", target, target],
+      ["Availability (%)", availability, availability],
+      ["Quality yield (%)", yieldRate, yieldRate],
+      [],
+      ["Station", "Current cycle (seconds)", "Proposed cycle (seconds)", "Reduction (seconds)"],
+      ...stations.map((station, index) => {
+        const proposed = proposedCycleTimes[index] ?? station.seconds;
+        return [station.name, station.seconds, proposed, station.seconds - proposed];
+      })
+    ];
+    const csv = rows.map(row => row.map(value => {
+      const cell = String(value ?? "");
+      return /[",\\n]/.test(cell) ? '"' + cell.replace(/"/g, '""') + '"' : cell;
+    }).join(",")).join("\\n");
+    const blob = new Blob(["\\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "factory-line-improvement-scenario.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
   function reset() {
     setStations(initialStations);
     setShiftHours(8);
@@ -269,6 +302,7 @@ export default function AssemblyLineSimulator() {
               <div className="factory-improvement-heading">
                 <div><span>WHAT-IF ANALYSIS / LINE BALANCING</span><h3>Test station improvements</h3><p>Enter a proposed cycle time for each station. Compare the projected shift output with the current simulation.</p></div>
                 <div className="factory-improvement-actions">
+                  <button type="button" className="line-reset" onClick={exportImprovementScenario}>Export scenario CSV ↓</button>
                   <button type="button" className="line-reset" onClick={() => setProposedCycleTimes(stations.map(station => station.seconds))}>Copy current times</button>
                   <button type="button" className="line-reset" onClick={() => setProposedCycleTimes(stations.map((station, index) => Math.min(station.seconds, clamp(improvement.requiredCycle, 20, 180))))}>Apply target pace</button>
                 </div>
