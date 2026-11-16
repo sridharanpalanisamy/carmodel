@@ -66,6 +66,7 @@ export default function AssemblyLineSimulator() {
   const [proposedCycleTimes, setProposedCycleTimes] = useState(initialStations.map(station => station.seconds));
   const [savedScenario, setSavedScenario] = useState(null);
   const [scenarioLibrary, setScenarioLibrary] = useState([]);
+  const [selectedScenarioNames, setSelectedScenarioNames] = useState([]);
   const [scenarioName, setScenarioName] = useState("Baseline improvement");
   const [scenarioStorageReady, setScenarioStorageReady] = useState(false);
   const [scenarioSaveMessage, setScenarioSaveMessage] = useState("");
@@ -139,6 +140,14 @@ export default function AssemblyLineSimulator() {
     } catch {
       setScenarioSaveMessage("Could not save the named scenario. Browser storage may be unavailable.");
     }
+  }
+
+  function toggleScenarioComparison(name, checked) {
+    setSelectedScenarioNames(current => {
+      if (!checked) return current.filter(item => item !== name);
+      if (current.length >= 2) return [current[1], name];
+      return [...current, name];
+    });
   }
 
   function loadNamedScenario(item) {
@@ -578,10 +587,27 @@ export default function AssemblyLineSimulator() {
                 {scenarioLibrary.length > 0 && <ul aria-label="Saved named scenarios">
                   {scenarioLibrary.map(item => <li key={item.name}>
                     <span><strong>{item.name}</strong><small>{new Date(item.snapshot.savedAt).toLocaleString()} · target {item.snapshot.target}/shift</small><small>{getScenarioProjection(item.snapshot).good.toLocaleString("en-IN")} good vehicles/shift · bottleneck {getScenarioProjection(item.snapshot).bottleneckName} ({getScenarioProjection(item.snapshot).bottleneck}s)</small><small className={getScenarioProjection(item.snapshot).gap >= 0 ? "factory-named-on-target" : "factory-named-below-target"}>{getScenarioProjection(item.snapshot).gap >= 0 ? `Target met · ${getScenarioProjection(item.snapshot).gap} above` : `${Math.abs(getScenarioProjection(item.snapshot).gap)} below target`}</small></span>
+                    <label className="factory-scenario-compare-choice"><input type="checkbox" checked={selectedScenarioNames.includes(item.name)} onChange={event => toggleScenarioComparison(item.name, event.target.checked)} aria-label={`Compare ${item.name}`} /> Compare</label>
                     <button type="button" className="line-reset" onClick={() => loadNamedScenario(item)}>Load</button>
                     <button type="button" className="line-reset" onClick={() => deleteNamedScenario(item.name)} aria-label={`Delete ${item.name}`}>Delete</button>
                   </li>)}
                 </ul>}
+                {selectedScenarioNames.length > 0 && <div className="factory-scenario-comparison" aria-live="polite">
+                  <strong>Scenario comparison ({selectedScenarioNames.length}/2)</strong>
+                  {selectedScenarioNames.map(name => {
+                    const item = scenarioLibrary.find(entry => entry.name === name);
+                    if (!item) return null;
+                    const projection = getScenarioProjection(item.snapshot);
+                    return <div key={name}><span>{item.name}</span><strong>{projection.good.toLocaleString("en-IN")} good/shift</strong><small>{projection.bottleneckName} · {projection.bottleneck}s bottleneck · {projection.gap >= 0 ? `+${projection.gap} above target` : `${Math.abs(projection.gap)} below target`}</small></div>;
+                  })}
+                  {selectedScenarioNames.length === 2 && (() => {
+                    const first = scenarioLibrary.find(item => item.name === selectedScenarioNames[0]);
+                    const second = scenarioLibrary.find(item => item.name === selectedScenarioNames[1]);
+                    if (!first || !second) return null;
+                    const difference = getScenarioProjection(second.snapshot).good - getScenarioProjection(first.snapshot).good;
+                    return <p><strong>{difference > 0 ? `+${difference}` : difference} good vehicles/shift</strong> for {second.name} compared with {first.name}.</p>;
+                  })()}
+                </div>}
                 <p>Up to 10 named scenarios are stored in this browser. They remain separate from the single quick-save slot above.</p>
               </div>
 
