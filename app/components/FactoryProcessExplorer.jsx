@@ -82,7 +82,7 @@ export default function FactoryProcessExplorer() {
         </div>
       </div>
       <div className="factory-progress" aria-label={`Stage ${active + 1} of ${stages.length}`}><span style={{width:progress+"%"}} /></div>
-      <article className="factory-stage-detail factory-stage-inline" aria-labelledby="factoryStageDialogTitle">
+      <article className="factory-stage-detail factory-stage-inline grid grid-cols-1 lg:grid-cols-[minmax(260px,0.85fr)_minmax(0,1.15fr)] w-full min-w-0" aria-labelledby="factoryStageDialogTitle">
           <div className="factory-stage-visual"><FactoryUnitVisual stage={stage} /></div>
           <div className="factory-stage-copy">
             <span className="eyebrow">STAGE {stage.id} / 07</span><h3 id="factoryStageDialogTitle">{stage.title}</h3><p className="factory-stage-summary">{stage.summary}</p>
