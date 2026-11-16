@@ -645,8 +645,15 @@ export default function AssemblyLineSimulator() {
                     const first = scenarioLibrary.find(item => item.name === selectedScenarioNames[0]);
                     const second = scenarioLibrary.find(item => item.name === selectedScenarioNames[1]);
                     if (!first || !second) return null;
-                    const difference = getScenarioProjection(second.snapshot).good - getScenarioProjection(first.snapshot).good;
-                    return <p><strong>{difference > 0 ? `+${difference}` : difference} good vehicles/shift</strong> for {second.name} compared with {first.name}.</p>;
+                    const firstProjection = getScenarioProjection(first.snapshot);
+                    const secondProjection = getScenarioProjection(second.snapshot);
+                    const difference = secondProjection.good - firstProjection.good;
+                    const percentDifference = firstProjection.good > 0 ? (difference / firstProjection.good) * 100 : null;
+                    const sameAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate", "target"].every(key => first.snapshot[key] === second.snapshot[key]);
+                    return <>
+                      <p><strong>{difference > 0 ? `+${difference}` : difference} good vehicles/shift</strong> for {second.name} compared with {first.name}{percentDifference !== null ? ` (${percentDifference > 0 ? "+" : ""}${percentDifference.toFixed(1)}%)` : ""}.</p>
+                      <small className={sameAssumptions ? "factory-scenario-comparison-fair" : "factory-scenario-comparison-warning"} role="status">{sameAssumptions ? "Like-for-like comparison: both scenarios use the same shift and production assumptions." : "Different assumptions detected. Output difference includes changes to shift time, breaks, availability, quality yield or target; compare cycle times separately for a fair line-performance assessment."}</small>
+                    </>;
                   })()}
                 </div>}
                 <p>Up to 10 named scenarios are stored in this browser. They remain separate from the single quick-save slot above.</p>
