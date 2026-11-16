@@ -653,6 +653,26 @@ export default function AssemblyLineSimulator() {
                     return <>
                       <p><strong>{difference > 0 ? `+${difference}` : difference} good vehicles/shift</strong> for {second.name} compared with {first.name}{percentDifference !== null ? ` (${percentDifference > 0 ? "+" : ""}${percentDifference.toFixed(1)}%)` : ""}.</p>
                       <small className={sameAssumptions ? "factory-scenario-comparison-fair" : "factory-scenario-comparison-warning"} role="status">{sameAssumptions ? "Like-for-like comparison: both scenarios use the same shift and production assumptions." : "Different assumptions detected. Output difference includes changes to shift time, breaks, availability, quality yield or target; compare cycle times separately for a fair line-performance assessment."}</small>
+                      <div className="factory-scenario-station-compare">
+                        <strong>Station cycle-time comparison</strong>
+                        <div className="factory-scenario-station-compare-scroll" role="region" aria-label="Side-by-side station cycle time comparison" tabIndex="0">
+                          <table>
+                            <thead><tr><th>Station</th><th>{first.name}</th><th>{second.name}</th><th>Difference</th></tr></thead>
+                            <tbody>{initialStations.map((station, index) => {
+                              const firstTime = first.snapshot.cycleTimes[index];
+                              const secondTime = second.snapshot.cycleTimes[index];
+                              const delta = secondTime - firstTime;
+                              return <tr key={station.name}>
+                                <th scope="row">{station.name}</th>
+                                <td>{firstTime}s</td>
+                                <td>{secondTime}s</td>
+                                <td className={delta < 0 ? "factory-cycle-faster" : delta > 0 ? "factory-cycle-slower" : ""}>{delta > 0 ? "+" : ""}{delta}s {delta < 0 ? "faster" : delta > 0 ? "slower" : "unchanged"}</td>
+                              </tr>;
+                            })}</tbody>
+                          </table>
+                        </div>
+                        <small>Difference is calculated as {second.name} minus {first.name}. A negative value means the second scenario has a faster station cycle.</small>
+                      </div>
                     </>;
                   })()}
                 </div>}
