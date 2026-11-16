@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 const initialStations = [
@@ -46,6 +46,7 @@ export default function AssemblyLineSimulator() {
   const [savedScenario, setSavedScenario] = useState(null);
   const [scenarioStorageReady, setScenarioStorageReady] = useState(false);
   const [scenarioSaveMessage, setScenarioSaveMessage] = useState("");
+  const scenarioFileInput = useRef(null);
 
   useEffect(() => {
     try {
@@ -80,6 +81,40 @@ export default function AssemblyLineSimulator() {
       setScenarioSaveMessage("Scenario saved on this device. It will be available in this browser.");
     } catch {
       setScenarioSaveMessage("Could not save this scenario. Browser storage may be disabled or unavailable.");
+    }
+  }
+
+  function exportScenarioJson() {
+    const snapshot = { version: 1, cycleTimes: proposedCycleTimes, target, shiftHours, breakMinutes, availability, yieldRate, savedAt: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "factory-improvement-scenario.json";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setScenarioSaveMessage("Scenario JSON exported. You can import this file on another device.");
+  }
+
+  async function importScenarioJson(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      const parsed = JSON.parse(await file.text());
+      if (!isValidSavedScenario(parsed)) throw new Error("Invalid scenario format");
+      setProposedCycleTimes([...parsed.cycleTimes]);
+      setShiftHours(parsed.shiftHours);
+      setBreakMinutes(parsed.breakMinutes);
+      setAvailability(parsed.availability);
+      setYieldRate(parsed.yieldRate);
+      setTarget(parsed.target);
+      setScenarioSaveMessage("Scenario imported. Review the projection, then choose Save scenario to keep it in this browser.");
+    } catch {
+      setScenarioSaveMessage("Import failed. Choose a valid scenario JSON file exported from this Factory Process planner.");
+    } finally {
+      event.target.value = "";
     }
   }
 
@@ -414,6 +449,9 @@ export default function AssemblyLineSimulator() {
                 <div><span>WHAT-IF ANALYSIS / LINE BALANCING</span><h3>Test station improvements</h3><p>Enter a proposed cycle time for each station. Compare the projected shift output with the current simulation.</p></div>
                 <div className="factory-improvement-actions">
                   <button type="button" className="line-reset" onClick={exportImprovementScenario}>Export scenario CSV ↓</button>
+                  <button type="button" className="line-reset" onClick={exportScenarioJson}>Export JSON ↓</button>
+                  <button type="button" className="line-reset" onClick={() => scenarioFileInput.current?.click()}>Import JSON ↑</button>
+                  <input ref={scenarioFileInput} type="file" accept=".json,application/json" onChange={importScenarioJson} className="sr-only" aria-label="Import factory improvement scenario JSON" />
                   <button type="button" className="line-reset" onClick={saveImprovementScenario}>Save scenario</button>
                   <button type="button" className="line-reset" onClick={loadImprovementScenario} disabled={!savedScenario}>Load saved</button>
                   <button type="button" className="line-reset" onClick={() => setProposedCycleTimes(stations.map(station => station.seconds))}>Copy current times</button>
