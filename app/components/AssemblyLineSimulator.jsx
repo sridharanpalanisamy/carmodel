@@ -110,7 +110,7 @@ export default function AssemblyLineSimulator() {
       ["Available capacity", result.available],
       ["Line availability (%)", availability],
       ["Quality yield (%)", yieldRate],
-      ["Target takt time (seconds per vehicle)", result.taktSeconds.toFixed(1)],
+      ["Target takt time before losses (seconds per vehicle)", result.taktSeconds.toFixed(1)],
       [],
       ["Station", "Cycle time (seconds)", "Bottleneck", "Target takt status"],
       ...stations.map(station => [station.name, station.seconds, station.seconds === result.bottleneck ? "Yes" : "No", station.seconds <= result.taktSeconds ? "Within takt" : "Exceeds takt"])
@@ -208,7 +208,7 @@ export default function AssemblyLineSimulator() {
             <div><span>Ideal line capacity</span><strong>{result.ideal} vehicles</strong></div>
             <div><span>After availability</span><strong>{result.available} vehicles</strong></div>
             <div><span>Good output per hour</span><strong>{result.hourly.toFixed(1)} vehicles</strong></div>
-            <div><span>Target takt time</span><strong>{result.taktSeconds.toFixed(1)} sec / vehicle</strong></div>
+            <div><span>Target takt time · before losses</span><strong>{result.taktSeconds.toFixed(1)} sec / vehicle</strong></div>
           </div>
           <div className="line-target-meter">
             <div><span>OUTPUT VS TARGET</span><strong>{target > 0 ? Math.min(100, result.goodUnits / target * 100).toFixed(0) : 0}%</strong></div>
@@ -290,7 +290,7 @@ export default function AssemblyLineSimulator() {
                     <tr><th scope="row">Availability loss</th><td>{Math.max(0,result.ideal-result.available).toLocaleString("en-IN")} vehicles</td><td>Ideal capacity − available capacity</td></tr>
                     <tr><th scope="row">Quality loss</th><td>{Math.max(0,result.available-result.goodUnits).toLocaleString("en-IN")} vehicles</td><td>Available capacity − good output</td></tr>
                     <tr><th scope="row">Target variance</th><td>{result.gap > 0 ? "+" : ""}{result.gap.toLocaleString("en-IN")} vehicles</td><td>Estimated good output − shift target</td></tr>
-                    <tr><th scope="row">Target takt time</th><td>{result.taktSeconds.toFixed(1)} seconds / vehicle</td><td>Net production seconds ÷ shift target; required pace to meet demand</td></tr>
+                    <tr><th scope="row">Target takt time</th><td>{result.taktSeconds.toFixed(1)} seconds / vehicle</td><td>Net production seconds ÷ shift target; pace before downtime and quality losses</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -303,7 +303,7 @@ export default function AssemblyLineSimulator() {
               </div>
             </section>
           )}
-          <p className="line-sim-tip">{result.taktSeconds > 0 && result.bottleneck > result.taktSeconds ? `The bottleneck cycle time is ${(result.bottleneck - result.taktSeconds).toFixed(1)} seconds slower than target takt. The line needs a faster cycle or more net production time to meet the selected target.` : "All station cycle times are at or below target takt under the current assumptions."}</p>
+          <p className="line-sim-tip">{result.taktSeconds > 0 && result.bottleneck > result.taktSeconds ? `The bottleneck cycle time is ${(result.bottleneck - result.taktSeconds).toFixed(1)} seconds slower than target takt. The line needs a faster cycle or more net production time to meet the selected target.` : "All station cycle times are at or below target takt before downtime and quality losses."}</p>
         </aside>
       </div>
       <p className="line-sim-disclaimer">Simplified educational model. It assumes a serial line whose throughput is limited by the slowest station. Real factories also account for buffers, parallel workstations, changeovers, downtime patterns, material shortages, rework, staffing and product mix. Results are estimates, not Ford plant data or production guarantees.</p>
