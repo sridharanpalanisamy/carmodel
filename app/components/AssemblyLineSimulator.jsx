@@ -111,6 +111,12 @@ export default function AssemblyLineSimulator() {
     try {
       if (file.size > 100 * 1024) throw new Error("Scenario file is too large");
       const parsed = JSON.parse(await file.text());
+      if (parsed?.version !== 1 && parsed?.version !== 2) throw new Error("Unsupported scenario version");
+      if (parsed.version === 2 && (!Array.isArray(parsed.stationNames) ||
+        parsed.stationNames.length !== initialStations.length ||
+        !parsed.stationNames.every((name, index) => name === initialStations[index].name))) {
+        throw new Error("Station layout does not match");
+      }
       if (!isValidSavedScenario(parsed)) throw new Error("Invalid scenario format");
       setProposedCycleTimes([...parsed.cycleTimes]);
       setShiftHours(parsed.shiftHours);
@@ -120,7 +126,7 @@ export default function AssemblyLineSimulator() {
       setTarget(parsed.target);
       setScenarioSaveMessage("Scenario imported. Review the projection, then choose Save scenario to keep it in this browser.");
     } catch {
-      setScenarioSaveMessage("Import failed. Choose a valid scenario JSON file exported from this Factory Process planner.");
+      setScenarioSaveMessage("Import failed. Use a version 1 or 2 scenario JSON exported from this planner, with matching station names and valid settings.");
     } finally {
       event.target.value = "";
     }
