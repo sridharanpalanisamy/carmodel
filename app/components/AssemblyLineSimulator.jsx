@@ -263,6 +263,7 @@ export default function AssemblyLineSimulator() {
       `Projected good output: ${projection.good} vehicles / shift`,
       `Shift target: ${snapshot.target} vehicles / shift`,
       `Target status: ${projection.gap >= 0 ? "Achieved" : "Below target"}`,
+      `Target attainment: ${projection.attainmentPercent.toFixed(1)}%`,
       `Target gap: ${projection.gap > 0 ? "+" : ""}${projection.gap} vehicles`,
       `Bottleneck: ${projection.bottleneckName} (${projection.bottleneck}s)`,
       `Shift assumptions: ${snapshot.shiftHours}h; breaks ${snapshot.breakMinutes} min; availability ${snapshot.availability}%; quality yield ${snapshot.yieldRate}%`,
@@ -310,6 +311,7 @@ export default function AssemblyLineSimulator() {
       ["Saved at", item.snapshot.savedAt],
       ["Good vehicles / shift", projection.good],
       ["Target", item.snapshot.target],
+      ["Target attainment (%)", Number(projection.attainmentPercent.toFixed(1))],
       ["Vehicles above / below target", projection.gap],
       ["Target status", projection.gap >= 0 ? "Target achieved" : "Below target"],
       ["Bottleneck station", projection.bottleneckName],
@@ -363,6 +365,7 @@ export default function AssemblyLineSimulator() {
       `- Good vehicles per shift: **${projection.good.toLocaleString("en-IN")}**`,
       `- Shift target: **${snapshot.target.toLocaleString("en-IN")}**`,
       `- Target status: **${projection.gap >= 0 ? "Achieved" : "Below target"}**`,
+      `- Target attainment: **${projection.attainmentPercent.toFixed(1)}%**`,
       `- Target gap: **${projection.gap > 0 ? "+" : ""}${projection.gap} vehicles**`,
       `- Bottleneck station: **${safeCell(projection.bottleneckName)}**`,
       `- Bottleneck cycle time: **${projection.bottleneck} seconds**`,
@@ -427,6 +430,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 <div class="cards">
 <div class="metric"><span>Projected good vehicles / shift</span><strong>${projection.good.toLocaleString("en-IN")}</strong></div>
 <div class="metric"><span>Production target / shift</span><strong>${snapshot.target.toLocaleString("en-IN")}</strong></div>
+<div class="metric"><span>Target attainment</span><strong>${projection.attainmentPercent.toFixed(1)}%</strong></div>
 <div class="metric"><span>Bottleneck station</span><strong style="font-size:19px">${escapeHtml(projection.bottleneckName)}</strong></div>
 <div class="metric"><span>Bottleneck cycle time</span><strong>${projection.bottleneck} s</strong></div>
 </div>
