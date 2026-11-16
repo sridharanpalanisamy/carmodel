@@ -26,6 +26,8 @@ export default function AssemblyLineSimulator() {
   const [target, setTarget] = useState(350);
   const [chartEditMode, setChartEditMode] = useState(false);
   const [showDataTable, setShowDataTable] = useState(false);
+  const [showImprovementPlanner, setShowImprovementPlanner] = useState(false);
+  const [proposedCycleTimes, setProposedCycleTimes] = useState(initialStations.map(station => station.seconds));
   const [chartVisibility, setChartVisibility] = useState({ radar: true, capacity: true, ratios: true, losses: true });
   const [chartTitles, setChartTitles] = useState({
     radar: "Station cycle times",
@@ -89,6 +91,20 @@ export default function AssemblyLineSimulator() {
       taktSeconds: target > 0 ? netMinutes * 60 / target : 0
     };
   }, [stations, shiftHours, breakMinutes, availability, yieldRate, target]);
+
+  const improvement = useMemo(() => {
+    const proposedBottleneck = Math.max(...proposedCycleTimes);
+    const proposedIdeal = proposedBottleneck > 0 ? Math.floor(result.netMinutes * 60 / proposedBottleneck) : 0;
+    const proposedAvailable = Math.floor(proposedIdeal * availability / 100);
+    const proposedGood = Math.floor(proposedAvailable * yieldRate / 100);
+    return {
+      bottleneck: proposedBottleneck,
+      bottleneckName: stations[proposedCycleTimes.indexOf(proposedBottleneck)]?.name || "—",
+      ideal: proposedIdeal,
+      good: proposedGood,
+      gain: proposedGood - result.goodUnits
+    };
+  }, [proposedCycleTimes, result.netMinutes, result.goodUnits, availability, yieldRate, stations]);
 
   function updateStation(index, seconds) {
     setStations(current => current.map((station, i) =>
@@ -219,6 +235,7 @@ export default function AssemblyLineSimulator() {
             <div className="factory-chart-actions">
               <button className="line-reset" type="button" onClick={exportSimulation}>Export CSV ↓</button>
               <button className="line-reset" type="button" aria-expanded={showDataTable} onClick={() => setShowDataTable(value => !value)}>{showDataTable ? "Hide data table −" : "View data table ≡"}</button>
+              <button className="line-reset" type="button" aria-expanded={showImprovementPlanner} onClick={() => setShowImprovementPlanner(value => !value)}>{showImprovementPlanner ? "Hide improvement planner −" : "Improve line ↗"}</button>
               <button className="line-reset" type="button" aria-expanded={chartEditMode} onClick={() => setChartEditMode(value => !value)}>{chartEditMode ? "Done editing ✓" : "Edit charts ⚙"}</button>
             </div>
           </div>
@@ -238,6 +255,34 @@ export default function AssemblyLineSimulator() {
               ))}
               <button type="button" className="line-reset" onClick={() => { setChartVisibility({ radar: true, capacity: true, ratios: true, losses: true }); setChartTitles(defaultChartTitles); }}>Restore chart defaults</button>
             </div>
+          )}
+          {showImprovementPlanner && (
+            <section className="factory-improvement-planner" aria-label="Station improvement planner">
+              <div className="factory-improvement-heading">
+                <div><span>WHAT-IF ANALYSIS / LINE BALANCING</span><h3>Test station improvements</h3><p>Enter a proposed cycle time for each station. Compare the projected shift output with the current simulation.</p></div>
+                <button type="button" className="line-reset" onClick={() => setProposedCycleTimes(stations.map(station => station.seconds))}>Copy current times</button>
+              </div>
+              <div className="factory-improvement-grid">
+                {stations.map((station, index) => (
+                  <label className="factory-improvement-row" key={station.name}>
+                    <span>{station.name}</span>
+                    <small>Current: {station.seconds}s</small>
+                    <div><input aria-label={`Proposed cycle time for ${station.name}`} type="number" min="20" max="180" step="1" value={proposedCycleTimes[index] ?? station.seconds} onChange={event => {
+                      const value = event.target.value;
+                      if (value !== "" && Number(value) >= 20 && Number(value) <= 180) {
+                        setProposedCycleTimes(current => current.map((time, i) => i === index ? Number(value) : time));
+                      }
+                    }}/><span>sec</span></div>
+                  </label>
+                ))}
+              </div>
+              <div className="factory-improvement-results">
+                <div><span>Projected good output</span><strong>{improvement.good.toLocaleString("en-IN")}</strong><small>vehicles / shift</small></div>
+                <div><span>Projected bottleneck</span><strong>{improvement.bottleneckName}</strong><small>{improvement.bottleneck}s per vehicle</small></div>
+                <div className={improvement.gain > 0 ? "is-positive" : improvement.gain < 0 ? "is-negative" : ""}><span>Change vs current</span><strong>{improvement.gain > 0 ? "+" : ""}{improvement.gain.toLocaleString("en-IN")}</strong><small>good vehicles / shift</small></div>
+              </div>
+              <p className="factory-chart-caption">This is a scenario estimate using the same shift, availability and quality assumptions. It assumes the line remains serial and the slowest proposed station sets the pace.</p>
+            </section>
           )}
           <div className="factory-live-charts grid grid-cols-1 2xl:grid-cols-2 gap-3 mt-5">
             {chartVisibility.radar && (<section className="factory-chart-card min-w-0" aria-label="Station cycle time radar chart">
