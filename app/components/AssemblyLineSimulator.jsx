@@ -167,6 +167,7 @@ export default function AssemblyLineSimulator() {
     try {
       window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
       setScenarioLibrary(next);
+      setSelectedScenarioNames(current => current.filter(item => item !== name));
       setScenarioSaveMessage(`“${name}” removed from the named scenario library.`);
     } catch {
       setScenarioSaveMessage("Could not update the named scenario library.");
@@ -593,12 +594,12 @@ export default function AssemblyLineSimulator() {
                   </li>)}
                 </ul>}
                 {selectedScenarioNames.length > 0 && <div className="factory-scenario-comparison" aria-live="polite">
-                  <strong>Scenario comparison ({selectedScenarioNames.length}/2)</strong>
+                  <div className="factory-scenario-comparison-heading"><strong>Scenario comparison ({selectedScenarioNames.length}/2)</strong><button type="button" className="line-reset" onClick={() => setSelectedScenarioNames([])}>Clear comparison</button></div>
                   {selectedScenarioNames.map(name => {
                     const item = scenarioLibrary.find(entry => entry.name === name);
                     if (!item) return null;
                     const projection = getScenarioProjection(item.snapshot);
-                    return <div key={name}><span>{item.name}</span><strong>{projection.good.toLocaleString("en-IN")} good/shift</strong><small>{projection.bottleneckName} · {projection.bottleneck}s bottleneck · {projection.gap >= 0 ? `+${projection.gap} above target` : `${Math.abs(projection.gap)} below target`}</small></div>;
+                    return <div key={name}><span>{item.name}</span><strong>{projection.good.toLocaleString("en-IN")} good/shift</strong><small>{projection.bottleneckName} · {projection.bottleneck}s bottleneck · {projection.gap >= 0 ? `+${projection.gap} above target` : `${Math.abs(projection.gap)} below target`}</small><small>Target {item.snapshot.target}/shift · {item.snapshot.shiftHours}h shift · {item.snapshot.availability}% availability · {item.snapshot.yieldRate}% quality</small></div>;
                   })}
                   {selectedScenarioNames.length === 2 && (() => {
                     const first = scenarioLibrary.find(item => item.name === selectedScenarioNames[0]);
