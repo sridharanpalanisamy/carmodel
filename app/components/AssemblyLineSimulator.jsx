@@ -68,6 +68,12 @@ export default function AssemblyLineSimulator() {
   function loadImprovementScenario() {
     if (!savedScenario) return;
     setProposedCycleTimes([...savedScenario.cycleTimes]);
+    // Restore the assumptions saved with the scenario so its projection is reproducible.
+    setShiftHours(clamp(Number(savedScenario.shiftHours) || 8, 4, 12));
+    setBreakMinutes(clamp(Number(savedScenario.breakMinutes) || 0, 0, 120));
+    setAvailability(clamp(Number(savedScenario.availability) || 90, 50, 100));
+    setYieldRate(clamp(Number(savedScenario.yieldRate) || 97, 70, 100));
+    setTarget(clamp(Number(savedScenario.target) || 350, 50, 700));
   }
 
   function clearImprovementScenario() {
