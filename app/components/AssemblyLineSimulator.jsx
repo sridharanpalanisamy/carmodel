@@ -361,10 +361,14 @@ export default function AssemblyLineSimulator() {
               <div className="factory-improvement-grid factory-improvement-detail-grid">
                 {stations.map((station, index) => {
                   const proposed = proposedCycleTimes[index] ?? station.seconds;
-                  const reduction = Math.max(0, station.seconds - proposed);
+                  const reduction = station.seconds - proposed;
+                  const abovePace = improvement.requiredCycle > 0 ? Math.max(0, proposed - improvement.requiredCycle) : null;
+                  const meetsPace = improvement.feasible && abovePace === 0;
                   return <div className="factory-improvement-detail" key={station.name}>
                     <strong>{station.name}</strong>
-                    <span>{proposed > improvement.requiredCycle ? `Still needs ${proposed - Math.max(20, improvement.requiredCycle)}s reduction` : reduction > 0 ? `Scenario reduces cycle by ${reduction}s` : "At or below target pace"}</span>
+                    <span>Current {station.seconds}s <span aria-hidden="true">→</span> Proposed {proposed}s</span>
+                    <span className={reduction > 0 ? "factory-detail-gain" : reduction < 0 ? "factory-detail-loss" : ""}>{reduction > 0 ? `Improved by ${reduction}s` : reduction < 0 ? `Increased by ${Math.abs(reduction)}s` : "No cycle-time change"}</span>
+                    <span className={meetsPace ? "factory-detail-on-pace" : "factory-detail-over-pace"}>{!improvement.feasible ? "Target pace unavailable" : meetsPace ? "Meets target pace" : `${abovePace}s above target pace`}</span>
                   </div>;
                 })}
               </div>
