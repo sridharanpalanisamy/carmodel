@@ -199,6 +199,35 @@ export default function AssemblyLineSimulator() {
     setScenarioSaveMessage(`Loaded “${item.name}”. Review the projection before saving changes.`);
   }
 
+  function duplicateNamedScenario(item) {
+    if (!item || !isValidSavedScenario(item.snapshot)) return;
+    if (scenarioLibrary.length >= 10) {
+      setScenarioSaveMessage("The scenario library is full. Delete a scenario before creating a duplicate.");
+      return;
+    }
+    const baseName = `Copy of ${item.name}`.slice(0, 48);
+    let duplicateName = baseName;
+    let suffix = 2;
+    while (scenarioLibrary.some(entry => entry.name.toLowerCase() === duplicateName.toLowerCase())) {
+      const ending = ` (${suffix})`;
+      duplicateName = `${baseName.slice(0, 48 - ending.length)}${ending}`;
+      suffix += 1;
+    }
+    const duplicate = {
+      name: duplicateName,
+      snapshot: { ...item.snapshot, cycleTimes: [...item.snapshot.cycleTimes], savedAt: new Date().toISOString() }
+    };
+    const next = [...scenarioLibrary, duplicate];
+    try {
+      window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
+      setScenarioLibrary(next);
+      setScenarioName(duplicateName);
+      setScenarioSaveMessage(`Created “${duplicateName}”. You can load it and adjust its settings independently.`);
+    } catch {
+      setScenarioSaveMessage("Could not duplicate this scenario. Browser storage may be unavailable.");
+    }
+  }
+
   function deleteNamedScenario(name) {
     const next = scenarioLibrary.filter(item => item.name !== name);
     try {
@@ -637,6 +666,7 @@ export default function AssemblyLineSimulator() {
                     <span><strong>{item.name}</strong><small>{new Date(item.snapshot.savedAt).toLocaleString()} · target {item.snapshot.target}/shift</small><small>{getScenarioProjection(item.snapshot).good.toLocaleString("en-IN")} good vehicles/shift · bottleneck {getScenarioProjection(item.snapshot).bottleneckName} ({getScenarioProjection(item.snapshot).bottleneck}s)</small><small className={getScenarioProjection(item.snapshot).gap >= 0 ? "factory-named-on-target" : "factory-named-below-target"}>{getScenarioProjection(item.snapshot).gap >= 0 ? `Target met · ${getScenarioProjection(item.snapshot).gap} above` : `${Math.abs(getScenarioProjection(item.snapshot).gap)} below target`}</small></span>
                     <label className="factory-scenario-compare-choice"><input type="checkbox" checked={selectedScenarioNames.includes(item.name)} onChange={event => toggleScenarioComparison(item.name, event.target.checked)} aria-label={`Compare ${item.name}`} /> Compare</label>
                     <button type="button" className="line-reset" onClick={() => loadNamedScenario(item)}>Load</button>
+                    <button type="button" className="line-reset" onClick={() => duplicateNamedScenario(item)} disabled={scenarioLibrary.length >= 10} aria-label={`Duplicate ${item.name}`}>Duplicate</button>
                     <button type="button" className="line-reset" onClick={() => deleteNamedScenario(item.name)} aria-label={`Delete ${item.name}`}>Delete</button>
                   </li>)}
                 </ul>
