@@ -51,9 +51,28 @@ export default function AssemblyLineSimulator() {
   const [showImprovementPlanner, setShowImprovementPlanner] = useState(false);
   const [proposedCycleTimes, setProposedCycleTimes] = useState(initialStations.map(station => station.seconds));
   const [savedScenario, setSavedScenario] = useState(null);
+  const [scenarioLibrary, setScenarioLibrary] = useState([]);
+  const [scenarioName, setScenarioName] = useState("Baseline improvement");
   const [scenarioStorageReady, setScenarioStorageReady] = useState(false);
   const [scenarioSaveMessage, setScenarioSaveMessage] = useState("");
   const scenarioFileInput = useRef(null);
+
+  useEffect(() => {
+    try {
+      const rawLibrary = window.localStorage.getItem("factory-improvement-scenarios");
+      if (rawLibrary) {
+        const parsedLibrary = JSON.parse(rawLibrary);
+        if (Array.isArray(parsedLibrary)) {
+          setScenarioLibrary(parsedLibrary.filter(item =>
+            item && typeof item.name === "string" && item.name.trim().length > 0 &&
+            isValidSavedScenario(item.snapshot)
+          ).slice(0, 10));
+        }
+      }
+    } catch {
+      // Named scenario library is optional when browser storage is unavailable.
+    }
+  }, []);
 
   useEffect(() => {
     try {
@@ -88,6 +107,46 @@ export default function AssemblyLineSimulator() {
       setScenarioSaveMessage("Scenario saved on this device. It will be available in this browser.");
     } catch {
       setScenarioSaveMessage("Could not save this scenario. Browser storage may be disabled or unavailable.");
+    }
+  }
+
+  function saveNamedScenario() {
+    const name = scenarioName.trim();
+    if (!name) {
+      setScenarioSaveMessage("Enter a name before saving this scenario.");
+      return;
+    }
+    const snapshot = { version: 2, stationNames: initialStations.map(station => station.name), cycleTimes: [...proposedCycleTimes], target, shiftHours, breakMinutes, availability, yieldRate, savedAt: new Date().toISOString() };
+    const next = [...scenarioLibrary.filter(item => item.name.toLowerCase() !== name.toLowerCase()), { name, snapshot }].slice(-10);
+    try {
+      window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
+      setScenarioLibrary(next);
+      setScenarioSaveMessage(`“${name}” saved to the named scenario library on this device.`);
+    } catch {
+      setScenarioSaveMessage("Could not save the named scenario. Browser storage may be unavailable.");
+    }
+  }
+
+  function loadNamedScenario(item) {
+    if (!item || !isValidSavedScenario(item.snapshot)) return;
+    const snapshot = item.snapshot;
+    setProposedCycleTimes([...snapshot.cycleTimes]);
+    setShiftHours(snapshot.shiftHours);
+    setBreakMinutes(snapshot.breakMinutes);
+    setAvailability(snapshot.availability);
+    setYieldRate(snapshot.yieldRate);
+    setTarget(snapshot.target);
+    setScenarioSaveMessage(`Loaded “${item.name}”. Review the projection before saving changes.`);
+  }
+
+  function deleteNamedScenario(name) {
+    const next = scenarioLibrary.filter(item => item.name !== name);
+    try {
+      window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
+      setScenarioLibrary(next);
+      setScenarioSaveMessage(`“${name}” removed from the named scenario library.`);
+    } catch {
+      setScenarioSaveMessage("Could not update the named scenario library.");
     }
   }
 
@@ -496,6 +555,22 @@ export default function AssemblyLineSimulator() {
                 </div>
               </div>
               {scenarioSaveMessage && <p className="factory-scenario-save-message" role="status">{scenarioSaveMessage}</p>}
+              <div className="factory-named-scenarios">
+                <label htmlFor="factoryScenarioName">Save a named version</label>
+                <div className="factory-named-scenario-controls">
+                  <input id="factoryScenarioName" type="text" maxLength="48" value={scenarioName} onChange={event => setScenarioName(event.target.value)} placeholder="e.g. Higher output target" />
+                  <button type="button" className="line-reset" onClick={saveNamedScenario}>Save named scenario</button>
+                </div>
+                {scenarioLibrary.length > 0 && <ul aria-label="Saved named scenarios">
+                  {scenarioLibrary.map(item => <li key={item.name}>
+                    <span><strong>{item.name}</strong><small>{new Date(item.snapshot.savedAt).toLocaleString()} · target {item.snapshot.target}/shift</small></span>
+                    <button type="button" className="line-reset" onClick={() => loadNamedScenario(item)}>Load</button>
+                    <button type="button" className="line-reset" onClick={() => deleteNamedScenario(item.name)} aria-label={`Delete ${item.name}`}>Delete</button>
+                  </li>)}
+                </ul>}
+                <p>Up to 10 named scenarios are stored in this browser. They remain separate from the single quick-save slot above.</p>
+              </div>
+
               {scenarioStorageReady && <div className="factory-scenario-saved-state" role="status">
                 {savedScenario ? <>
                   <div className="factory-saved-scenario-summary">
