@@ -103,7 +103,7 @@ export default function AssemblyLineSimulator() {
       "",
       "Station cycle times (current → proposed)",
       ...stations.map((station, index) => `${station.name}: ${station.seconds}s → ${proposedCycleTimes[index] ?? station.seconds}s`)
-    ].join("\\n");
+    ].join("\n");
     try {
       if (!navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
       await navigator.clipboard.writeText(lines);
