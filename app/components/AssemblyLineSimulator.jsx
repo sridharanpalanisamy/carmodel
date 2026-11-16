@@ -143,6 +143,21 @@ export default function AssemblyLineSimulator() {
                 <div className="factory-ratio-item"><div className="factory-ratio-ring yield" style={{"--ratio":yieldRate+"%"}}><strong>{yieldRate}%</strong></div><div><b>Quality yield</b><p>Share of produced units assumed to pass quality checks.</p></div></div>
               </div>
             </section>
+            <section className="factory-chart-card factory-loss-card min-w-0 xl:col-span-2" aria-label="Production loss breakdown chart">
+              <div className="factory-chart-heading"><div><span>CHART 04 / LOSS ANALYSIS</span><h3>Where does capacity go?</h3></div><small>Vehicles / shift</small></div>
+              <div className="factory-loss-chart">
+                {[
+                  {label:"Availability loss",value:Math.max(0,result.ideal-result.available),tone:"availability"},
+                  {label:"Quality loss",value:Math.max(0,result.available-result.goodUnits),tone:"quality"},
+                  {label:"Good output",value:result.goodUnits,tone:"output"}
+                ].map(item=><div className="factory-loss-row" key={item.label}>
+                  <span>{item.label}</span>
+                  <div className="factory-loss-track"><i className={item.tone} style={{width:(result.ideal>0?item.value/result.ideal*100:0)+"%"}} /></div>
+                  <b>{item.value.toLocaleString("en-IN")}</b>
+                </div>)}
+              </div>
+              <p className="factory-chart-caption">Losses are calculated from the simulator's ideal capacity, availability and quality-yield assumptions. They are estimates, not measured factory data.</p>
+            </section>
           </div>
           <p className="line-sim-tip">{result.gap < 0 ? `The ${result.bottleneckName} station limits the line. Reducing its cycle time or improving line balance can increase theoretical output.` : "The estimated good output meets the selected shift target under these assumptions."}</p>
         </aside>
