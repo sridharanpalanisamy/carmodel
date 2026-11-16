@@ -115,6 +115,35 @@ export default function AssemblyLineSimulator() {
             <div><span>OUTPUT VS TARGET</span><strong>{target > 0 ? Math.min(100, result.goodUnits / target * 100).toFixed(0) : 0}%</strong></div>
             <div className="line-target-track"><i style={{ width: `${target > 0 ? clamp(result.goodUnits / target * 100, 0, 100) : 0}%` }}/></div>
           </div>
+          <div className="factory-live-charts grid grid-cols-1 xl:grid-cols-2 gap-3 mt-5">
+            <section className="factory-chart-card min-w-0" aria-label="Station cycle time bar chart">
+              <div className="factory-chart-heading"><div><span>CHART 01 / LINE BALANCE</span><h3>Station cycle times</h3></div><small>Seconds / vehicle</small></div>
+              <div className="factory-cycle-chart">
+                {stations.map((station,index)=><div className="factory-cycle-row" key={station.name}>
+                  <span title={station.name}>{station.name}</span>
+                  <div className="factory-cycle-track"><i className={station.seconds===result.bottleneck?"is-bottleneck":""} style={{width:(station.seconds/180*100)+"%"}} /></div>
+                  <b>{station.seconds}s</b>
+                </div>)}
+              </div>
+              <p className="factory-chart-caption">The longest cycle time sets the theoretical pace of this simplified serial line.</p>
+            </section>
+            <section className="factory-chart-card min-w-0" aria-label="Production output comparison chart">
+              <div className="factory-chart-heading"><div><span>CHART 02 / OUTPUT CAPACITY</span><h3>Production funnel</h3></div><small>Vehicles / shift</small></div>
+              <div className="factory-output-chart">
+                {[{label:"Ideal",value:result.ideal,color:"ideal"},{label:"Available",value:result.available,color:"available"},{label:"Good units",value:result.goodUnits,color:"good"},{label:"Target",value:target,color:"target"}].map(item=><div className="factory-output-column" key={item.label}>
+                  <b>{item.value.toLocaleString("en-IN")}</b><div className="factory-output-track"><i className={item.color} style={{height:(Math.max(item.value,target,result.ideal,1)>0?item.value/Math.max(item.value,target,result.ideal,1)*100:0)+"%"}} /></div><span>{item.label}</span>
+                </div>)}
+              </div>
+              <p className="factory-chart-caption">Compare ideal capacity with availability losses, quality yield and the selected target.</p>
+            </section>
+            <section className="factory-chart-card factory-efficiency-card min-w-0 xl:col-span-2" aria-label="Availability and quality yield chart">
+              <div className="factory-chart-heading"><div><span>CHART 03 / OPERATING CONDITIONS</span><h3>Availability & quality yield</h3></div><small>Current assumptions</small></div>
+              <div className="factory-ratio-charts">
+                <div className="factory-ratio-item"><div className="factory-ratio-ring availability" style={{"--ratio":availability+"%"}}><strong>{availability}%</strong></div><div><b>Line availability</b><p>Share of scheduled production time assumed available to run.</p></div></div>
+                <div className="factory-ratio-item"><div className="factory-ratio-ring yield" style={{"--ratio":yieldRate+"%"}}><strong>{yieldRate}%</strong></div><div><b>Quality yield</b><p>Share of produced units assumed to pass quality checks.</p></div></div>
+              </div>
+            </section>
+          </div>
           <p className="line-sim-tip">{result.gap < 0 ? `The ${result.bottleneckName} station limits the line. Reducing its cycle time or improving line balance can increase theoretical output.` : "The estimated good output meets the selected shift target under these assumptions."}</p>
         </aside>
       </div>
