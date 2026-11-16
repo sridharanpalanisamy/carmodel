@@ -25,6 +25,7 @@ export default function AssemblyLineSimulator() {
   const [yieldRate, setYieldRate] = useState(97);
   const [target, setTarget] = useState(350);
   const [chartEditMode, setChartEditMode] = useState(false);
+  const [showDataTable, setShowDataTable] = useState(false);
   const [chartVisibility, setChartVisibility] = useState({ radar: true, capacity: true, ratios: true, losses: true });
   const [chartTitles, setChartTitles] = useState({
     radar: "Station cycle times",
@@ -200,6 +201,7 @@ export default function AssemblyLineSimulator() {
             <div><span className="eyebrow">LIVE PRODUCTION ANALYTICS</span><p>Four chart views update as you change the simulator settings.</p></div>
             <div className="factory-chart-actions">
               <button className="line-reset" type="button" onClick={exportSimulation}>Export CSV ↓</button>
+              <button className="line-reset" type="button" aria-expanded={showDataTable} onClick={() => setShowDataTable(value => !value)}>{showDataTable ? "Hide data table −" : "View data table ≡"}</button>
               <button className="line-reset" type="button" aria-expanded={chartEditMode} onClick={() => setChartEditMode(value => !value)}>{chartEditMode ? "Done editing ✓" : "Edit charts ⚙"}</button>
             </div>
           </div>
@@ -258,6 +260,31 @@ export default function AssemblyLineSimulator() {
               <p className="factory-chart-caption">Losses are calculated from the simulator's ideal capacity, availability and quality-yield assumptions. They are estimates, not measured factory data.</p>
             </section>)}
           </div>
+          {showDataTable && (
+            <section className="factory-data-table-wrap" aria-label="Detailed simulation data">
+              <div className="factory-data-table-heading"><div><span>SIMULATION DATA / LIVE VALUES</span><strong>Production breakdown</strong></div><small>Updates with every setting change</small></div>
+              <div className="factory-data-table-scroll" role="region" aria-label="Scrollable production data table" tabIndex="0">
+                <table className="factory-data-table">
+                  <thead><tr><th scope="col">Metric</th><th scope="col">Value</th><th scope="col">How it is used</th></tr></thead>
+                  <tbody>
+                    <tr><th scope="row">Ideal capacity</th><td>{result.ideal.toLocaleString("en-IN")} vehicles</td><td>Net shift seconds ÷ slowest station cycle time</td></tr>
+                    <tr><th scope="row">Available capacity</th><td>{result.available.toLocaleString("en-IN")} vehicles</td><td>Ideal capacity × line availability</td></tr>
+                    <tr><th scope="row">Estimated good output</th><td>{result.goodUnits.toLocaleString("en-IN")} vehicles</td><td>Available capacity × quality yield</td></tr>
+                    <tr><th scope="row">Availability loss</th><td>{Math.max(0,result.ideal-result.available).toLocaleString("en-IN")} vehicles</td><td>Ideal capacity − available capacity</td></tr>
+                    <tr><th scope="row">Quality loss</th><td>{Math.max(0,result.available-result.goodUnits).toLocaleString("en-IN")} vehicles</td><td>Available capacity − good output</td></tr>
+                    <tr><th scope="row">Target variance</th><td>{result.gap > 0 ? "+" : ""}{result.gap.toLocaleString("en-IN")} vehicles</td><td>Estimated good output − shift target</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="factory-data-table-heading factory-station-table-heading"><div><span>STATION DETAIL</span><strong>Cycle-time comparison</strong></div><small>Longest cycle time sets line pace</small></div>
+              <div className="factory-data-table-scroll" role="region" aria-label="Scrollable station cycle time table" tabIndex="0">
+                <table className="factory-data-table">
+                  <thead><tr><th scope="col">Station</th><th scope="col">Cycle time</th><th scope="col">Line status</th></tr></thead>
+                  <tbody>{stations.map(station => <tr key={station.name}><th scope="row">{station.name}</th><td>{station.seconds} sec / vehicle</td><td>{station.seconds === result.bottleneck ? <span className="factory-bottleneck-label">Bottleneck</span> : "Within current line pace"}</td></tr>)}</tbody>
+                </table>
+              </div>
+            </section>
+          )}
           <p className="line-sim-tip">{result.gap < 0 ? `The ${result.bottleneckName} station limits the line. Reducing its cycle time or improving line balance can increase theoretical output.` : "The estimated good output meets the selected shift target under these assumptions."}</p>
         </aside>
       </div>
