@@ -578,6 +578,15 @@ export default function AssemblyLineSimulator() {
     setChartEditMode(false);
   }
 
+  const visibleScenarioLibrary = scenarioLibrary
+    .filter(item => item.name.toLowerCase().includes(scenarioSearch.trim().toLowerCase()))
+    .sort((a, b) => {
+      if (scenarioSort === "name") return a.name.localeCompare(b.name);
+      if (scenarioSort === "output") return getScenarioProjection(b.snapshot).good - getScenarioProjection(a.snapshot).good;
+      if (scenarioSort === "target") return getScenarioProjection(b.snapshot).gap - getScenarioProjection(a.snapshot).gap;
+      return Date.parse(b.snapshot.savedAt) - Date.parse(a.snapshot.savedAt);
+    });
+
   if (!mount) return null;
   return createPortal(
     <section className="line-simulator w-full max-w-[1440px] mx-auto px-3 sm:px-5 lg:px-8" aria-labelledby="lineSimulatorTitle">
@@ -595,15 +604,6 @@ export default function AssemblyLineSimulator() {
           <div className="line-sim-section-title"><span>01 / STATION CYCLE TIMES</span><small>SECONDS PER VEHICLE</small></div>
           {stations.map((station, index) => {
             const isBottleneck = station.seconds === result.bottleneck;
-            const visibleScenarioLibrary = scenarioLibrary
-    .filter(item => item.name.toLowerCase().includes(scenarioSearch.trim().toLowerCase()))
-    .sort((a, b) => {
-      if (scenarioSort === "name") return a.name.localeCompare(b.name);
-      if (scenarioSort === "output") return getScenarioProjection(b.snapshot).good - getScenarioProjection(a.snapshot).good;
-      if (scenarioSort === "target") return getScenarioProjection(b.snapshot).gap - getScenarioProjection(a.snapshot).gap;
-      return Date.parse(b.snapshot.savedAt) - Date.parse(a.snapshot.savedAt);
-    });
-
   return (
               <div className={`line-station-row${isBottleneck ? " is-bottleneck" : ""}`} key={station.name}>
                 <div className="line-station-top">
