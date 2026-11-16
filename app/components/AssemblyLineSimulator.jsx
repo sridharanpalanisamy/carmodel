@@ -47,7 +47,8 @@ function getScenarioProjection(snapshot) {
     good,
     bottleneck,
     bottleneckName: initialStations[snapshot.cycleTimes.indexOf(bottleneck)]?.name || "—",
-    gap: good - snapshot.target
+    gap: good - snapshot.target,
+    attainmentPercent: snapshot.target > 0 ? good / snapshot.target * 100 : 0
   };
 }
 
@@ -164,7 +165,7 @@ export default function AssemblyLineSimulator() {
     }
     const rows = [
       ["Factory scenario library comparison"],
-      ["Scenario", "Saved at", "Good vehicles / shift", "Target", "Vehicles above / below target", "Target status", "Bottleneck station", "Bottleneck cycle (sec)", "Shift hours", "Break minutes", "Availability (%)", "Quality yield (%)", ...initialStations.map(station => station.name + " cycle (sec)")],
+      ["Scenario", "Saved at", "Good vehicles / shift", "Target", "Target attainment (%)", "Vehicles above / below target", "Target status", "Bottleneck station", "Bottleneck cycle (sec)", "Shift hours", "Break minutes", "Availability (%)", "Quality yield (%)", ...initialStations.map(station => station.name + " cycle (sec)")],
       ...scenarioLibrary.map(item => {
         const projection = getScenarioProjection(item.snapshot);
         return [
@@ -172,6 +173,7 @@ export default function AssemblyLineSimulator() {
           item.snapshot.savedAt,
           projection.good,
           item.snapshot.target,
+          Number(projection.attainmentPercent.toFixed(1)),
           projection.gap,
           projection.gap >= 0 ? "Target achieved" : "Below target",
           projection.bottleneckName,
@@ -1279,7 +1281,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                   <ul aria-label="Saved named scenarios">
                   {visibleScenarioLibrary.map(item => <li key={item.name}>
                     <span className="factory-scenario-item-details">
-                      {renamingScenario === item.name ? <span className="factory-scenario-rename"><label htmlFor={`rename-${item.name}`}>New scenario name</label><input id={`rename-${item.name}`} value={renameScenarioValue} maxLength={48} onChange={event => setRenameScenarioValue(event.target.value)} onKeyDown={event => { if (event.key === "Enter") renameNamedScenario(item.name); if (event.key === "Escape") setRenamingScenario(""); }} /><span><button type="button" className="line-reset" onClick={() => renameNamedScenario(item.name)}>Save name</button><button type="button" className="line-reset" onClick={() => setRenamingScenario("")}>Cancel</button></span></span> : <><strong>{item.name}</strong><small>{new Date(item.snapshot.savedAt).toLocaleString()} · target {item.snapshot.target}/shift</small><small>{getScenarioProjection(item.snapshot).good.toLocaleString("en-IN")} good vehicles/shift · bottleneck {getScenarioProjection(item.snapshot).bottleneckName} ({getScenarioProjection(item.snapshot).bottleneck}s)</small><small className={getScenarioProjection(item.snapshot).gap >= 0 ? "factory-named-on-target" : "factory-named-below-target"}>{getScenarioProjection(item.snapshot).gap >= 0 ? `Target met · ${getScenarioProjection(item.snapshot).gap} above` : `${Math.abs(getScenarioProjection(item.snapshot).gap)} below target`}</small></>}
+                      {renamingScenario === item.name ? <span className="factory-scenario-rename"><label htmlFor={`rename-${item.name}`}>New scenario name</label><input id={`rename-${item.name}`} value={renameScenarioValue} maxLength={48} onChange={event => setRenameScenarioValue(event.target.value)} onKeyDown={event => { if (event.key === "Enter") renameNamedScenario(item.name); if (event.key === "Escape") setRenamingScenario(""); }} /><span><button type="button" className="line-reset" onClick={() => renameNamedScenario(item.name)}>Save name</button><button type="button" className="line-reset" onClick={() => setRenamingScenario("")}>Cancel</button></span></span> : <><strong>{item.name}</strong><small>{new Date(item.snapshot.savedAt).toLocaleString()} · target {item.snapshot.target}/shift</small><small>{getScenarioProjection(item.snapshot).good.toLocaleString("en-IN")} good vehicles/shift · bottleneck {getScenarioProjection(item.snapshot).bottleneckName} ({getScenarioProjection(item.snapshot).bottleneck}s)</small><small className={getScenarioProjection(item.snapshot).gap >= 0 ? "factory-named-on-target" : "factory-named-below-target"}>{getScenarioProjection(item.snapshot).gap >= 0 ? `Target met · ${getScenarioProjection(item.snapshot).gap} above` : `${Math.abs(getScenarioProjection(item.snapshot).gap)} below target`}</small><span className="mt-2 block max-w-sm"><span className="mb-1 flex items-center justify-between gap-2 text-xs"><span>Target attainment</span><strong>{getScenarioProjection(item.snapshot).attainmentPercent.toFixed(1)}%</strong></span><span className="block h-2 overflow-hidden rounded-full bg-slate-200" role="progressbar" aria-label={`${item.name} target attainment`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.min(100, getScenarioProjection(item.snapshot).attainmentPercent)} aria-valuetext={`${getScenarioProjection(item.snapshot).attainmentPercent.toFixed(1)} percent of target`}><span className="block h-full rounded-full bg-teal-600 transition-[width]" style={{ width: `${clamp(getScenarioProjection(item.snapshot).attainmentPercent, 0, 100)}%` }} /></span></span></>}
                     </span>
                     <label className="factory-scenario-compare-choice"><input type="checkbox" checked={selectedScenarioNames.includes(item.name)} onChange={event => toggleScenarioComparison(item.name, event.target.checked)} aria-label={`Compare ${item.name}`} /> Compare</label>
                     {renamingScenario !== item.name && <button type="button" className="line-reset" onClick={() => { setRenamingScenario(item.name); setRenameScenarioValue(item.name); }}>Rename</button>}
