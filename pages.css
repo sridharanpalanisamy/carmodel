@@ -2192,3 +2192,5 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-scenario-empty-search{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin:10px 0;padding:12px;border:1px dashed var(--line);border-radius:8px;color:var(--muted);font-size:12px}
 .factory-scenario-empty-search p{margin:0}
 @media(max-width:620px){.factory-scenario-empty-search{align-items:stretch;flex-direction:column}.factory-scenario-empty-search button{width:100%}}
+
+.factory-scenario-capacity{display:block;margin:7px 0 10px;color:var(--muted);font-size:10px;line-height:1.5}
