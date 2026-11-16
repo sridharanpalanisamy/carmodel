@@ -349,6 +349,51 @@ export default function AssemblyLineSimulator() {
     setScenarioSaveMessage(`Exported the comparison between “${first.name}” and “${second.name}” as CSV.`);
   }
 
+  async function copyScenarioComparisonSummary(first, second) {
+    if (!first || !second || !isValidSavedScenario(first.snapshot) || !isValidSavedScenario(second.snapshot)) {
+      setScenarioSaveMessage("Select two valid saved scenarios before copying their comparison.");
+      return;
+    }
+    const firstProjection = getScenarioProjection(first.snapshot);
+    const secondProjection = getScenarioProjection(second.snapshot);
+    const commonConditions = {
+      shiftHours: first.snapshot.shiftHours,
+      breakMinutes: first.snapshot.breakMinutes,
+      availability: first.snapshot.availability,
+      yieldRate: first.snapshot.yieldRate,
+      target: first.snapshot.target
+    };
+    const normalizedFirst = getScenarioProjection({ ...first.snapshot, ...commonConditions });
+    const normalizedSecond = getScenarioProjection({ ...second.snapshot, ...commonConditions });
+    const difference = secondProjection.good - firstProjection.good;
+    const normalizedDifference = normalizedSecond.good - normalizedFirst.good;
+    const lines = [
+      "FACTORY SCENARIO COMPARISON",
+      `First scenario: ${first.name}`,
+      `Second scenario: ${second.name}`,
+      "",
+      `Projected good vehicles/shift: ${firstProjection.good} vs ${secondProjection.good}`,
+      `Overall difference (second minus first): ${difference > 0 ? "+" : ""}${difference}`,
+      `Normalized output using first scenario conditions: ${normalizedFirst.good} vs ${normalizedSecond.good}`,
+      `Cycle-time-only difference: ${normalizedDifference > 0 ? "+" : ""}${normalizedDifference}`,
+      "",
+      `First bottleneck: ${firstProjection.bottleneckName} (${firstProjection.bottleneck}s)`,
+      `Second bottleneck: ${secondProjection.bottleneckName} (${secondProjection.bottleneck}s)`,
+      `Same operating assumptions: ${["shiftHours", "breakMinutes", "availability", "yieldRate", "target"].every(key => first.snapshot[key] === second.snapshot[key]) ? "Yes" : "No"}`,
+      `Shared conditions for normalized comparison: ${commonConditions.shiftHours}h shift, ${commonConditions.breakMinutes} min breaks, ${commonConditions.availability}% availability, ${commonConditions.yieldRate}% quality yield, target ${commonConditions.target}`,
+      "",
+      "STATION CYCLE TIMES (SECONDS)",
+      ...initialStations.map((station, index) => `${station.name}: ${first.snapshot.cycleTimes[index]}s -> ${second.snapshot.cycleTimes[index]}s (${second.snapshot.cycleTimes[index] - first.snapshot.cycleTimes[index] > 0 ? "+" : ""}${second.snapshot.cycleTimes[index] - first.snapshot.cycleTimes[index]}s)`)
+    ];
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
+      await navigator.clipboard.writeText(lines.join("\\n"));
+      setScenarioSaveMessage("Scenario comparison summary copied. You can paste it into a report or message.");
+    } catch {
+      setScenarioSaveMessage("Could not copy the comparison summary. Use Export comparison CSV or JSON instead.");
+    }
+  }
+
   function exportScenarioComparisonJson(first, second) {
     if (!first || !second || !isValidSavedScenario(first.snapshot) || !isValidSavedScenario(second.snapshot)) {
       setScenarioSaveMessage("Select two valid saved scenarios before exporting their comparison.");
@@ -974,6 +1019,7 @@ export default function AssemblyLineSimulator() {
                       <p><strong>{difference > 0 ? `+${difference}` : difference} good vehicles/shift</strong> for {second.name} compared with {first.name}{percentDifference !== null ? ` (${percentDifference > 0 ? "+" : ""}${percentDifference.toFixed(1)}%)` : ""}.</p>
                       <button type="button" className="line-reset factory-comparison-export" onClick={() => exportScenarioComparisonCsv(first, second)}>Export comparison CSV</button>
                       <button type="button" className="line-reset factory-comparison-export" onClick={() => exportScenarioComparisonJson(first, second)}>Export comparison JSON</button>
+                      <button type="button" className="line-reset factory-comparison-export" onClick={() => copyScenarioComparisonSummary(first, second)}>Copy comparison summary</button>
                       <small className={sameAssumptions ? "factory-scenario-comparison-fair" : "factory-scenario-comparison-warning"} role="status">{sameAssumptions ? "Like-for-like comparison: both scenarios use the same shift and production assumptions." : "Different assumptions detected. Output difference includes changes to shift time, breaks, availability, quality yield or target; compare cycle times separately for a fair line-performance assessment."}</small>
                       <div className="factory-scenario-normalized">
                         <strong>Cycle-time-only comparison</strong>
