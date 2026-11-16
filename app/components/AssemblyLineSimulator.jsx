@@ -327,12 +327,18 @@ export default function AssemblyLineSimulator() {
                   <label className="factory-improvement-row" key={station.name}>
                     <span>{station.name}</span>
                     <small>Current: {station.seconds}s</small>
-                    <div><input aria-label={`Proposed cycle time for ${station.name}`} type="number" min="20" max="180" step="1" value={proposedCycleTimes[index] ?? station.seconds} onChange={event => {
-                      const value = event.target.value;
-                      if (value !== "" && Number(value) >= 20 && Number(value) <= 180) {
-                        setProposedCycleTimes(current => current.map((time, i) => i === index ? Number(value) : time));
-                      }
-                    }}/><span>sec</span></div>
+                    <div className="factory-proposed-cycle-control">
+                      <input className="factory-proposed-cycle-slider" aria-label={`Proposed cycle time slider for ${station.name}`} type="range" min="20" max="180" step="1" value={proposedCycleTimes[index] ?? station.seconds} onChange={event => {
+                        const value = Number(event.target.value);
+                        setProposedCycleTimes(current => current.map((time, i) => i === index ? value : time));
+                      }}/>
+                      <div className="factory-proposed-cycle-number"><input aria-label={`Proposed cycle time for ${station.name}`} type="number" min="20" max="180" step="1" value={proposedCycleTimes[index] ?? station.seconds} onChange={event => {
+                        const value = event.target.value;
+                        if (value !== "" && Number(value) >= 20 && Number(value) <= 180) {
+                          setProposedCycleTimes(current => current.map((time, i) => i === index ? Number(value) : time));
+                        }
+                      }}/><span>sec</span></div>
+                    </div>
                   </label>
                 ))}
               </div>
