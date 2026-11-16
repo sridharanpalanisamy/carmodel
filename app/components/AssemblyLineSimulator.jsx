@@ -225,11 +225,15 @@ export default function AssemblyLineSimulator() {
       if (valid.length === 0) throw new Error("No valid scenarios found");
       const merged = [...scenarioLibrary];
       valid.forEach(item => { const index = merged.findIndex(entry => entry.name.toLowerCase() === item.name.toLowerCase()); if (index >= 0) merged[index] = item; else merged.push(item); });
-      const next = merged.slice(-10);
+      if (merged.length > 10) {
+        setScenarioSaveMessage(`Import would create ${merged.length} named scenarios, but the library limit is 10. Delete ${merged.length - 10} existing scenario(s), then import again.`);
+        return;
+      }
+      const next = merged;
       window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
       setScenarioLibrary(next);
       setSelectedScenarioNames(current => current.filter(name => next.some(item => item.name === name)));
-      setScenarioSaveMessage("Imported " + valid.length + " valid named scenario(s). Matching names were updated; the library keeps the latest 10.");
+      setScenarioSaveMessage("Imported " + valid.length + " valid named scenario(s). Matching names were updated; no existing scenarios were removed.");
     } catch {
       setScenarioSaveMessage("Library import failed. Choose a valid scenario-library JSON exported by this planner; files must match the current station layout.");
     } finally { event.target.value = ""; }
