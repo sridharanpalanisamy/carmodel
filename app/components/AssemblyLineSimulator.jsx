@@ -1150,6 +1150,16 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
       return Date.parse(b.snapshot.savedAt) - Date.parse(a.snapshot.savedAt);
     });
 
+  const visibleScenarioSummary = visibleScenarioLibrary.reduce((summary, item) => {
+    const projection = getScenarioProjection(item.snapshot);
+    summary.totalAttainment += projection.attainmentPercent;
+    summary.onTarget += projection.gap >= 0 ? 1 : 0;
+    return summary;
+  }, { totalAttainment: 0, onTarget: 0 });
+  const averageScenarioAttainment = visibleScenarioLibrary.length
+    ? visibleScenarioSummary.totalAttainment / visibleScenarioLibrary.length
+    : 0;
+
   if (!mount) return null;
   return createPortal(
     <section className="line-simulator w-full max-w-[1440px] mx-auto px-3 sm:px-5 lg:px-8" aria-labelledby="lineSimulatorTitle">
@@ -1287,6 +1297,11 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                     <input id="factoryScenarioSearch" type="search" value={scenarioSearch} onChange={event => setScenarioSearch(event.target.value)} placeholder="Search scenario names..." />
                     {scenarioSearch && <button type="button" className="line-reset factory-scenario-clear-search" onClick={() => setScenarioSearch("")}>Clear search</button>}
                     <small>Showing {visibleScenarioLibrary.length} of {scenarioLibrary.length} saved scenarios</small>
+                    <div className="grid grid-cols-1 gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm sm:grid-cols-3" aria-live="polite" aria-label="Saved scenario summary">
+                      <div><span className="block text-xs text-slate-500">Average target attainment</span><strong className="text-base">{averageScenarioAttainment.toFixed(1)}%</strong></div>
+                      <div><span className="block text-xs text-slate-500">Scenarios meeting target</span><strong className="text-base">{visibleScenarioSummary.onTarget} / {visibleScenarioLibrary.length}</strong></div>
+                      <div><span className="block text-xs text-slate-500">Below target</span><strong className="text-base">{visibleScenarioLibrary.length - visibleScenarioSummary.onTarget}</strong></div>
+                    </div>
                     <label className="factory-scenario-sort"><span>Sort</span><select value={scenarioSort} onChange={event => setScenarioSort(event.target.value)} aria-label="Sort saved scenarios"><option value="recent">Recently saved</option><option value="output">Highest output</option><option value="target">Best target result</option><option value="attainment">Highest target attainment</option><option value="lowest-attainment">Lowest target attainment</option><option value="name">Name A–Z</option></select></label>
                   </div>
                   <ul aria-label="Saved named scenarios">
