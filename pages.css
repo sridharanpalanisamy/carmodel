@@ -1912,3 +1912,16 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 @media(prefers-reduced-motion:reduce){
   .factory-flow-node,.factory-progress span,.factory-cycle-track i{transition:none}
 }
+
+
+/* Production loss breakdown chart */
+.factory-loss-chart{display:grid;gap:14px;padding:17px 0 5px}
+.factory-loss-row{display:grid;grid-template-columns:minmax(100px,1fr) minmax(70px,2fr) 48px;align-items:center;gap:10px;min-width:0}
+.factory-loss-row>span{font-size:8px;color:#e5e1e2}
+.factory-loss-row>b{font-size:8px;color:#fff;text-align:right;font-variant-numeric:tabular-nums}
+.factory-loss-track{height:11px;background:#ffffff1c;overflow:hidden;border-radius:2px}
+.factory-loss-track i{display:block;height:100%;min-width:0;border-radius:2px;transition:width .2s ease}
+.factory-loss-track i.availability{background:#60a5fa}
+.factory-loss-track i.quality{background:#f59e0b}
+.factory-loss-track i.output{background:#14b8a6}
+@media(max-width:520px){.factory-loss-row{grid-template-columns:minmax(85px,1fr) minmax(55px,1.4fr) 40px;gap:7px}.factory-loss-row>span,.factory-loss-row>b{font-size:7px}}
