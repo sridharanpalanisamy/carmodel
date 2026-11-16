@@ -67,6 +67,7 @@ export default function AssemblyLineSimulator() {
   const [proposedCycleTimes, setProposedCycleTimes] = useState(initialStations.map(station => station.seconds));
   const [savedScenario, setSavedScenario] = useState(null);
   const [scenarioLibrary, setScenarioLibrary] = useState([]);
+  const [pinnedScenarioName, setPinnedScenarioName] = useState("");
   const [selectedScenarioNames, setSelectedScenarioNames] = useState([]);
   const [scenarioName, setScenarioName] = useState("Baseline improvement");
   const [scenarioSearch, setScenarioSearch] = useState("");
@@ -78,6 +79,14 @@ export default function AssemblyLineSimulator() {
   const [scenarioSaveMessage, setScenarioSaveMessage] = useState("");
   const scenarioFileInput = useRef(null);
   const scenarioLibraryFileInput = useRef(null);
+
+  useEffect(() => {
+    try {
+      setPinnedScenarioName(window.localStorage.getItem("factory-improvement-pinned-scenario") || "");
+    } catch {
+      // Pinning is optional when browser storage is unavailable.
+    }
+  }, []);
 
   useEffect(() => {
     try {
@@ -792,6 +801,18 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     setScenarioSaveMessage(`Exported the comparison between “${first.name}” and “${second.name}” as a standalone HTML report.`);
   }
 
+  function togglePinnedScenario(name) {
+    const nextName = pinnedScenarioName === name ? "" : name;
+    try {
+      if (nextName) window.localStorage.setItem("factory-improvement-pinned-scenario", nextName);
+      else window.localStorage.removeItem("factory-improvement-pinned-scenario");
+      setPinnedScenarioName(nextName);
+      setScenarioSaveMessage(nextName ? `“${name}” pinned as the baseline scenario.` : "Baseline scenario pin cleared.");
+    } catch {
+      setScenarioSaveMessage("Could not save the baseline pin in this browser.");
+    }
+  }
+
   function loadNamedScenario(item) {
     if (!item || !isValidSavedScenario(item.snapshot)) return;
     const snapshot = item.snapshot;
@@ -822,6 +843,10 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     try {
       window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
       setScenarioLibrary(next);
+      if (pinnedScenarioName === oldName) {
+        window.localStorage.setItem("factory-improvement-pinned-scenario", nextName);
+        setPinnedScenarioName(nextName);
+      }
       setSelectedScenarioNames(current => current.map(name => name === oldName ? nextName : name));
       setScenarioName(current => current === oldName ? nextName : current);
       setRenamingScenario("");
@@ -866,6 +891,10 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     try {
       window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
       setScenarioLibrary(next);
+      if (pinnedScenarioName === name) {
+        window.localStorage.removeItem("factory-improvement-pinned-scenario");
+        setPinnedScenarioName("");
+      }
       setSelectedScenarioNames(current => current.filter(item => item !== name));
       setPendingDeleteScenario("");
       setScenarioSaveMessage(`“${name}” removed from the named scenario library.`);
@@ -1164,6 +1193,8 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
   const visibleScenarioLibrary = scenarioLibrary
     .filter(item => item.name.toLowerCase().includes(scenarioSearch.trim().toLowerCase()))
     .sort((a, b) => {
+      if (a.name === pinnedScenarioName && b.name !== pinnedScenarioName) return -1;
+      if (b.name === pinnedScenarioName && a.name !== pinnedScenarioName) return 1;
       if (scenarioSort === "name") return a.name.localeCompare(b.name);
       if (scenarioSort === "output") return getScenarioProjection(b.snapshot).good - getScenarioProjection(a.snapshot).good;
       if (scenarioSort === "target") return getScenarioProjection(b.snapshot).gap - getScenarioProjection(a.snapshot).gap;
@@ -1338,6 +1369,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                       {renamingScenario === item.name ? <span className="factory-scenario-rename"><label htmlFor={`rename-${item.name}`}>New scenario name</label><input id={`rename-${item.name}`} value={renameScenarioValue} maxLength={48} onChange={event => setRenameScenarioValue(event.target.value)} onKeyDown={event => { if (event.key === "Enter") renameNamedScenario(item.name); if (event.key === "Escape") setRenamingScenario(""); }} /><span><button type="button" className="line-reset" onClick={() => renameNamedScenario(item.name)}>Save name</button><button type="button" className="line-reset" onClick={() => setRenamingScenario("")}>Cancel</button></span></span> : <><strong>{item.name}</strong><small>{new Date(item.snapshot.savedAt).toLocaleString()} · target {item.snapshot.target}/shift</small><small>{getScenarioProjection(item.snapshot).good.toLocaleString("en-IN")} good vehicles/shift · bottleneck {getScenarioProjection(item.snapshot).bottleneckName} ({getScenarioProjection(item.snapshot).bottleneck}s)</small><small className={getScenarioProjection(item.snapshot).gap >= 0 ? "factory-named-on-target" : "factory-named-below-target"}>{getScenarioProjection(item.snapshot).gap >= 0 ? `Target met · ${getScenarioProjection(item.snapshot).gap} above` : `${Math.abs(getScenarioProjection(item.snapshot).gap)} below target`}</small><span className="mt-2 block max-w-sm"><span className="mb-1 flex items-center justify-between gap-2 text-xs"><span>Target attainment</span><strong>{getScenarioProjection(item.snapshot).attainmentPercent.toFixed(1)}%</strong></span><span className="block h-2 overflow-hidden rounded-full bg-slate-200" role="progressbar" aria-label={`${item.name} target attainment`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.min(100, getScenarioProjection(item.snapshot).attainmentPercent)} aria-valuetext={`${getScenarioProjection(item.snapshot).attainmentPercent.toFixed(1)} percent of target`}><span className="block h-full rounded-full bg-teal-600 transition-[width]" style={{ width: `${clamp(getScenarioProjection(item.snapshot).attainmentPercent, 0, 100)}%` }} /></span></span></>}
                     </span>
                     <label className="factory-scenario-compare-choice"><input type="checkbox" checked={selectedScenarioNames.includes(item.name)} onChange={event => toggleScenarioComparison(item.name, event.target.checked)} aria-label={`Compare ${item.name}`} /> Compare</label>
+                    <button type="button" className="line-reset" onClick={() => togglePinnedScenario(item.name)} aria-pressed={pinnedScenarioName === item.name}>{pinnedScenarioName === item.name ? "★ Pinned baseline" : "☆ Pin baseline"}</button>
                     {renamingScenario !== item.name && <button type="button" className="line-reset" onClick={() => { setRenamingScenario(item.name); setRenameScenarioValue(item.name); }}>Rename</button>}
                     <button type="button" className="line-reset" onClick={() => exportNamedScenarioJson(item)}>Export JSON</button>
                     <button type="button" className="line-reset" onClick={() => exportNamedScenarioCsv(item)}>Export CSV</button>
