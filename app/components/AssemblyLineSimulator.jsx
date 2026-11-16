@@ -148,6 +148,49 @@ export default function AssemblyLineSimulator() {
     }
   }
 
+  function exportScenarioLibraryCsv() {
+    if (scenarioLibrary.length === 0) {
+      setScenarioSaveMessage("There are no named scenarios to export.");
+      return;
+    }
+    const rows = [
+      ["Factory scenario library comparison"],
+      ["Scenario", "Saved at", "Good vehicles / shift", "Target", "Vehicles above / below target", "Target status", "Bottleneck station", "Bottleneck cycle (sec)", "Shift hours", "Break minutes", "Availability (%)", "Quality yield (%)", ...initialStations.map(station => station.name + " cycle (sec)")],
+      ...scenarioLibrary.map(item => {
+        const projection = getScenarioProjection(item.snapshot);
+        return [
+          item.name,
+          item.snapshot.savedAt,
+          projection.good,
+          item.snapshot.target,
+          projection.gap,
+          projection.gap >= 0 ? "Target achieved" : "Below target",
+          projection.bottleneckName,
+          projection.bottleneck,
+          item.snapshot.shiftHours,
+          item.snapshot.breakMinutes,
+          item.snapshot.availability,
+          item.snapshot.yieldRate,
+          ...item.snapshot.cycleTimes
+        ];
+      })
+    ];
+    const csv = rows.map(row => row.map(value => {
+      const cell = String(value ?? "");
+      return /[",\\n]/.test(cell) ? '"' + cell.replace(/"/g, '""') + '"' : cell;
+    }).join(",")).join("\\n");
+    const blob = new Blob(["\\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "factory-scenario-library.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setScenarioSaveMessage("Exported all named scenarios with shift assumptions and station cycle times to CSV.");
+  }
+
   function exportScenarioLibraryJson() {
     const payload = { version: 1, type: "factory-scenario-library", exportedAt: new Date().toISOString(), scenarios: scenarioLibrary };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
@@ -712,6 +755,7 @@ export default function AssemblyLineSimulator() {
                   <button type="button" className="line-reset" onClick={saveNamedScenario}>Save named scenario</button>
                 </div>                <div className="factory-scenario-library-actions">
                   <button type="button" className="line-reset" onClick={exportScenarioLibraryJson} disabled={scenarioLibrary.length === 0}>Export library JSON</button>
+                  <button type="button" className="line-reset" onClick={exportScenarioLibraryCsv} disabled={scenarioLibrary.length === 0}>Export library CSV</button>
                   <button type="button" className="line-reset" onClick={() => scenarioLibraryFileInput.current?.click()}>Import library JSON</button>
                   <input ref={scenarioLibraryFileInput} type="file" accept=".json,application/json" aria-label="Import named scenario library JSON" onChange={importScenarioLibraryJson} hidden />
                 </div>
