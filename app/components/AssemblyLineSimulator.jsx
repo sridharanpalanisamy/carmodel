@@ -158,6 +158,33 @@ export default function AssemblyLineSimulator() {
     }
   }
 
+  async function copyVisibleScenarioSummary() {
+    if (visibleScenarioLibrary.length === 0) {
+      setScenarioSaveMessage("No visible scenarios to copy. Clear the search or save a scenario first.");
+      return;
+    }
+    const projections = visibleScenarioLibrary.map(item => ({ item, projection: getScenarioProjection(item.snapshot) }));
+    const averageAttainment = projections.reduce((total, entry) => total + entry.projection.attainmentPercent, 0) / projections.length;
+    const onTarget = projections.filter(entry => entry.projection.gap >= 0).length;
+    const lines = [
+      "Factory saved scenario overview",
+      `Scenarios included: ${projections.length}`,
+      `Average target attainment: ${averageAttainment.toFixed(1)}%`,
+      `Meeting target: ${onTarget} / ${projections.length}`,
+      `Below target: ${projections.length - onTarget}`,
+      "",
+      "Scenario details",
+      ...projections.map(({ item, projection }) => `${item.name}: ${projection.good} good vehicles/shift; target ${item.snapshot.target}; attainment ${projection.attainmentPercent.toFixed(1)}%; ${projection.gap >= 0 ? `${projection.gap} above target` : `${Math.abs(projection.gap)} below target`}; bottleneck ${projection.bottleneckName} (${projection.bottleneck}s)`)
+    ].join("\\n");
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
+      await navigator.clipboard.writeText(lines);
+      setScenarioSaveMessage(`Copied overview for ${projections.length} visible scenario(s).`);
+    } catch {
+      setScenarioSaveMessage("Could not copy automatically. Use Export library CSV or JSON instead.");
+    }
+  }
+
   function exportScenarioLibraryCsv() {
     if (scenarioLibrary.length === 0) {
       setScenarioSaveMessage("There are no named scenarios to export.");
@@ -1288,6 +1315,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                 <div className="factory-scenario-library-actions">
                   <button type="button" className="line-reset" onClick={exportScenarioLibraryJson} disabled={scenarioLibrary.length === 0}>Export library JSON</button>
                   <button type="button" className="line-reset" onClick={exportScenarioLibraryCsv} disabled={scenarioLibrary.length === 0}>Export library CSV</button>
+                  <button type="button" className="line-reset" onClick={copyVisibleScenarioSummary} disabled={visibleScenarioLibrary.length === 0}>Copy visible overview</button>
                   <button type="button" className="line-reset" onClick={() => scenarioLibraryFileInput.current?.click()}>Import library JSON</button>
                   <input ref={scenarioLibraryFileInput} type="file" accept=".json,application/json" aria-label="Import named scenario library JSON" onChange={importScenarioLibraryJson} hidden />
                 </div>
