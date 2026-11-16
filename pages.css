@@ -2055,3 +2055,8 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-proposed-cycle-number input{width:64px;min-width:0;padding:6px 7px;border:1px solid #cfc8cd;border-radius:3px;background:#fff;color:var(--ink);font:700 11px var(--sans);font-variant-numeric:tabular-nums;text-align:right}
 .factory-proposed-cycle-number input:focus-visible,.factory-proposed-cycle-slider:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
 @media(max-width:380px){.factory-proposed-cycle-control{grid-template-columns:minmax(0,1fr) auto;gap:6px}.factory-proposed-cycle-number input{width:56px}}
+
+.factory-improvement-detail .factory-detail-gain{color:#28734f;font-weight:700}
+.factory-improvement-detail .factory-detail-loss{color:#a34b38;font-weight:700}
+.factory-improvement-detail .factory-detail-on-pace{color:#28734f;font-weight:700}
+.factory-improvement-detail .factory-detail-over-pace{color:#9a6325;font-weight:700}
