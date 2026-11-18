@@ -9,7 +9,7 @@ export default function FordGLBViewer() {
   const resetViewRef = useRef(null);
   const controlsRef = useRef(null);
   const [modelReady, setModelReady] = useState(false);
-  const [autoRotate, setAutoRotate] = useState(false);
+  const [autoRotate, setAutoRotate] = useState(true);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -69,7 +69,8 @@ export default function FordGLBViewer() {
         controls.enableDamping = true;
         const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
         setPrefersReducedMotion(reducedMotion);
-        controls.autoRotate = false;
+        controls.autoRotate = !reducedMotion;
+        setAutoRotate(!reducedMotion);
         controls.autoRotateSpeed = 1.35;
         controls.enableKeys = true;
         controls.dampingFactor = 0.065;
