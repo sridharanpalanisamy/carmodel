@@ -7,7 +7,9 @@ export default function FordGLBViewer() {
   const [status, setStatus] = useState("Loading the local Ford Model T 3D model…");
   const [failed, setFailed] = useState(false);
   const resetViewRef = useRef(null);
+  const controlsRef = useRef(null);
   const [modelReady, setModelReady] = useState(false);
+  const [autoRotate, setAutoRotate] = useState(false);
 
   useEffect(() => {
     let renderer;
@@ -62,7 +64,10 @@ export default function FordGLBViewer() {
         scene.add(floor);
 
         controls = new OrbitControls(camera, renderer.domElement);
+        controlsRef.current = controls;
         controls.enableDamping = true;
+        controls.autoRotate = false;
+        controls.autoRotateSpeed = 1.35;
         controls.dampingFactor = 0.065;
         controls.enablePan = true;
         controls.minPolarAngle = 0.12;
@@ -167,6 +172,7 @@ export default function FordGLBViewer() {
       resizeObserver?.disconnect();
       controls?.dispose();
       resetViewRef.current = null;
+      controlsRef.current = null;
       if (renderer) {
         renderer.dispose();
         renderer.domElement.remove();
@@ -179,7 +185,7 @@ export default function FordGLBViewer() {
       <div ref={hostRef} className="ford-glb-stage" />
       <div className="ford-glb-controls" style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:"12px",padding:"10px 12px",background:"#202126",color:"#f7f5f3"}}>
         <div className="ford-glb-status" role="status" style={{fontSize:"11px",lineHeight:1.5}}>{status}</div>
-        <button type="button" onClick={() => resetViewRef.current?.()} disabled={!modelReady} style={{flex:"0 0 auto",border:"1px solid #ffffff66",background:"transparent",color:"inherit",padding:"8px 12px",fontSize:"10px",fontWeight:700,cursor:modelReady?"pointer":"not-allowed",opacity:modelReady?1:0.5}}>Reset view</button>
+        <div style={{display:"flex",gap:"8px",flex:"0 0 auto"}}><button type="button" onClick={() => { const next = !autoRotate; setAutoRotate(next); if (controlsRef.current) controlsRef.current.autoRotate = next; }} disabled={!modelReady} style={{border:"1px solid #ffffff66",background:autoRotate?"#f7f5f3":"transparent",color:autoRotate?"#202126":"inherit",padding:"8px 12px",fontSize:"10px",fontWeight:700,cursor:modelReady?"pointer":"not-allowed",opacity:modelReady?1:0.5}}>{autoRotate?"Pause rotation":"Auto rotate"}</button><button type="button" onClick={() => resetViewRef.current?.()} disabled={!modelReady} style={{border:"1px solid #ffffff66",background:"transparent",color:"inherit",padding:"8px 12px",fontSize:"10px",fontWeight:700,cursor:modelReady?"pointer":"not-allowed",opacity:modelReady?1:0.5}}>Reset view</button></div>
       </div>
       {failed && <p className="ford-glb-help">Check your internet connection and reload the page. The 3D asset is served from this project, not an external 360° service.</p>}
     </div>
