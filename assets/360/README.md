@@ -51,3 +51,15 @@ A draggable 3D mesh is an interactive 3D viewer, not a 360° turntable video. Fo
 - If footage is rendered from a 3D asset, that asset's license must permit rendering and website use.
 
 A single photograph, a cropped image, or a generic vehicle is not a genuine 360° view. Do not label an asset as exact or operational until it has been checked.
+
+
+## Additional free candidates found (18 November 2026)
+
+These are exact Ford-branded community model listings with permissive free licenses. They are **not yet installed**: the files still need to be downloaded, inspected in Blender, checked for texture integrity, and converted to optimized GLB before appearing in the local viewer.
+
+- **1957 Ford Thunderbird** — Riley_Lowe, BlendSwap, CC0. The creator notes that rear topology is rough and the interior is limited, so inspect before use: https://blendswap.com/blend/6043
+- **Ford Mustang GT (approx. 2016)** — koumis, BlendSwap, CC0. The uploader describes the year as approximate: https://blendswap.com/blend/21904
+- **1968 Mustang GT Fastback** — Tryder, BlendSwap, CC0. Search the exact title on BlendSwap and confirm the asset page before download.
+- **1985 Ford Bronco** — computergeekman, BlendSwap, CC BY-SA. Commercial use is not excluded, but attribution and share-alike obligations apply to adaptations: https://blendswap.com/3d/offroad
+
+The BlendSwap download pages are currently not accessible to the automation session (HTTP 403). No model binaries were retrieved or copied into this repository in this pass. Do not mark these as ready until the actual files are inspected and locally hosted.
