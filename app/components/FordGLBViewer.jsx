@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export default function FordGLBViewer({ modelPath = modelPath, modelName = "Ford Model T" }) {
+export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model-t.glb", modelName = "Ford Model T" }) {
   const hostRef = useRef(null);
   const [status, setStatus] = useState(`Loading the local ${modelName} 3D model…`);
   const [failed, setFailed] = useState(false);
@@ -132,7 +132,7 @@ export default function FordGLBViewer({ modelPath = modelPath, modelName = "Ford
           },
           undefined,
           (error) => {
-            console.error("Unable to load local ${modelName} GLB:", error);
+            console.error(`Unable to load local ${modelName} GLB:`, error);
             if (!disposed) {
               setFailed(true);
               setStatus("The local 3D model could not be loaded. Please refresh and try again.");
