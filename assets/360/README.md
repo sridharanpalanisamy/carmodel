@@ -63,3 +63,20 @@ These are exact Ford-branded community model listings with permissive free licen
 - **1985 Ford Bronco** — computergeekman, BlendSwap, CC BY-SA. Commercial use is not excluded, but attribution and share-alike obligations apply to adaptations: https://blendswap.com/3d/offroad
 
 The BlendSwap download pages are currently not accessible to the automation session (HTTP 403). No model binaries were retrieved or copied into this repository in this pass. Do not mark these as ready until the actual files are inspected and locally hosted.
+
+
+## Further Ford-specific candidates verified on BlendSwap (18 November 2026)
+
+These listings have identifiable Ford models and stated free licenses. They remain **candidate downloads only**; no source binaries were accessible to this automated session, so none are marked as installed.
+
+| Model | Creator | Listing license | Notes |
+|---|---|---|---|
+| 1969 Ford Mustang Boss 429 | shontoloyo | CC0 | Creator warns the model may not be fully accurate due to limited reference blueprints; inspect before using: https://blendswap.com/blend/15616 |
+| 1957 Ford Thunderbird custom build | rianvermeulen | CC0 | Customised 1957 Thunderbird, not stock-original specification: https://blendswap.com/blend/12654 |
+| 1950s Ford F-100 pickup | MajorNightmare | CC BY | Attribution required; inspect whether it matches the desired F-100 generation: browse https://blendswap.com/3d/truck-ford |
+| 1985 Ford Bronco (untextured) | computergeekman | CC BY-SA | Attribution and share-alike obligations apply; untextured asset: browse https://blendswap.com/3d/truck-ford |
+| Ford Model A | lovelyfish75 | CC BY | Exact individual asset page not resolved in this research pass; browse https://blendswap.com/3d/ford |
+
+Additional Mustang listings include a 1968 Mustang GT Fastback and a Ford Mustang GT, both shown as CC0 in BlendSwap's Mustang catalogue: https://blendswap.com/3d/ford-mustang. Their individual files still require retrieval and inspection.
+
+BlendSwap's individual listing pages expose previews and license labels, but downloads returned HTTP 403 to the automation session. A listing or license label alone does not prove that the downloaded archive is intact, correctly textured, or suitable for this site's presentation. Do not copy these candidates into `public/models` until the files have been inspected and attribution/license records completed.
