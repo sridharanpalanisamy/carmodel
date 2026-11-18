@@ -45,3 +45,26 @@ For every future asset, record:
 - Date rights were checked
 
 Do not add footage unless it depicts the exact vehicle and the rights permit its intended use. No third-party viewer should be reintroduced as a fallback.
+
+
+## 1967 Ford Mustang Fastback — owner-supplied GLB
+
+- Creator: Mark Peters — https://sketchfab.com/mark-peters
+- Source: https://sketchfab.com/3d-models/1967-ford-mustang-fastback-4096px2-02933292f4d64a52a9bec5923e24b0af
+- License embedded in original GLB: CC BY 4.0
+- Intended local file: `public/models/ford-mustang-1967.glb`
+- Optimization: 4096px textures reduced to 2048px; opaque color maps encoded as JPEG; normal/data maps retained as PNG; mesh geometry unchanged.
+- Size: 52.64 MB original → 31.96 MB optimized.
+- Status: optimized and validated; awaiting addition of the binary to the repository.
+
+## 1973 Ford Falcon GT — owner-supplied GLB
+
+- Creator: Tom Zimmermann — https://sketchfab.com/tomm8
+- Source: https://sketchfab.com/3d-models/ford-falcon-gt-1973-13d628c752db4ae0acb755e3ba927aa0
+- License embedded in original GLB: CC BY 4.0
+- Intended local file: `public/models/ford-falcon-gt-1973.glb`
+- Optimization: textures reduced to 1024px; opaque color maps encoded as JPEG; normal/data maps retained as PNG; mesh geometry unchanged.
+- Size: 84.06 MB original → 13.77 MB optimized.
+- Status: optimized and validated; awaiting addition of the binary to the repository.
+
+The optimized GLBs preserve the original mesh geometry and face counts. Reduced texture resolution is a deliberate loading-performance trade-off. Provide creator attribution and a link to the CC BY 4.0 source pages wherever the models are displayed.
