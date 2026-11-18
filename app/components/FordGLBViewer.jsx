@@ -10,6 +10,7 @@ export default function FordGLBViewer() {
   const controlsRef = useRef(null);
   const [modelReady, setModelReady] = useState(false);
   const [autoRotate, setAutoRotate] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
     let renderer;
@@ -66,7 +67,8 @@ export default function FordGLBViewer() {
         controls = new OrbitControls(camera, renderer.domElement);
         controlsRef.current = controls;
         controls.enableDamping = true;
-        const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+        const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+        setPrefersReducedMotion(reducedMotion);
         controls.autoRotate = false;
         controls.autoRotateSpeed = 1.35;
         controls.enableKeys = true;
