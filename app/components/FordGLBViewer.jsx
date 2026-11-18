@@ -6,6 +6,8 @@ export default function FordGLBViewer() {
   const hostRef = useRef(null);
   const [status, setStatus] = useState("Loading the local Ford Model T 3D model…");
   const [failed, setFailed] = useState(false);
+  const resetViewRef = useRef(null);
+  const [modelReady, setModelReady] = useState(false);
 
   useEffect(() => {
     let renderer;
@@ -114,6 +116,8 @@ export default function FordGLBViewer() {
               controls.target.set(0, 0, 0);
               controls.update();
             };
+            resetViewRef.current = resetView;
+            setModelReady(true);
             setStatus("Real Ford Model T mesh · drag to rotate · scroll to zoom");
           },
           undefined,
@@ -162,6 +166,7 @@ export default function FordGLBViewer() {
       cancelAnimationFrame(frame);
       resizeObserver?.disconnect();
       controls?.dispose();
+      resetViewRef.current = null;
       if (renderer) {
         renderer.dispose();
         renderer.domElement.remove();
@@ -172,7 +177,10 @@ export default function FordGLBViewer() {
   return (
     <div className="ford-glb-viewer">
       <div ref={hostRef} className="ford-glb-stage" />
-      <div className="ford-glb-status" role="status">{status}</div>
+      <div className="ford-glb-controls" style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:"12px",padding:"10px 12px",background:"#202126",color:"#f7f5f3"}}>
+        <div className="ford-glb-status" role="status" style={{fontSize:"11px",lineHeight:1.5}}>{status}</div>
+        <button type="button" onClick={() => resetViewRef.current?.()} disabled={!modelReady} style={{flex:"0 0 auto",border:"1px solid #ffffff66",background:"transparent",color:"inherit",padding:"8px 12px",fontSize:"10px",fontWeight:700,cursor:modelReady?"pointer":"not-allowed",opacity:modelReady?1:0.5}}>Reset view</button>
+      </div>
       {failed && <p className="ford-glb-help">Check your internet connection and reload the page. The 3D asset is served from this project, not an external 360° service.</p>}
     </div>
   );
