@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export default function FordGLBViewer() {
+export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model-t.glb", modelName = "Ford Model T" }) {
   const hostRef = useRef(null);
-  const [status, setStatus] = useState("Loading the local Ford Model T 3D model…");
+  const [status, setStatus] = useState(`Loading the local ${modelName} 3D model…`);
   const [failed, setFailed] = useState(false);
   const resetViewRef = useRef(null);
   const controlsRef = useRef(null);
@@ -39,7 +39,7 @@ export default function FordGLBViewer() {
         renderer.toneMappingExposure = 1.15;
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        renderer.domElement.setAttribute("aria-label", "Interactive real 3D Ford Model T vehicle model");
+        renderer.domElement.setAttribute("aria-label", `Interactive real 3D ${modelName} vehicle model`);
         renderer.domElement.style.width = "100%";
         renderer.domElement.style.height = "100%";
         renderer.domElement.style.display = "block";
@@ -128,11 +128,11 @@ export default function FordGLBViewer() {
             };
             resetViewRef.current = resetView;
             setModelReady(true);
-            setStatus("Real Ford Model T mesh · drag to rotate · scroll to zoom");
+            setStatus(`${modelName} · local 3D mesh · drag to rotate · scroll to zoom`);
           },
           undefined,
           (error) => {
-            console.error("Unable to load local Ford Model T GLB:", error);
+            console.error(`Unable to load local ${modelName} GLB:`, error);
             if (!disposed) {
               setFailed(true);
               setStatus("The local 3D model could not be loaded. Please refresh and try again.");
@@ -162,7 +162,7 @@ export default function FordGLBViewer() {
 
         host.dataset.viewerReady = "true";
       } catch (error) {
-        console.error("Unable to initialize the Ford Model T viewer:", error);
+        console.error(`Unable to initialize the ${modelName} viewer:`, error);
         if (!disposed) {
           setFailed(true);
           setStatus("3D viewer initialization failed in this browser.");

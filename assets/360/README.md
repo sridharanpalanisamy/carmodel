@@ -80,3 +80,15 @@ These listings have identifiable Ford models and stated free licenses. They rema
 Additional Mustang listings include a 1968 Mustang GT Fastback and a Ford Mustang GT, both shown as CC0 in BlendSwap's Mustang catalogue: https://blendswap.com/3d/ford-mustang. Their individual files still require retrieval and inspection.
 
 BlendSwap's individual listing pages expose previews and license labels, but downloads returned HTTP 403 to the automation session. A listing or license label alone does not prove that the downloaded archive is intact, correctly textured, or suitable for this site's presentation. Do not copy these candidates into `public/models` until the files have been inspected and attribution/license records completed.
+
+
+## Owner-supplied additional 3D models (18 November 2026)
+
+Two Ford-specific GLB files were supplied and inspected. Both are valid GLB 2.0 scenes and have been texture-optimized while preserving their mesh geometry:
+
+| Vehicle | Creator / license | Original | Optimized | Repository path | Status |
+|---|---|---:|---:|---|---|
+| 1967 Ford Mustang Fastback | Mark Peters · CC BY 4.0 | 52.64 MB | 31.96 MB | `public/models/ford-mustang-1967.glb` | Optimized; binary awaiting repository upload |
+| 1973 Ford Falcon GT | Tom Zimmermann · CC BY 4.0 | 84.06 MB | 13.77 MB | `public/models/ford-falcon-gt-1973.glb` | Optimized; binary awaiting repository upload |
+
+The homepage 3D selector is configured to detect these local files and reveal the matching model choices only when the files exist. This avoids broken model buttons before the binary assets are committed. Download the optimized package from the conversation and copy the two GLBs into `public/models/`; the local viewer will then expose them automatically. See `CREDITS.md` for creator links and optimization details.
