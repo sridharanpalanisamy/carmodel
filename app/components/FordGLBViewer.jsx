@@ -162,7 +162,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
 
         host.dataset.viewerReady = "true";
       } catch (error) {
-        console.error("Unable to initialize the ${modelName} viewer:", error);
+        console.error(`Unable to initialize the ${modelName} viewer:`, error);
         if (!disposed) {
           setFailed(true);
           setStatus("3D viewer initialization failed in this browser.");
