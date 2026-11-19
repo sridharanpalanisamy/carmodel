@@ -26,6 +26,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         const THREE = await import("three");
         const { GLTFLoader } = await import("three/examples/jsm/loaders/GLTFLoader.js");
         const { OrbitControls } = await import("three/examples/jsm/controls/OrbitControls.js");
+        const { MeshoptDecoder } = await import("three/examples/jsm/libs/meshopt_decoder.module.js");
         if (disposed || !hostRef.current) return;
 
         const host = hostRef.current;
@@ -79,6 +80,8 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         controls.maxPolarAngle = Math.PI * 0.49;
 
         const loader = new GLTFLoader();
+        // The Mustang GLB uses EXT_meshopt_compression; register its decoder before parse().
+        loader.setMeshoptDecoder(MeshoptDecoder);
         const assetUrl = new URL(modelPath, window.location.href);
         setStatus(`Downloading local ${modelName} model…`);
         const response = await fetch(assetUrl.href, { cache: "no-cache" });
