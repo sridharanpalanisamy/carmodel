@@ -327,7 +327,22 @@ export default function AssemblyLineSimulator() {
       if (file.size > 100 * 1024) throw new Error("Library file is too large");
       const parsed = JSON.parse(await file.text());
       if (parsed?.version !== 1 || parsed?.type !== "factory-scenario-library" || !Array.isArray(parsed.scenarios)) throw new Error("Unsupported library format");
-      const validEntries = parsed.scenarios.filter(item => item && typeof item.name === "string" && item.name.trim().length > 0 && item.name.trim().length <= 48 && isValidSavedScenario(item.snapshot) && item.snapshot.version === 2 && Array.isArray(item.snapshot.stationNames) && item.snapshot.stationNames.length === initialStations.length && item.snapshot.stationNames.every((name, index) => name === initialStations[index].name)).map(item => ({ name: item.name.trim(), snapshot: item.snapshot }));
+      const validEntries = parsed.scenarios
+        .filter(item => {
+          if (!item || typeof item.name !== "string" || !item.name.trim() || item.name.trim().length > 48 || !isValidSavedScenario(item.snapshot)) return false;
+          const snapshotVersion = item.snapshot.version ?? 1;
+          if (snapshotVersion === 1) return item.snapshot.stationNames === undefined;
+          return snapshotVersion === 2 &&
+            Array.isArray(item.snapshot.stationNames) &&
+            item.snapshot.stationNames.length === initialStations.length &&
+            item.snapshot.stationNames.every((name, index) => name === initialStations[index].name);
+        })
+        .map(item => ({
+          name: item.name.trim(),
+          snapshot: item.snapshot.version === 2
+            ? item.snapshot
+            : { ...item.snapshot, version: 2, stationNames: initialStations.map(station => station.name) }
+        }));
       const invalidCount = parsed.scenarios.length - validEntries.length;
       const uniqueEntries = new Map();
       validEntries.forEach(item => uniqueEntries.set(item.name.toLowerCase(), item));
