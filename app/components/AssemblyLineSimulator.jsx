@@ -289,14 +289,20 @@ export default function AssemblyLineSimulator() {
       window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
       setScenarioLibrary(next);
       setSelectedScenarioNames(current => current.filter(name => next.some(item => item.name === name)));
-      const importedPin = typeof parsed.pinnedBaselineName === "string"
-        ? next.find(item => item.name.toLowerCase() === parsed.pinnedBaselineName.trim().toLowerCase())
+      const importedPinEntry = typeof parsed.pinnedBaselineName === "string"
+        ? valid.find(item => item.name.toLowerCase() === parsed.pinnedBaselineName.trim().toLowerCase())
+        : null;
+      const importedPin = importedPinEntry
+        ? next.find(item => item.name.toLowerCase() === importedPinEntry.name.toLowerCase())
         : null;
       if (importedPin) {
         window.localStorage.setItem("factory-improvement-pinned-scenario", importedPin.name);
         setPinnedScenarioName(importedPin.name);
       }
-      setScenarioSaveMessage("Imported " + valid.length + " valid named scenario(s). Matching names were updated; no existing scenarios were removed." + (importedPin ? ` “${importedPin.name}” was restored as the pinned baseline.` : ""));
+      const pinNotice = parsed.pinnedBaselineName && !importedPin
+        ? " The backup's pinned baseline was not restored because that scenario was not valid in the imported file."
+        : importedPin ? ` “${importedPin.name}” was restored as the pinned baseline.` : "";
+      setScenarioSaveMessage("Imported " + valid.length + " valid named scenario(s). Matching names were updated; no existing scenarios were removed." + pinNotice);
     } catch {
       setScenarioSaveMessage("Library import failed. Choose a valid scenario-library JSON exported by this planner; files must match the current station layout.");
     } finally { event.target.value = ""; }
