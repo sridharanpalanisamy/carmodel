@@ -80,7 +80,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
 
         const loader = new GLTFLoader();
         loader.load(
-          "/carmodel/models/ford-model-t.glb",
+          modelPath,
           (gltf) => {
             if (disposed) return;
             modelRoot = gltf.scene;
@@ -183,7 +183,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         renderer.domElement.remove();
       }
     };
-  }, []);
+  }, [modelPath, modelName]);
 
   return (
     <div className="ford-glb-viewer">
