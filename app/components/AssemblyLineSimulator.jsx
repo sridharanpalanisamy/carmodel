@@ -97,9 +97,23 @@ export default function AssemblyLineSimulator() {
         const parsedLibrary = JSON.parse(rawLibrary);
         if (Array.isArray(parsedLibrary)) {
           const validEntries = parsedLibrary
-            .filter(item => item && typeof item.name === "string" && item.name.trim().length > 0 &&
-              item.name.trim().length <= 48 && isValidSavedScenario(item.snapshot))
-            .map(item => ({ ...item, name: item.name.trim() }));
+            .filter(item => {
+              if (!item || typeof item.name !== "string" || !item.name.trim() ||
+                item.name.trim().length > 48 || !isValidSavedScenario(item.snapshot)) return false;
+              const version = item.snapshot.version ?? 1;
+              if (version === 1) return item.snapshot.stationNames === undefined;
+              return version === 2 &&
+                Array.isArray(item.snapshot.stationNames) &&
+                item.snapshot.stationNames.length === initialStations.length &&
+                item.snapshot.stationNames.every((name, index) => name === initialStations[index].name);
+            })
+            .map(item => ({
+              ...item,
+              name: item.name.trim(),
+              snapshot: item.snapshot.version === 2
+                ? item.snapshot
+                : { ...item.snapshot, version: 2, stationNames: initialStations.map(station => station.name) }
+            }));
           const uniqueEntries = new Map();
           validEntries.forEach(item => uniqueEntries.set(item.name.toLowerCase(), item));
           const normalized = [...uniqueEntries.values()].slice(-10);
