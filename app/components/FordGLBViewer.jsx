@@ -44,6 +44,9 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         renderer.domElement.style.width = "100%";
         renderer.domElement.style.height = "100%";
         renderer.domElement.style.display = "block";
+        renderer.domElement.style.touchAction = "none";
+        renderer.domElement.style.cursor = "grab";
+        renderer.domElement.style.pointerEvents = "auto";
         host.appendChild(renderer.domElement);
 
         scene.add(new THREE.HemisphereLight(0xffffff, 0x77736b, 2.0));
@@ -55,15 +58,10 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         const fill = new THREE.DirectionalLight(0xffffff, 1.15);
         fill.position.set(-5, 3, -4);
         scene.add(fill);
+        const undersideFill = new THREE.DirectionalLight(0xffffff, 1.6);
+        undersideFill.position.set(0, -5, 4);
+        scene.add(undersideFill);
 
-        const floor = new THREE.Mesh(
-          new THREE.PlaneGeometry(200, 200),
-          new THREE.MeshStandardMaterial({ color: "#d1cfca", roughness: 0.92, metalness: 0 })
-        );
-        floor.rotation.x = -Math.PI / 2;
-        floor.position.y = -0.015;
-        floor.receiveShadow = true;
-        scene.add(floor);
 
         controls = new OrbitControls(camera, renderer.domElement);
         controlsRef.current = controls;
@@ -74,10 +72,19 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         setAutoRotate(!reducedMotion);
         controls.autoRotateSpeed = 1.35;
         controls.enableKeys = true;
+        controls.enableRotate = true;
+        controls.enableZoom = true;
+        controls.mouseButtons = {
+          LEFT: THREE.MOUSE.ROTATE,
+          MIDDLE: THREE.MOUSE.DOLLY,
+          RIGHT: THREE.MOUSE.PAN,
+        };
         controls.dampingFactor = 0.065;
         controls.enablePan = true;
         controls.minPolarAngle = 0.12;
-        controls.maxPolarAngle = Math.PI * 0.49;
+        // Allow a complete orbit, including below the vehicle. The old 88-degree
+        // ceiling made an underside view physically unreachable by mouse/touch.
+        controls.maxPolarAngle = Math.PI - 0.08;
 
         const loader = new GLTFLoader();
         // The Mustang GLB uses EXT_meshopt_compression; register its decoder before parse().
