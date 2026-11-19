@@ -178,7 +178,7 @@
   display:block!important;
   width:100%;
   height:auto!important;
-  min-height:360px!important;
+  min-height:300px!important;
   aspect-ratio:auto!important;
   overflow:visible!important;
   position:relative;
@@ -187,7 +187,7 @@
 .home-model-t-panel #homeModelTGLBMount{
   display:block!important;
   width:100%!important;
-  min-height:360px!important;
+  min-height:300px!important;
   height:auto!important;
   overflow:visible!important;
 }
@@ -202,8 +202,8 @@
 .home-model-t-panel .ford-glb-stage{
   display:block!important;
   width:100%!important;
-  height:clamp(360px,52vw,560px)!important;
-  min-height:360px!important;
+  height:clamp(300px,40vw,430px)!important;
+  min-height:300px!important;
   position:relative!important;
   overflow:hidden!important;
   background:#e7e6e3!important;
