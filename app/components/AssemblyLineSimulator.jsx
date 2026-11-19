@@ -474,13 +474,29 @@ export default function AssemblyLineSimulator() {
       setScenarioSaveMessage("This saved scenario is invalid and cannot be exported.");
       return;
     }
-    const projection = getScenarioProjection(item.snapshot);
+    const snapshot = item.snapshot;
+    const projection = getScenarioProjection(snapshot);
+    const netMinutes = Math.max(0, snapshot.shiftHours * 60 - snapshot.breakMinutes);
+    const idealCapacity = projection.bottleneck > 0 ? Math.floor(netMinutes * 60 / projection.bottleneck) : 0;
+    const availableCapacity = Math.floor(idealCapacity * snapshot.availability / 100);
+    const requiredAvailable = snapshot.target > 0 && snapshot.yieldRate > 0
+      ? Math.ceil(snapshot.target / (snapshot.yieldRate / 100)) : 0;
+    const requiredIdeal = requiredAvailable > 0 && snapshot.availability > 0
+      ? Math.ceil(requiredAvailable / (snapshot.availability / 100)) : 0;
+    const requiredCycle = requiredIdeal > 0 ? Math.floor(netMinutes * 60 / requiredIdeal) : 0;
+    const targetFeasible = snapshot.target === 0 || (requiredCycle >= 20 && snapshot.availability > 0 && snapshot.yieldRate > 0);
     const rows = [
       ["Factory improvement scenario", item.name],
-      ["Saved at", item.snapshot.savedAt],
+      ["Saved at", snapshot.savedAt],
       ["Good vehicles / shift", projection.good],
-      ["Target", item.snapshot.target],
+      ["Ideal capacity (vehicles / shift)", idealCapacity],
+      ["Available capacity (vehicles / shift)", availableCapacity],
+      ["Net production time (minutes)", netMinutes],
+      ["Target", snapshot.target],
       ["Target attainment (%)", Number(projection.attainmentPercent.toFixed(1))],
+      ["Target takt before losses (seconds)", snapshot.target > 0 ? Number((netMinutes * 60 / snapshot.target).toFixed(1)) : "N/A"],
+      ["Required cycle after availability and quality losses (seconds)", snapshot.target > 0 && targetFeasible ? requiredCycle : "Not feasible / no target"],
+      ["Target pace feasibility", snapshot.target === 0 ? "No target selected" : targetFeasible ? "Feasible within 20-second minimum" : "Not feasible within 20-second minimum"],
       ["Vehicles above / below target", projection.gap],
       ["Target status", projection.gap >= 0 ? "Target achieved" : "Below target"],
       ["Bottleneck station", projection.bottleneckName],
