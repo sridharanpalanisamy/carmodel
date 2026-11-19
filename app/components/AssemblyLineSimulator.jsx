@@ -370,6 +370,7 @@ export default function AssemblyLineSimulator() {
         return;
       }
       const next = merged;
+      const hasPinnedBaselineField = Object.prototype.hasOwnProperty.call(parsed, "pinnedBaselineName");
       const importedPinEntry = typeof parsed.pinnedBaselineName === "string"
         ? valid.find(item => item.name.toLowerCase() === parsed.pinnedBaselineName.trim().toLowerCase())
         : null;
@@ -380,7 +381,10 @@ export default function AssemblyLineSimulator() {
       const previousPin = window.localStorage.getItem("factory-improvement-pinned-scenario");
       try {
         window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
-        if (importedPin) window.localStorage.setItem("factory-improvement-pinned-scenario", importedPin.name);
+        if (hasPinnedBaselineField) {
+          if (importedPin) window.localStorage.setItem("factory-improvement-pinned-scenario", importedPin.name);
+          else window.localStorage.removeItem("factory-improvement-pinned-scenario");
+        }
       } catch (storageError) {
         try {
           if (previousLibrary === null) window.localStorage.removeItem("factory-improvement-scenarios");
@@ -394,10 +398,11 @@ export default function AssemblyLineSimulator() {
       }
       setScenarioLibrary(next);
       setSelectedScenarioNames(current => current.filter(name => next.some(item => item.name === name)));
-      if (importedPin) setPinnedScenarioName(importedPin.name);
-      const pinNotice = parsed.pinnedBaselineName && !importedPin
-        ? " The backup's pinned baseline was not restored because that scenario was not valid in the imported file."
-        : importedPin ? ` “${importedPin.name}” was restored as the pinned baseline.` : "";
+      if (hasPinnedBaselineField) setPinnedScenarioName(importedPin?.name || "");
+      const pinNotice = typeof parsed.pinnedBaselineName === "string" && !importedPin
+        ? " The backup's pinned baseline was not restored because that scenario was not valid in the imported file; the previous pin was cleared."
+        : importedPin ? ` “${importedPin.name}” was restored as the pinned baseline.`
+        : hasPinnedBaselineField ? " The backup contained no pinned baseline, so the previous pin was cleared." : "";
       const importDetails = [`Imported ${valid.length} unique scenario(s)`, duplicateCount ? `${duplicateCount} duplicate name(s) consolidated (last entry kept)` : "", invalidCount ? `${invalidCount} invalid entr${invalidCount === 1 ? "y" : "ies"} skipped` : ""].filter(Boolean).join(". ");
       setScenarioSaveMessage(importDetails + ". Matching names were updated; no existing scenarios were removed." + pinNotice);
     } catch {
