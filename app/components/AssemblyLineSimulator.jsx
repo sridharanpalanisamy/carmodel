@@ -298,7 +298,12 @@ export default function AssemblyLineSimulator() {
       if (file.size > 100 * 1024) throw new Error("Library file is too large");
       const parsed = JSON.parse(await file.text());
       if (parsed?.version !== 1 || parsed?.type !== "factory-scenario-library" || !Array.isArray(parsed.scenarios)) throw new Error("Unsupported library format");
-      const valid = parsed.scenarios.filter(item => item && typeof item.name === "string" && item.name.trim().length > 0 && item.name.trim().length <= 48 && isValidSavedScenario(item.snapshot) && item.snapshot.version === 2 && Array.isArray(item.snapshot.stationNames) && item.snapshot.stationNames.length === initialStations.length && item.snapshot.stationNames.every((name, index) => name === initialStations[index].name)).map(item => ({ name: item.name.trim(), snapshot: item.snapshot }));
+      const validEntries = parsed.scenarios.filter(item => item && typeof item.name === "string" && item.name.trim().length > 0 && item.name.trim().length <= 48 && isValidSavedScenario(item.snapshot) && item.snapshot.version === 2 && Array.isArray(item.snapshot.stationNames) && item.snapshot.stationNames.length === initialStations.length && item.snapshot.stationNames.every((name, index) => name === initialStations[index].name)).map(item => ({ name: item.name.trim(), snapshot: item.snapshot }));
+      const invalidCount = parsed.scenarios.length - validEntries.length;
+      const uniqueEntries = new Map();
+      validEntries.forEach(item => uniqueEntries.set(item.name.toLowerCase(), item));
+      const duplicateCount = validEntries.length - uniqueEntries.size;
+      const valid = [...uniqueEntries.values()];
       if (valid.length === 0) throw new Error("No valid scenarios found");
       const merged = [...scenarioLibrary];
       valid.forEach(item => { const index = merged.findIndex(entry => entry.name.toLowerCase() === item.name.toLowerCase()); if (index >= 0) merged[index] = item; else merged.push(item); });
@@ -323,7 +328,8 @@ export default function AssemblyLineSimulator() {
       const pinNotice = parsed.pinnedBaselineName && !importedPin
         ? " The backup's pinned baseline was not restored because that scenario was not valid in the imported file."
         : importedPin ? ` “${importedPin.name}” was restored as the pinned baseline.` : "";
-      setScenarioSaveMessage("Imported " + valid.length + " valid named scenario(s). Matching names were updated; no existing scenarios were removed." + pinNotice);
+      const importDetails = [`Imported ${valid.length} unique scenario(s)`, duplicateCount ? `${duplicateCount} duplicate name(s) consolidated (last entry kept)` : "", invalidCount ? `${invalidCount} invalid entr${invalidCount === 1 ? "y" : "ies"} skipped` : ""].filter(Boolean).join(". ");
+      setScenarioSaveMessage(importDetails + ". Matching names were updated; no existing scenarios were removed." + pinNotice);
     } catch {
       setScenarioSaveMessage("Library import failed. Choose a valid scenario-library JSON exported by this planner; files must match the current station layout.");
     } finally { event.target.value = ""; }
