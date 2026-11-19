@@ -1219,6 +1219,16 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     : 0;
   const pinnedScenario = scenarioLibrary.find(item => item.name === pinnedScenarioName);
   const pinnedScenarioProjection = pinnedScenario ? getScenarioProjection(pinnedScenario.snapshot) : null;
+  const baselineComparedScenarios = pinnedScenarioProjection
+    ? visibleScenarioLibrary.filter(item => item.name !== pinnedScenarioName).map(item => ({
+        name: item.name,
+        goodDelta: getScenarioProjection(item.snapshot).good - pinnedScenarioProjection.good
+      }))
+    : [];
+  const scenariosAboveBaseline = baselineComparedScenarios.filter(item => item.goodDelta > 0).length;
+  const averageBaselineOutputDelta = baselineComparedScenarios.length
+    ? baselineComparedScenarios.reduce((total, item) => total + item.goodDelta, 0) / baselineComparedScenarios.length
+    : 0;
 
   if (!mount) return null;
   return createPortal(
@@ -1358,10 +1368,11 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                     <input id="factoryScenarioSearch" type="search" value={scenarioSearch} onChange={event => setScenarioSearch(event.target.value)} placeholder="Search scenario names..." />
                     {scenarioSearch && <button type="button" className="line-reset factory-scenario-clear-search" onClick={() => setScenarioSearch("")}>Clear search</button>}
                     <small>Showing {visibleScenarioLibrary.length} of {scenarioLibrary.length} saved scenarios</small>
-                    <div className="grid grid-cols-1 gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm sm:grid-cols-3" aria-live="polite" aria-label="Saved scenario summary">
+                    <div className="grid grid-cols-1 gap-2 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm sm:grid-cols-2 lg:grid-cols-5" aria-live="polite" aria-label="Saved scenario summary">
                       <div><span className="block text-xs text-slate-500">Average target attainment</span><strong className="text-base">{averageScenarioAttainment.toFixed(1)}%</strong></div>
                       <div><span className="block text-xs text-slate-500">Scenarios meeting target</span><strong className="text-base">{visibleScenarioSummary.onTarget} / {visibleScenarioLibrary.length}</strong></div>
                       <div><span className="block text-xs text-slate-500">Below target</span><strong className="text-base">{visibleScenarioLibrary.length - visibleScenarioSummary.onTarget}</strong></div>
+                      {pinnedScenarioProjection && <><div><span className="block text-xs text-slate-500">Outperforming pinned baseline</span><strong className="text-base">{scenariosAboveBaseline} / {baselineComparedScenarios.length}</strong></div><div><span className="block text-xs text-slate-500">Average output vs baseline</span><strong className={averageBaselineOutputDelta > 0 ? "text-base text-emerald-700" : averageBaselineOutputDelta < 0 ? "text-base text-rose-700" : "text-base"}>{averageBaselineOutputDelta > 0 ? "+" : ""}{averageBaselineOutputDelta.toFixed(1)} vehicles/shift</strong></div></>}
                     </div>
                     <label className="factory-scenario-sort"><span>Sort</span><select value={scenarioSort} onChange={event => setScenarioSort(event.target.value)} aria-label="Sort saved scenarios"><option value="recent">Recently saved</option><option value="output">Highest output</option><option value="target">Best target result</option><option value="attainment">Highest target attainment</option><option value="lowest-attainment">Lowest target attainment</option><option value="name">Name A–Z</option></select></label>
                   </div>
