@@ -1327,11 +1327,15 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
       ["Shift target", target, target],
       ["Availability (%)", availability, availability],
       ["Quality yield (%)", yieldRate, yieldRate],
+      ["Required cycle time after availability and quality losses (seconds)", target > 0 && improvement.feasible ? improvement.requiredCycle : "Not feasible / no target"],
+      ["Proposed target status", target === 0 ? "No target selected" : improvement.meetsTarget ? "Target achieved" : "Target not achieved"],
+      ["Target pace feasibility", target === 0 ? "No target selected" : improvement.feasible ? "Feasible within 20-second minimum" : "Not feasible within 20-second minimum"],
       [],
-      ["Station", "Current cycle (seconds)", "Proposed cycle (seconds)", "Reduction (seconds)"],
+      ["Station", "Current cycle (seconds)", "Proposed cycle (seconds)", "Reduction (seconds)", "Proposed target pace status"],
       ...stations.map((station, index) => {
         const proposed = proposedCycleTimes[index] ?? station.seconds;
-        return [station.name, station.seconds, proposed, station.seconds - proposed];
+        const paceStatus = target === 0 ? "No target selected" : !improvement.feasible ? "Target pace unavailable" : proposed <= improvement.requiredCycle ? "Within required pace" : "Exceeds required pace";
+        return [station.name, station.seconds, proposed, station.seconds - proposed, paceStatus];
       })
     ];
     const csv = rows.map(row => row.map(value => {
