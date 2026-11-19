@@ -16,8 +16,26 @@ export default function FordHome3DMount() {
   const [selectedId, setSelectedId] = useState("mustang-1967");
 
   useEffect(() => {
-    const mount = document.getElementById("homeModelTGLBMount");
-    if (mount) setTarget(mount);
+    let observer;
+    let cancelled = false;
+    const findMount = () => {
+      const mount = document.getElementById("homeModelTGLBMount");
+      if (mount && !cancelled) {
+        mount.style.width = "100%";
+        mount.style.minWidth = "0";
+        setTarget(mount);
+        observer?.disconnect();
+      }
+    };
+    findMount();
+    if (!document.getElementById("homeModelTGLBMount")) {
+      observer = new MutationObserver(findMount);
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
+    return () => {
+      cancelled = true;
+      observer?.disconnect();
+    };
   }, []);
 
   useEffect(() => {
