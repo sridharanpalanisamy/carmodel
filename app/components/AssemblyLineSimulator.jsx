@@ -1291,9 +1291,13 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
       ["Line availability (%)", availability],
       ["Quality yield (%)", yieldRate],
       ["Target takt time before losses (seconds per vehicle)", result.taktSeconds.toFixed(1)],
+      ["Required cycle time after availability and quality losses (seconds)", target > 0 && result.targetPaceFeasible ? result.requiredGoodOutputCycle : "Not feasible / no target"],
+      ["Good-output target pace status", target === 0 ? "No target selected" : result.targetPaceFeasible ? "Feasible within 20-second minimum" : "Not feasible within 20-second minimum"],
+      ["Shift duration (hours)", shiftHours],
+      ["Break time (minutes)", breakMinutes],
       [],
-      ["Station", "Cycle time (seconds)", "Bottleneck", "Target takt status"],
-      ...stations.map(station => [station.name, station.seconds, station.seconds === result.bottleneck ? "Yes" : "No", station.seconds <= result.taktSeconds ? "Within takt" : "Exceeds takt"])
+      ["Station", "Cycle time (seconds)", "Bottleneck", "Good-output target pace status"],
+      ...stations.map(station => [station.name, station.seconds, station.seconds === result.bottleneck ? "Yes" : "No", target === 0 ? "No target selected" : !result.targetPaceFeasible ? "Target pace unavailable" : station.seconds <= result.requiredGoodOutputCycle ? "Within required pace" : "Exceeds required pace"])
     ];
     const csv = rows.map(row => row.map(value => {
       const text = String(value ?? "");
