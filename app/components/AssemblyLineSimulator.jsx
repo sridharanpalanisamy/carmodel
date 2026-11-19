@@ -942,9 +942,11 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     }
     const next = scenarioLibrary.map(item => item.name === oldName ? { ...item, name: nextName } : item);
     const renamingPinnedBaseline = pinnedScenarioName === oldName;
-    const previousLibrary = window.localStorage.getItem("factory-improvement-scenarios");
-    const previousPin = window.localStorage.getItem("factory-improvement-pinned-scenario");
+    let previousLibrary;
+    let previousPin;
     try {
+      previousLibrary = window.localStorage.getItem("factory-improvement-scenarios");
+      previousPin = window.localStorage.getItem("factory-improvement-pinned-scenario");
       try {
         window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
         if (renamingPinnedBaseline) window.localStorage.setItem("factory-improvement-pinned-scenario", nextName);
