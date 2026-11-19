@@ -12,8 +12,8 @@ const SHOWROOM_MODELS = [
 
 export default function FordHome3DMount() {
   const [target, setTarget] = useState(null);
-  const [available, setAvailable] = useState([SHOWROOM_MODELS[0]]);
-  const [selectedId, setSelectedId] = useState("model-t");
+  const [available, setAvailable] = useState([SHOWROOM_MODELS[0], SHOWROOM_MODELS[1]]);
+  const [selectedId, setSelectedId] = useState("mustang-1967");
 
   useEffect(() => {
     const mount = document.getElementById("homeModelTGLBMount");
