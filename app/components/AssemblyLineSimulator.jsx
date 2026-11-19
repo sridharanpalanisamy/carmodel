@@ -1240,15 +1240,22 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
   const pinnedScenario = scenarioLibrary.find(item => item.name === pinnedScenarioName);
   const pinnedScenarioProjection = pinnedScenario ? getScenarioProjection(pinnedScenario.snapshot) : null;
   const baselineComparedScenarios = pinnedScenarioProjection
-    ? visibleScenarioLibrary.filter(item => item.name !== pinnedScenarioName).map(item => ({
-        name: item.name,
-        goodDelta: getScenarioProjection(item.snapshot).good - pinnedScenarioProjection.good
-      }))
+    ? visibleScenarioLibrary.filter(item => item.name !== pinnedScenarioName).map(item => {
+        const sameOperatingAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate"]
+          .every(key => item.snapshot[key] === pinnedScenario.snapshot[key]);
+        return {
+          name: item.name,
+          goodDelta: getScenarioProjection(item.snapshot).good - pinnedScenarioProjection.good,
+          sameOperatingAssumptions
+        };
+      })
     : [];
-  const scenariosAboveBaseline = baselineComparedScenarios.filter(item => item.goodDelta > 0).length;
-  const averageBaselineOutputDelta = baselineComparedScenarios.length
-    ? baselineComparedScenarios.reduce((total, item) => total + item.goodDelta, 0) / baselineComparedScenarios.length
-    : 0;
+  const likeForLikeBaselineComparisons = baselineComparedScenarios.filter(item => item.sameOperatingAssumptions);
+  const differentAssumptionBaselineComparisons = baselineComparedScenarios.length - likeForLikeBaselineComparisons.length;
+  const scenariosAboveBaseline = likeForLikeBaselineComparisons.filter(item => item.goodDelta > 0).length;
+  const averageBaselineOutputDelta = likeForLikeBaselineComparisons.length
+    ? likeForLikeBaselineComparisons.reduce((total, item) => total + item.goodDelta, 0) / likeForLikeBaselineComparisons.length
+    : null;
 
   if (!mount) return null;
   return createPortal(
@@ -1392,7 +1399,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                       <div><span className="block text-xs text-slate-500">Average target attainment</span><strong className="text-base">{averageScenarioAttainment.toFixed(1)}%</strong></div>
                       <div><span className="block text-xs text-slate-500">Scenarios meeting target</span><strong className="text-base">{visibleScenarioSummary.onTarget} / {visibleScenarioLibrary.length}</strong></div>
                       <div><span className="block text-xs text-slate-500">Below target</span><strong className="text-base">{visibleScenarioLibrary.length - visibleScenarioSummary.onTarget}</strong></div>
-                      {pinnedScenarioProjection && <><div><span className="block text-xs text-slate-500">Outperforming pinned baseline</span><strong className="text-base">{scenariosAboveBaseline} / {baselineComparedScenarios.length}</strong></div><div><span className="block text-xs text-slate-500">Average output vs baseline</span><strong className={averageBaselineOutputDelta > 0 ? "text-base text-emerald-700" : averageBaselineOutputDelta < 0 ? "text-base text-rose-700" : "text-base"}>{averageBaselineOutputDelta > 0 ? "+" : ""}{averageBaselineOutputDelta.toFixed(1)} vehicles/shift</strong></div></>}
+                      {pinnedScenarioProjection && <><div><span className="block text-xs text-slate-500">Outperforming baseline (like-for-like)</span><strong className="text-base">{scenariosAboveBaseline} / {likeForLikeBaselineComparisons.length}</strong></div><div><span className="block text-xs text-slate-500">Average output delta (like-for-like)</span><strong className={averageBaselineOutputDelta === null ? "text-base" : averageBaselineOutputDelta > 0 ? "text-base text-emerald-700" : averageBaselineOutputDelta < 0 ? "text-base text-rose-700" : "text-base"}>{averageBaselineOutputDelta === null ? "—" : `${averageBaselineOutputDelta > 0 ? "+" : ""}${averageBaselineOutputDelta.toFixed(1)} vehicles/shift`}</strong></div><div><span className="block text-xs text-slate-500">Different assumptions</span><strong className="text-base">{differentAssumptionBaselineComparisons} excluded</strong></div></>}
                     </div>
                     <label className="factory-scenario-sort"><span>Sort</span><select value={scenarioSort} onChange={event => setScenarioSort(event.target.value)} aria-label="Sort saved scenarios"><option value="recent">Recently saved</option><option value="output">Highest output</option><option value="target">Best target result</option><option value="attainment">Highest target attainment</option><option value="lowest-attainment">Lowest target attainment</option><option value="name">Name A–Z</option></select></label>
                   </div>
