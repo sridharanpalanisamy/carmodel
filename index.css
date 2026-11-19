@@ -219,3 +219,89 @@
 .home-model-t-panel .viewer-frame #homeModelTGLBMount{width:100%;min-width:0}
 
 @media(max-width:600px){.home-model-t-panel .ford-glb-stage{height:280px!important;min-height:280px!important}}
+
+
+/* HOMEPAGE LAYOUT REFINEMENT
+   Balance the editorial sections in paired rows and give the interactive
+   showroom a full-width row so the two-column page does not leave a dead zone. */
+@media (min-width: 901px) {
+  .home-layout {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-areas:
+      "hero innovation"
+      "process collection"
+      "showroom showroom"
+      "latest quote" !important;
+    column-gap: clamp(24px, 3vw, 42px) !important;
+    row-gap: clamp(24px, 3vw, 38px) !important;
+    align-items: start !important;
+  }
+  .home-layout > .left-column,
+  .home-layout > .right-column {
+    display: contents !important;
+  }
+  .home-layout > .left-column > .hero-panel { grid-area: hero; }
+  .home-layout > .left-column > .process-panel { grid-area: process; }
+  .home-layout > .right-column > .innovation-panel { grid-area: innovation; }
+  .home-layout > .right-column > .orange-feature { grid-area: collection; }
+  .home-layout > .right-column > .turntable-panel { grid-area: showroom; }
+  .home-layout > .right-column > .latest-panel { grid-area: latest; }
+  .home-layout > .right-column > .quote-panel { grid-area: quote; }
+
+  .home-layout > .left-column,
+  .home-layout > .right-column,
+  .home-layout > section {
+    min-width: 0;
+    border: 0;
+  }
+  .home-layout .hero-panel,
+  .home-layout .process-panel,
+  .home-layout .innovation-panel,
+  .home-layout .orange-feature,
+  .home-layout .turntable-panel,
+  .home-layout .latest-panel,
+  .home-layout .quote-panel {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+  }
+  .home-layout .hero-panel,
+  .home-layout .innovation-panel {
+    align-self: stretch;
+  }
+  .home-layout .process-panel,
+  .home-layout .orange-feature {
+    align-self: start;
+  }
+  .home-layout .turntable-panel {
+    padding-top: 24px;
+    padding-bottom: 24px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .home-layout .ford-glb-stage {
+    height: 320px !important;
+    min-height: 320px !important;
+  }
+  .home-layout .latest-panel,
+  .home-layout .quote-panel {
+    align-self: start;
+    border-bottom: 0;
+  }
+  .home-layout .quote-panel {
+    padding-top: 24px;
+  }
+}
+@media (max-width: 900px) {
+  .home-layout > .left-column,
+  .home-layout > .right-column {
+    display: block !important;
+  }
+  .home-layout {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas: none !important;
+    row-gap: 0 !important;
+  }
+}
