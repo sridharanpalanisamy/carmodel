@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import FordGLBViewer from "./FordGLBViewer";
 
@@ -12,29 +12,30 @@ const SHOWROOM_MODELS = [
 
 export default function FordHome3DMount() {
   const [target, setTarget] = useState(null);
+  const targetRef = useRef(null);
   const [available, setAvailable] = useState([SHOWROOM_MODELS[0], SHOWROOM_MODELS[1]]);
   const [selectedId, setSelectedId] = useState("mustang-1967");
 
   useEffect(() => {
-    let observer;
     let cancelled = false;
     const findMount = () => {
       const mount = document.getElementById("homeModelTGLBMount");
-      if (mount && !cancelled) {
+      // The legacy page is hydrated from injected HTML. React may replace that
+      // subtree after the first paint, so keep the portal attached to the live node.
+      if (mount && !cancelled && (!mount.isConnected || targetRef.current !== mount)) {
         mount.style.width = "100%";
         mount.style.minWidth = "0";
+        targetRef.current = mount;
         setTarget(mount);
-        observer?.disconnect();
       }
     };
     findMount();
-    if (!document.getElementById("homeModelTGLBMount")) {
-      observer = new MutationObserver(findMount);
-      observer.observe(document.body, { childList: true, subtree: true });
-    }
+    const observer = new MutationObserver(findMount);
+    observer.observe(document.body, { childList: true, subtree: true });
     return () => {
       cancelled = true;
-      observer?.disconnect();
+      observer.disconnect();
+      targetRef.current = null;
     };
   }, []);
 
