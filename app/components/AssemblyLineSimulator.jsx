@@ -1531,7 +1531,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                     </> : <button type="button" className="line-reset" onClick={() => { setPendingDeleteScenario(item.name); setRenamingScenario(""); }}>Delete</button>}
                   </li>)}
                 </ul>
-                  {scenarioLibrary.every(item => !item.name.toLowerCase().includes(scenarioSearch.trim().toLowerCase())) && <div className="factory-scenario-empty-search" role="status"><p>No saved scenarios match “{scenarioSearch}”.</p><button type="button" className="line-reset" onClick={() => setScenarioSearch("")}>Clear search and show all scenarios</button></div>}
+                  {visibleScenarioLibrary.length === 0 && <div className="factory-scenario-empty-search" role="status"><p>{scenarioSearch.trim() ? `No saved scenarios match “${scenarioSearch}” with the current filters.` : "No saved scenarios match the selected baseline filter."}</p><button type="button" className="line-reset" onClick={() => { setScenarioSearch(""); setScenarioBaselineFilter("all"); }}>Clear search and filters</button></div>}
                 </>}
                 {selectedScenarioNames.length > 0 && <div className="factory-scenario-comparison" aria-live="polite">
                   <div className="factory-scenario-comparison-heading"><strong>Scenario comparison ({selectedScenarioNames.length}/2)</strong><button type="button" className="line-reset" onClick={() => setSelectedScenarioNames([])}>Clear comparison</button></div>
