@@ -79,8 +79,20 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         controls.maxPolarAngle = Math.PI * 0.49;
 
         const loader = new GLTFLoader();
-        loader.load(
-          modelPath,
+        const assetUrl = new URL(modelPath, window.location.href);
+        setStatus(`Downloading local ${modelName} model…`);
+        const response = await fetch(assetUrl.href, { cache: "no-cache" });
+        if (!response.ok) {
+          throw new Error(`Model request failed: HTTP ${response.status} ${response.statusText} (${assetUrl.pathname})`);
+        }
+        const modelBuffer = await response.arrayBuffer();
+        if (modelBuffer.byteLength < 20) {
+          throw new Error(`Model response is unexpectedly small (${modelBuffer.byteLength} bytes).`);
+        }
+        const resourcePath = new URL(".", assetUrl).href;
+        loader.parse(
+          modelBuffer,
+          resourcePath,
           (gltf) => {
             if (disposed) return;
             modelRoot = gltf.scene;
@@ -141,12 +153,11 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
             setModelReady(true);
             setStatus(`${modelName} loaded · drag to rotate · scroll to zoom`);
           },
-          undefined,
           (error) => {
-            console.error(`Unable to load local ${modelName} GLB:`, error);
+            console.error(`Unable to parse local ${modelName} GLB:`, error);
             if (!disposed) {
               setFailed(true);
-              setStatus("The local 3D model could not be loaded. Please refresh and try again.");
+              setStatus(`3D model parse failed: ${error?.message || "unsupported or invalid GLB data"}`);
             }
           }
         );
@@ -176,7 +187,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         console.error(`Unable to initialize the ${modelName} viewer:`, error);
         if (!disposed) {
           setFailed(true);
-          setStatus("3D viewer initialization failed in this browser.");
+          setStatus(error?.message || "3D viewer initialization failed in this browser.");
         }
       }
     }
