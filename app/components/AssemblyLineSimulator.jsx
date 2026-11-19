@@ -181,10 +181,15 @@ export default function AssemblyLineSimulator() {
       `Average target attainment: ${averageAttainment.toFixed(1)}%`,
       `Meeting target: ${onTarget} / ${projections.length}`,
       `Below target: ${projections.length - onTarget}`,
+      ...(pinnedScenarioProjection ? [
+        `Pinned baseline: ${pinnedScenario.name} (${pinnedScenarioProjection.good} good vehicles/shift)`,
+        `Scenarios outperforming baseline: ${projections.filter(entry => entry.item.name !== pinnedScenarioName && entry.projection.good > pinnedScenarioProjection.good).length}`,
+        `Average output difference vs baseline: ${projections.filter(entry => entry.item.name !== pinnedScenarioName).length ? (projections.filter(entry => entry.item.name !== pinnedScenarioName).reduce((total, entry) => total + entry.projection.good - pinnedScenarioProjection.good, 0) / projections.filter(entry => entry.item.name !== pinnedScenarioName).length).toFixed(1) : "N/A"} vehicles/shift`
+      ] : ["Pinned baseline: none"]),
       "",
       "Scenario details",
       ...projections.map(({ item, projection }) => `${item.name}: ${projection.good} good vehicles/shift; target ${item.snapshot.target}; attainment ${projection.attainmentPercent.toFixed(1)}%; ${projection.gap >= 0 ? `${projection.gap} above target` : `${Math.abs(projection.gap)} below target`}; bottleneck ${projection.bottleneckName} (${projection.bottleneck}s)`)
-    ].join("\\n");
+    ].join("\n");
     try {
       if (!navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
       await navigator.clipboard.writeText(lines);
