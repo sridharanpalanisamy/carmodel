@@ -181,11 +181,32 @@ export default function AssemblyLineSimulator() {
       `Average target attainment: ${averageAttainment.toFixed(1)}%`,
       `Meeting target: ${onTarget} / ${projections.length}`,
       `Below target: ${projections.length - onTarget}`,
-      ...(pinnedScenarioProjection ? [
-        `Pinned baseline: ${pinnedScenario.name} (${pinnedScenarioProjection.good} good vehicles/shift)`,
-        `Scenarios outperforming baseline: ${projections.filter(entry => entry.item.name !== pinnedScenarioName && entry.projection.good > pinnedScenarioProjection.good).length}`,
-        `Average output difference vs baseline: ${projections.filter(entry => entry.item.name !== pinnedScenarioName).length ? (projections.filter(entry => entry.item.name !== pinnedScenarioName).reduce((total, entry) => total + entry.projection.good - pinnedScenarioProjection.good, 0) / projections.filter(entry => entry.item.name !== pinnedScenarioName).length).toFixed(1) : "N/A"} vehicles/shift`
-      ] : ["Pinned baseline: none"]),
+      ...(pinnedScenarioProjection ? (() => {
+        const comparisons = projections.filter(entry => entry.item.name !== pinnedScenarioName).map(entry => {
+          const sameAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate"]
+            .every(key => entry.item.snapshot[key] === pinnedScenario.snapshot[key]);
+          const normalized = getScenarioProjection({
+            ...entry.item.snapshot,
+            shiftHours: pinnedScenario.snapshot.shiftHours,
+            breakMinutes: pinnedScenario.snapshot.breakMinutes,
+            availability: pinnedScenario.snapshot.availability,
+            yieldRate: pinnedScenario.snapshot.yieldRate
+          });
+          return { ...entry, sameAssumptions, normalizedDelta: normalized.good - pinnedScenarioProjection.good };
+        });
+        const fair = comparisons.filter(entry => entry.sameAssumptions);
+        const above = fair.filter(entry => entry.projection.good > pinnedScenarioProjection.good).length;
+        const averageDelta = fair.length
+          ? fair.reduce((total, entry) => total + entry.projection.good - pinnedScenarioProjection.good, 0) / fair.length
+          : null;
+        return [
+          `Pinned baseline: ${pinnedScenario.name} (${pinnedScenarioProjection.good} good vehicles/shift)`,
+          `Outperforming baseline (like-for-like): ${above} / ${fair.length}`,
+          `Average output difference (like-for-like): ${averageDelta === null ? "N/A — no matching assumptions" : `${averageDelta > 0 ? "+" : ""}${averageDelta.toFixed(1)} vehicles/shift`}`,
+          `Scenarios with different assumptions: ${comparisons.length - fair.length} (excluded from fair average)`,
+          ...comparisons.filter(entry => !entry.sameAssumptions).map(entry => `Normalized cycle-only difference — ${entry.item.name}: ${entry.normalizedDelta > 0 ? "+" : ""}${entry.normalizedDelta} vehicles/shift under baseline assumptions`)
+        ];
+      })() : ["Pinned baseline: none"]),
       "",
       "Scenario details",
       ...projections.map(({ item, projection }) => `${item.name}: ${projection.good} good vehicles/shift; target ${item.snapshot.target}; attainment ${projection.attainmentPercent.toFixed(1)}%; ${projection.gap >= 0 ? `${projection.gap} above target` : `${Math.abs(projection.gap)} below target`}; bottleneck ${projection.bottleneckName} (${projection.bottleneck}s)`)
