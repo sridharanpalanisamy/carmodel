@@ -99,27 +99,38 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
                 }
               }
             });
-            const bounds = new THREE.Box3().setFromObject(modelRoot);
+            // Fit the loaded GLB from its world-space bounds. Some downloaded GLBs
+            // carry a transformed scene root, so center a wrapper group rather than
+            // assuming the model's root transform is identity.
+            const modelGroup = new THREE.Group();
+            modelGroup.add(modelRoot);
+            scene.add(modelGroup);
+            modelGroup.updateMatrixWorld(true);
+            const bounds = new THREE.Box3().setFromObject(modelGroup);
             const size = bounds.getSize(new THREE.Vector3());
             const center = bounds.getCenter(new THREE.Vector3());
-            modelRoot.position.sub(center);
-            scene.add(modelRoot);
+            modelGroup.position.sub(center);
+            modelGroup.updateMatrixWorld(true);
 
-            const maxDimension = Math.max(size.x, size.y, size.z) || 1;
+            const maxDimension = Math.max(size.x, size.y, size.z);
+            if (!Number.isFinite(maxDimension) || maxDimension <= 0) {
+              throw new Error("The GLB contains no visible model geometry.");
+            }
             const sphere = new THREE.Sphere();
-            bounds.getBoundingSphere(sphere);
+            new THREE.Box3().setFromObject(modelGroup).getBoundingSphere(sphere);
             const verticalFov = THREE.MathUtils.degToRad(camera.fov);
             const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * Math.max(camera.aspect, 0.5));
             const limitingFov = Math.min(verticalFov, horizontalFov);
-            const distance = Math.max(sphere.radius / Math.sin(limitingFov / 2) * 1.25, maxDimension * 1.8);
+            const distance = Math.max(sphere.radius / Math.sin(limitingFov / 2) * 1.45, maxDimension * 2.0);
             const viewDirection = new THREE.Vector3(1.25, 0.72, 1.45).normalize();
             camera.position.copy(viewDirection.multiplyScalar(distance));
             camera.near = Math.max(maxDimension / 1000, 0.001);
-            camera.far = maxDimension * 100;
+            camera.far = Math.max(maxDimension * 100, distance * 20);
+            camera.lookAt(0, 0, 0);
             camera.updateProjectionMatrix();
             controls.target.set(0, 0, 0);
-            controls.minDistance = maxDimension * 0.85;
-            controls.maxDistance = maxDimension * 7;
+            controls.minDistance = maxDimension * 0.65;
+            controls.maxDistance = maxDimension * 8;
             controls.update();
             resetView = () => {
               camera.position.copy(new THREE.Vector3(1.25, 0.72, 1.45).normalize().multiplyScalar(distance));
@@ -128,7 +139,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
             };
             resetViewRef.current = resetView;
             setModelReady(true);
-            setStatus(`${modelName} · local 3D mesh · drag to rotate · scroll to zoom`);
+            setStatus(`${modelName} loaded · drag to rotate · scroll to zoom`);
           },
           undefined,
           (error) => {
