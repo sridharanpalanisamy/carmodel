@@ -913,13 +913,26 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
       return;
     }
     const next = scenarioLibrary.map(item => item.name === oldName ? { ...item, name: nextName } : item);
+    const renamingPinnedBaseline = pinnedScenarioName === oldName;
+    const previousLibrary = window.localStorage.getItem("factory-improvement-scenarios");
+    const previousPin = window.localStorage.getItem("factory-improvement-pinned-scenario");
     try {
-      window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
-      setScenarioLibrary(next);
-      if (pinnedScenarioName === oldName) {
-        window.localStorage.setItem("factory-improvement-pinned-scenario", nextName);
-        setPinnedScenarioName(nextName);
+      try {
+        window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
+        if (renamingPinnedBaseline) window.localStorage.setItem("factory-improvement-pinned-scenario", nextName);
+      } catch (storageError) {
+        try {
+          if (previousLibrary === null) window.localStorage.removeItem("factory-improvement-scenarios");
+          else window.localStorage.setItem("factory-improvement-scenarios", previousLibrary);
+          if (previousPin === null) window.localStorage.removeItem("factory-improvement-pinned-scenario");
+          else window.localStorage.setItem("factory-improvement-pinned-scenario", previousPin);
+        } catch {
+          // Best-effort rollback if browser storage becomes unavailable mid-rename.
+        }
+        throw storageError;
       }
+      setScenarioLibrary(next);
+      if (renamingPinnedBaseline) setPinnedScenarioName(nextName);
       setSelectedScenarioNames(current => current.map(name => name === oldName ? nextName : name));
       setScenarioName(current => current === oldName ? nextName : current);
       setRenamingScenario("");
@@ -961,13 +974,26 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 
   function deleteNamedScenario(name) {
     const next = scenarioLibrary.filter(item => item.name !== name);
+    const deletingPinnedBaseline = pinnedScenarioName === name;
+    const previousLibrary = window.localStorage.getItem("factory-improvement-scenarios");
+    const previousPin = window.localStorage.getItem("factory-improvement-pinned-scenario");
     try {
-      window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
-      setScenarioLibrary(next);
-      if (pinnedScenarioName === name) {
-        window.localStorage.removeItem("factory-improvement-pinned-scenario");
-        setPinnedScenarioName("");
+      try {
+        window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
+        if (deletingPinnedBaseline) window.localStorage.removeItem("factory-improvement-pinned-scenario");
+      } catch (storageError) {
+        try {
+          if (previousLibrary === null) window.localStorage.removeItem("factory-improvement-scenarios");
+          else window.localStorage.setItem("factory-improvement-scenarios", previousLibrary);
+          if (previousPin === null) window.localStorage.removeItem("factory-improvement-pinned-scenario");
+          else window.localStorage.setItem("factory-improvement-pinned-scenario", previousPin);
+        } catch {
+          // Best-effort rollback if browser storage becomes unavailable mid-delete.
+        }
+        throw storageError;
       }
+      setScenarioLibrary(next);
+      if (deletingPinnedBaseline) setPinnedScenarioName("");
       setSelectedScenarioNames(current => current.filter(item => item !== name));
       setPendingDeleteScenario("");
       setScenarioSaveMessage(`“${name}” removed from the named scenario library.`);
