@@ -72,6 +72,7 @@ export default function AssemblyLineSimulator() {
   const [scenarioName, setScenarioName] = useState("Baseline improvement");
   const [scenarioSearch, setScenarioSearch] = useState("");
   const [scenarioSort, setScenarioSort] = useState("recent");
+  const [scenarioBaselineFilter, setScenarioBaselineFilter] = useState("all");
   const [renamingScenario, setRenamingScenario] = useState("");
   const [renameScenarioValue, setRenameScenarioValue] = useState("");
   const [pendingDeleteScenario, setPendingDeleteScenario] = useState("");
@@ -1262,8 +1263,16 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     setChartEditMode(false);
   }
 
+  const pinnedScenario = scenarioLibrary.find(item => item.name === pinnedScenarioName);
+  const pinnedScenarioProjection = pinnedScenario ? getScenarioProjection(pinnedScenario.snapshot) : null;
   const visibleScenarioLibrary = scenarioLibrary
     .filter(item => item.name.toLowerCase().includes(scenarioSearch.trim().toLowerCase()))
+    .filter(item => {
+      if (scenarioBaselineFilter === "all" || !pinnedScenario || item.name === pinnedScenarioName) return true;
+      const sameAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate"]
+        .every(key => item.snapshot[key] === pinnedScenario.snapshot[key]);
+      return scenarioBaselineFilter === "like-for-like" ? sameAssumptions : !sameAssumptions;
+    })
     .sort((a, b) => {
       if (a.name === pinnedScenarioName && b.name !== pinnedScenarioName) return -1;
       if (b.name === pinnedScenarioName && a.name !== pinnedScenarioName) return 1;
@@ -1289,8 +1298,6 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
   const averageScenarioAttainment = visibleScenarioLibrary.length
     ? visibleScenarioSummary.totalAttainment / visibleScenarioLibrary.length
     : 0;
-  const pinnedScenario = scenarioLibrary.find(item => item.name === pinnedScenarioName);
-  const pinnedScenarioProjection = pinnedScenario ? getScenarioProjection(pinnedScenario.snapshot) : null;
   const baselineComparedScenarios = pinnedScenarioProjection
     ? visibleScenarioLibrary.filter(item => item.name !== pinnedScenarioName).map(item => {
         const sameOperatingAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate"]
@@ -1453,7 +1460,10 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                       <div><span className="block text-xs text-slate-500">Below target</span><strong className="text-base">{visibleScenarioLibrary.length - visibleScenarioSummary.onTarget}</strong></div>
                       {pinnedScenarioProjection && <><div><span className="block text-xs text-slate-500">Outperforming baseline (like-for-like)</span><strong className="text-base">{scenariosAboveBaseline} / {likeForLikeBaselineComparisons.length}</strong></div><div><span className="block text-xs text-slate-500">Average output delta (like-for-like)</span><strong className={averageBaselineOutputDelta === null ? "text-base" : averageBaselineOutputDelta > 0 ? "text-base text-emerald-700" : averageBaselineOutputDelta < 0 ? "text-base text-rose-700" : "text-base"}>{averageBaselineOutputDelta === null ? "—" : `${averageBaselineOutputDelta > 0 ? "+" : ""}${averageBaselineOutputDelta.toFixed(1)} vehicles/shift`}</strong></div><div><span className="block text-xs text-slate-500">Different assumptions</span><strong className="text-base">{differentAssumptionBaselineComparisons} excluded</strong></div></>}
                     </div>
-                    <label className="factory-scenario-sort"><span>Sort</span><select value={scenarioSort} onChange={event => setScenarioSort(event.target.value)} aria-label="Sort saved scenarios"><option value="recent">Recently saved</option><option value="output">Highest output</option><option value="target">Best target result</option><option value="attainment">Highest target attainment</option><option value="lowest-attainment">Lowest target attainment</option><option value="name">Name A–Z</option></select></label>
+                    <div className="flex flex-wrap items-end gap-3">
+                      {pinnedScenario && <label className="factory-scenario-sort"><span>Baseline comparison</span><select value={scenarioBaselineFilter} onChange={event => setScenarioBaselineFilter(event.target.value)} aria-label="Filter scenarios by baseline assumptions"><option value="all">All scenarios</option><option value="like-for-like">Like-for-like only</option><option value="different">Different assumptions</option></select></label>}
+                      <label className="factory-scenario-sort"><span>Sort</span><select value={scenarioSort} onChange={event => setScenarioSort(event.target.value)} aria-label="Sort saved scenarios"><option value="recent">Recently saved</option><option value="output">Highest output</option><option value="target">Best target result</option><option value="attainment">Highest target attainment</option><option value="lowest-attainment">Lowest target attainment</option><option value="name">Name A–Z</option></select></label>
+                    </div>
                   </div>
                   <ul aria-label="Saved named scenarios">
                   {visibleScenarioLibrary.map(item => <li key={item.name}>
