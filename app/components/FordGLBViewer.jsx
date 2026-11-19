@@ -136,8 +136,8 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
             const verticalFov = THREE.MathUtils.degToRad(camera.fov);
             const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * Math.max(camera.aspect, 0.5));
             const limitingFov = Math.min(verticalFov, horizontalFov);
-            const distance = Math.max(sphere.radius / Math.sin(limitingFov / 2) * 1.45, maxDimension * 2.0);
-            const viewDirection = new THREE.Vector3(1.25, 0.72, 1.45).normalize();
+            const distance = Math.max(sphere.radius / Math.sin(limitingFov / 2) * 2.25, maxDimension * 2.8);
+            const viewDirection = new THREE.Vector3(1.35, 0.38, 1.55).normalize();
             camera.position.copy(viewDirection.multiplyScalar(distance));
             camera.near = Math.max(maxDimension / 1000, 0.001);
             camera.far = Math.max(maxDimension * 100, distance * 20);
@@ -148,7 +148,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
             controls.maxDistance = maxDimension * 8;
             controls.update();
             resetView = () => {
-              camera.position.copy(new THREE.Vector3(1.25, 0.72, 1.45).normalize().multiplyScalar(distance));
+              camera.position.copy(new THREE.Vector3(1.35, 0.38, 1.55).normalize().multiplyScalar(distance));
               controls.target.set(0, 0, 0);
               controls.update();
             };
