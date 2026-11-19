@@ -202,8 +202,8 @@
 .home-model-t-panel .ford-glb-stage{
   display:block!important;
   width:100%!important;
-  height:clamp(300px,40vw,430px)!important;
-  min-height:300px!important;
+  height:320px!important;
+  min-height:320px!important;
   position:relative!important;
   overflow:hidden!important;
   background:#e7e6e3!important;
@@ -217,3 +217,5 @@
 /* The real GLB viewer is taller than the legacy 16:9 iframe slot. Let its full canvas determine the frame height so the lower half and wheels are never clipped. */
 .home-model-t-panel .viewer-frame{height:auto;min-height:0;aspect-ratio:auto;overflow:visible}
 .home-model-t-panel .viewer-frame #homeModelTGLBMount{width:100%;min-width:0}
+
+@media(max-width:600px){.home-model-t-panel .ford-glb-stage{height:280px!important;min-height:280px!important}}
