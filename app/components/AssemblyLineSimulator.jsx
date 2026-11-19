@@ -67,6 +67,7 @@ export default function AssemblyLineSimulator() {
   const [proposedCycleTimes, setProposedCycleTimes] = useState(initialStations.map(station => station.seconds));
   const [savedScenario, setSavedScenario] = useState(null);
   const [scenarioLibrary, setScenarioLibrary] = useState([]);
+  const [scenarioLibraryReady, setScenarioLibraryReady] = useState(false);
   const [pinnedScenarioName, setPinnedScenarioName] = useState("");
   const [selectedScenarioNames, setSelectedScenarioNames] = useState([]);
   const [scenarioName, setScenarioName] = useState("Baseline improvement");
@@ -95,16 +96,43 @@ export default function AssemblyLineSimulator() {
       if (rawLibrary) {
         const parsedLibrary = JSON.parse(rawLibrary);
         if (Array.isArray(parsedLibrary)) {
-          setScenarioLibrary(parsedLibrary.filter(item =>
-            item && typeof item.name === "string" && item.name.trim().length > 0 &&
-            isValidSavedScenario(item.snapshot)
-          ).slice(0, 10));
+          const validEntries = parsedLibrary
+            .filter(item => item && typeof item.name === "string" && item.name.trim().length > 0 &&
+              item.name.trim().length <= 48 && isValidSavedScenario(item.snapshot))
+            .map(item => ({ ...item, name: item.name.trim() }));
+          const uniqueEntries = new Map();
+          validEntries.forEach(item => uniqueEntries.set(item.name.toLowerCase(), item));
+          const normalized = [...uniqueEntries.values()].slice(-10);
+          setScenarioLibrary(normalized);
+          if (JSON.stringify(parsedLibrary) !== JSON.stringify(normalized)) {
+            try {
+              window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(normalized));
+              if (validEntries.length !== uniqueEntries.size) {
+                setScenarioSaveMessage("Cleaned duplicate scenario names in the saved library. The most recently stored entry for each name was kept.");
+              }
+            } catch {
+              setScenarioSaveMessage("Loaded valid scenarios, but could not clean the saved library in browser storage.");
+            }
+          }
         }
       }
     } catch {
       // Named scenario library is optional when browser storage is unavailable.
+    } finally {
+      setScenarioLibraryReady(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (!scenarioLibraryReady || !pinnedScenarioName || scenarioLibrary.some(item => item.name === pinnedScenarioName)) return;
+    try {
+      window.localStorage.removeItem("factory-improvement-pinned-scenario");
+    } catch {
+      // The stale pin is ignored even if browser storage cannot be updated.
+    }
+    setPinnedScenarioName("");
+    setScenarioSaveMessage("The saved baseline no longer exists in the scenario library, so its pin was cleared.");
+  }, [scenarioLibraryReady, scenarioLibrary, pinnedScenarioName]);
 
   useEffect(() => {
     try {
