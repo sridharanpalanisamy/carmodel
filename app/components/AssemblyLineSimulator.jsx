@@ -257,7 +257,7 @@ export default function AssemblyLineSimulator() {
   }
 
   function exportScenarioLibraryJson() {
-    const payload = { version: 1, type: "factory-scenario-library", exportedAt: new Date().toISOString(), scenarios: scenarioLibrary };
+    const payload = { version: 1, type: "factory-scenario-library", exportedAt: new Date().toISOString(), pinnedBaselineName: pinnedScenarioName || null, scenarios: scenarioLibrary };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -289,7 +289,14 @@ export default function AssemblyLineSimulator() {
       window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
       setScenarioLibrary(next);
       setSelectedScenarioNames(current => current.filter(name => next.some(item => item.name === name)));
-      setScenarioSaveMessage("Imported " + valid.length + " valid named scenario(s). Matching names were updated; no existing scenarios were removed.");
+      const importedPin = typeof parsed.pinnedBaselineName === "string"
+        ? next.find(item => item.name.toLowerCase() === parsed.pinnedBaselineName.trim().toLowerCase())
+        : null;
+      if (importedPin) {
+        window.localStorage.setItem("factory-improvement-pinned-scenario", importedPin.name);
+        setPinnedScenarioName(importedPin.name);
+      }
+      setScenarioSaveMessage("Imported " + valid.length + " valid named scenario(s). Matching names were updated; no existing scenarios were removed." + (importedPin ? ` “${importedPin.name}” was restored as the pinned baseline.` : ""));
     } catch {
       setScenarioSaveMessage("Library import failed. Choose a valid scenario-library JSON exported by this planner; files must match the current station layout.");
     } finally { event.target.value = ""; }
