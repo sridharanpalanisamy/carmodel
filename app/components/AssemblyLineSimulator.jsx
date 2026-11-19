@@ -312,19 +312,31 @@ export default function AssemblyLineSimulator() {
         return;
       }
       const next = merged;
-      window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
-      setScenarioLibrary(next);
-      setSelectedScenarioNames(current => current.filter(name => next.some(item => item.name === name)));
       const importedPinEntry = typeof parsed.pinnedBaselineName === "string"
         ? valid.find(item => item.name.toLowerCase() === parsed.pinnedBaselineName.trim().toLowerCase())
         : null;
       const importedPin = importedPinEntry
         ? next.find(item => item.name.toLowerCase() === importedPinEntry.name.toLowerCase())
         : null;
-      if (importedPin) {
-        window.localStorage.setItem("factory-improvement-pinned-scenario", importedPin.name);
-        setPinnedScenarioName(importedPin.name);
+      const previousLibrary = window.localStorage.getItem("factory-improvement-scenarios");
+      const previousPin = window.localStorage.getItem("factory-improvement-pinned-scenario");
+      try {
+        window.localStorage.setItem("factory-improvement-scenarios", JSON.stringify(next));
+        if (importedPin) window.localStorage.setItem("factory-improvement-pinned-scenario", importedPin.name);
+      } catch (storageError) {
+        try {
+          if (previousLibrary === null) window.localStorage.removeItem("factory-improvement-scenarios");
+          else window.localStorage.setItem("factory-improvement-scenarios", previousLibrary);
+          if (previousPin === null) window.localStorage.removeItem("factory-improvement-pinned-scenario");
+          else window.localStorage.setItem("factory-improvement-pinned-scenario", previousPin);
+        } catch {
+          // Best-effort rollback if browser storage becomes unavailable mid-import.
+        }
+        throw storageError;
       }
+      setScenarioLibrary(next);
+      setSelectedScenarioNames(current => current.filter(name => next.some(item => item.name === name)));
+      if (importedPin) setPinnedScenarioName(importedPin.name);
       const pinNotice = parsed.pinnedBaselineName && !importedPin
         ? " The backup's pinned baseline was not restored because that scenario was not valid in the imported file."
         : importedPin ? ` “${importedPin.name}” was restored as the pinned baseline.` : "";
