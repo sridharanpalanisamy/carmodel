@@ -1205,7 +1205,12 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
       goodUnits,
       gap: goodUnits - target,
       hourly: netMinutes > 0 ? goodUnits / (netMinutes / 60) : 0,
-      taktSeconds: target > 0 ? netMinutes * 60 / target : 0
+      taktSeconds: target > 0 ? netMinutes * 60 / target : 0,
+      requiredGoodOutputCycle: target > 0 && availability > 0 && yieldRate > 0
+        ? Math.floor(netMinutes * 60 / Math.ceil(Math.ceil(target / (yieldRate / 100)) / (availability / 100)))
+        : 0,
+      targetPaceFeasible: target === 0 || (netMinutes > 0 && availability > 0 && yieldRate > 0 &&
+        Math.floor(netMinutes * 60 / Math.ceil(Math.ceil(target / (yieldRate / 100)) / (availability / 100))) >= 20)
     };
   }, [stations, shiftHours, breakMinutes, availability, yieldRate, target]);
 
@@ -1808,13 +1813,13 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
               <div className="factory-data-table-heading factory-station-table-heading"><div><span>STATION DETAIL</span><strong>Cycle-time comparison</strong></div><small>Longest cycle time sets line pace</small></div>
               <div className="factory-data-table-scroll" role="region" aria-label="Scrollable station cycle time table" tabIndex="0">
                 <table className="factory-data-table">
-                  <thead><tr><th scope="col">Station</th><th scope="col">Cycle time</th><th scope="col">Target pace check</th></tr></thead>
-                  <tbody>{stations.map(station => <tr key={station.name}><th scope="row">{station.name}</th><td>{station.seconds} sec / vehicle</td><td>{station.seconds > result.taktSeconds ? <span className="factory-bottleneck-label">Exceeds takt</span> : station.seconds === result.bottleneck ? <span className="factory-bottleneck-label">Bottleneck · within takt</span> : "Within takt"}</td></tr>)}</tbody>
+                  <thead><tr><th scope="col">Station</th><th scope="col">Cycle time</th><th scope="col">Good-output target pace check</th></tr></thead>
+                  <tbody>{stations.map(station => <tr key={station.name}><th scope="row">{station.name}</th><td>{station.seconds} sec / vehicle</td><td>{target === 0 ? "No target selected" : !result.targetPaceFeasible ? <span className="factory-bottleneck-label">Target pace unavailable</span> : station.seconds > result.requiredGoodOutputCycle ? <span className="factory-bottleneck-label">Exceeds required pace</span> : station.seconds === result.bottleneck ? <span className="factory-bottleneck-label">Bottleneck · within pace</span> : "Within required pace"}</td></tr>)}</tbody>
                 </table>
               </div>
             </section>
           )}
-          <p className="line-sim-tip">{result.taktSeconds > 0 && result.bottleneck > result.taktSeconds ? `The bottleneck cycle time is ${(result.bottleneck - result.taktSeconds).toFixed(1)} seconds slower than target takt. The line needs a faster cycle or more net production time to meet the selected target.` : "All station cycle times are at or below target takt before downtime and quality losses."}</p>
+          <p className="line-sim-tip">{target === 0 ? "Select a shift target to calculate the required production pace." : !result.targetPaceFeasible ? "The selected good-output target cannot be reached within the simulator’s 20-second minimum cycle under the current shift, availability and quality assumptions." : result.bottleneck > result.requiredGoodOutputCycle ? `The bottleneck is ${(result.bottleneck - result.requiredGoodOutputCycle).toFixed(1)} seconds slower than the required cycle after availability and quality losses. Improve the bottleneck or increase net production time to meet the good-output target.` : "The bottleneck cycle is within the required pace after accounting for availability and quality losses."}</p>
         </aside>
       </div>
       <p className="line-sim-disclaimer">Simplified educational model. It assumes a serial line whose throughput is limited by the slowest station. Real factories also account for buffers, parallel workstations, changeovers, downtime patterns, material shortages, rework, staffing and product mix. Results are estimates, not Ford plant data or production guarantees.</p>
