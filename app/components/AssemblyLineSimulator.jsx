@@ -1448,6 +1448,9 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                     const normalizedFirst = getScenarioProjection({ ...first.snapshot, ...commonConditions });
                     const normalizedSecond = getScenarioProjection({ ...second.snapshot, ...commonConditions });
                     const normalizedDifference = normalizedSecond.good - normalizedFirst.good;
+                    const improvedStations = initialStations.filter((station, index) => second.snapshot.cycleTimes[index] < first.snapshot.cycleTimes[index]).length;
+                    const worsenedStations = initialStations.filter((station, index) => second.snapshot.cycleTimes[index] > first.snapshot.cycleTimes[index]).length;
+                    const bottleneckCycleDelta = secondProjection.bottleneck - firstProjection.bottleneck;
                     return <div className="factory-scenario-comparison-print">
                       <h3>Scenario comparison report</h3>
                       <p><strong>{difference > 0 ? `+${difference}` : difference} good vehicles/shift</strong> for {second.name} compared with {first.name}{percentDifference !== null ? ` (${percentDifference > 0 ? "+" : ""}${percentDifference.toFixed(1)}%)` : ""}.</p>
@@ -1464,6 +1467,9 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                         <div><span>{first.name}</span><strong>{normalizedFirst.good.toLocaleString("en-IN")} good/shift</strong></div>
                         <div><span>{second.name}</span><strong>{normalizedSecond.good.toLocaleString("en-IN")} good/shift</strong></div>
                         <small className={normalizedDifference > 0 ? "factory-cycle-faster" : normalizedDifference < 0 ? "factory-cycle-slower" : ""}>{normalizedDifference > 0 ? "+" : ""}{normalizedDifference} good vehicles/shift for {second.name} on the same operating assumptions.</small>
+                        <div><span>Station cycles improved / worsened</span><strong>{improvedStations} improved · {worsenedStations} worsened</strong></div>
+                        <div><span>Bottleneck change</span><strong>{firstProjection.bottleneckName} → {secondProjection.bottleneckName}</strong></div>
+                        <small className={bottleneckCycleDelta < 0 ? "factory-cycle-faster" : bottleneckCycleDelta > 0 ? "factory-cycle-slower" : ""}>Bottleneck cycle {bottleneckCycleDelta > 0 ? "+" : ""}{bottleneckCycleDelta}s (second minus first).</small>
                       </div>
                       <div className="factory-scenario-station-compare">
                         <strong>Station cycle-time comparison</strong>
