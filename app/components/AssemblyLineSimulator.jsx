@@ -204,11 +204,21 @@ export default function AssemblyLineSimulator() {
       setScenarioSaveMessage("There are no named scenarios to export.");
       return;
     }
+    const baselineProjection = pinnedScenario ? getScenarioProjection(pinnedScenario.snapshot) : null;
+    const sameProductionAssumptions = (left, right) =>
+      left.shiftHours === right.shiftHours &&
+      left.breakMinutes === right.breakMinutes &&
+      left.availability === right.availability &&
+      left.yieldRate === right.yieldRate;
     const rows = [
       ["Factory scenario library comparison"],
-      ["Scenario", "Saved at", "Good vehicles / shift", "Target", "Target attainment (%)", "Vehicles above / below target", "Target status", "Bottleneck station", "Bottleneck cycle (sec)", "Shift hours", "Break minutes", "Availability (%)", "Quality yield (%)", ...initialStations.map(station => station.name + " cycle (sec)")],
+      ["Pinned baseline", pinnedScenario?.name || "None", "Baseline output (good vehicles / shift)", baselineProjection?.good ?? "N/A"],
+      ["Scenario", "Saved at", "Good vehicles / shift", "Target", "Target attainment (%)", "Vehicles above / below target", "Target status", "Bottleneck station", "Bottleneck cycle (sec)", "Shift hours", "Break minutes", "Availability (%)", "Quality yield (%)", "Baseline output delta (vehicles / shift)", "Baseline comparison", "Production assumptions match baseline", ...initialStations.map(station => station.name + " cycle (sec)")],
       ...scenarioLibrary.map(item => {
         const projection = getScenarioProjection(item.snapshot);
+        const isBaseline = item.name === pinnedScenarioName && baselineProjection;
+        const assumptionsMatch = baselineProjection && sameProductionAssumptions(item.snapshot, pinnedScenario.snapshot);
+        const baselineDelta = baselineProjection ? projection.good - baselineProjection.good : "";
         return [
           item.name,
           item.snapshot.savedAt,
@@ -223,6 +233,9 @@ export default function AssemblyLineSimulator() {
           item.snapshot.breakMinutes,
           item.snapshot.availability,
           item.snapshot.yieldRate,
+          baselineDelta,
+          !baselineProjection ? "No pinned baseline" : isBaseline ? "Pinned baseline" : baselineDelta > 0 ? "Above baseline" : baselineDelta < 0 ? "Below baseline" : "Equal output",
+          !baselineProjection ? "N/A" : assumptionsMatch ? "Yes" : "No",
           ...item.snapshot.cycleTimes
         ];
       })
@@ -240,7 +253,7 @@ export default function AssemblyLineSimulator() {
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
-    setScenarioSaveMessage("Exported all named scenarios with shift assumptions and station cycle times to CSV.");
+    setScenarioSaveMessage(pinnedScenario ? "Exported all named scenarios with pinned-baseline output deltas and an assumptions-match check to CSV." : "Exported all named scenarios. Pin a baseline to include baseline comparison columns.");
   }
 
   function exportScenarioLibraryJson() {
