@@ -529,6 +529,8 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
       ["Break minutes", first.snapshot.breakMinutes, second.snapshot.breakMinutes, second.snapshot.breakMinutes - first.snapshot.breakMinutes],
       ["Availability (%)", first.snapshot.availability, second.snapshot.availability, second.snapshot.availability - first.snapshot.availability],
       ["Quality yield (%)", first.snapshot.yieldRate, second.snapshot.yieldRate, second.snapshot.yieldRate - first.snapshot.yieldRate],
+      ["Operating assumptions match", ["shiftHours", "breakMinutes", "availability", "yieldRate"].every(key => first.snapshot[key] === second.snapshot[key]) ? "Yes" : "No", "", ""],
+      ["Normalized comparison conditions", `${first.snapshot.shiftHours}h shift; ${first.snapshot.breakMinutes} min breaks; ${first.snapshot.availability}% availability; ${first.snapshot.yieldRate}% quality`, "Applied to both scenarios", ""],
       ["Normalized good vehicles / shift (first scenario conditions)", normalizedFirst.good, normalizedSecond.good, normalizedSecond.good - normalizedFirst.good],
       [],
       ["Station cycle-time comparison (seconds)", first.name, second.name, "Second minus first"],
@@ -582,7 +584,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
       "",
       `First bottleneck: ${firstProjection.bottleneckName} (${firstProjection.bottleneck}s)`,
       `Second bottleneck: ${secondProjection.bottleneckName} (${secondProjection.bottleneck}s)`,
-      `Same operating assumptions: ${["shiftHours", "breakMinutes", "availability", "yieldRate", "target"].every(key => first.snapshot[key] === second.snapshot[key]) ? "Yes" : "No"}`,
+      `Same operating assumptions: ${["shiftHours", "breakMinutes", "availability", "yieldRate"].every(key => first.snapshot[key] === second.snapshot[key]) ? "Yes" : "No"}`,
       `Shared conditions for normalized comparison: ${commonConditions.shiftHours}h shift, ${commonConditions.breakMinutes} min breaks, ${commonConditions.availability}% availability, ${commonConditions.yieldRate}% quality yield, target ${commonConditions.target}`,
       "",
       "STATION CYCLE TIMES (SECONDS)",
@@ -613,7 +615,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     };
     const normalizedFirst = getScenarioProjection({ ...first.snapshot, ...sharedConditions });
     const normalizedSecond = getScenarioProjection({ ...second.snapshot, ...sharedConditions });
-    const sameAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate", "target"].every(key => first.snapshot[key] === second.snapshot[key]);
+    const sameAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate"].every(key => first.snapshot[key] === second.snapshot[key]);
     const payload = {
       version: 1,
       type: "factory-scenario-comparison",
@@ -669,7 +671,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     };
     const normalizedFirst = getScenarioProjection({ ...first.snapshot, ...conditions });
     const normalizedSecond = getScenarioProjection({ ...second.snapshot, ...conditions });
-    const sameAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate", "target"].every(key => first.snapshot[key] === second.snapshot[key]);
+    const sameAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate"].every(key => first.snapshot[key] === second.snapshot[key]);
     const safeCell = value => String(value).replace(/\\|/g, "\\\\|").replace(/\\r?\\n/g, " ");
     const rows = initialStations.map((station, index) => {
       const a = first.snapshot.cycleTimes[index];
@@ -746,7 +748,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     const conditions = { shiftHours: a.shiftHours, breakMinutes: a.breakMinutes, availability: a.availability, yieldRate: a.yieldRate, target: a.target };
     const normalizedA = getScenarioProjection({ ...a, ...conditions });
     const normalizedB = getScenarioProjection({ ...b, ...conditions });
-    const sameAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate", "target"].every(key => a[key] === b[key]);
+    const sameAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate"].every(key => a[key] === b[key]);
     const escapeHtml = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
     const signed = value => `${value > 0 ? "+" : ""}${value}`;
     const stationRows = initialStations.map((station, index) => {
@@ -1435,7 +1437,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                     const secondProjection = getScenarioProjection(second.snapshot);
                     const difference = secondProjection.good - firstProjection.good;
                     const percentDifference = firstProjection.good > 0 ? (difference / firstProjection.good) * 100 : null;
-                    const sameAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate", "target"].every(key => first.snapshot[key] === second.snapshot[key]);
+                    const sameAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate"].every(key => first.snapshot[key] === second.snapshot[key]);
                     const commonConditions = {
                       shiftHours: first.snapshot.shiftHours,
                       breakMinutes: first.snapshot.breakMinutes,
