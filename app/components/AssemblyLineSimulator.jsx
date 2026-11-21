@@ -434,9 +434,9 @@ export default function AssemblyLineSimulator() {
     }));
     const csv = [columns,...rows].map(row => row.map(value => {
       const cell = String(value ?? "");
-      return /[",\\n]/.test(cell) ? '"' + cell.replace(/"/g,'""') + '"' : cell;
-    }).join(",")).join("\\n");
-    const url = URL.createObjectURL(new Blob(["\\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
+      return /[",\n]/.test(cell) ? '"' + cell.replace(/"/g,'""') + '"' : cell;
+    }).join(",")).join("\n");
+    const url = URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
     const link = document.createElement("a");
     link.href = url;
     link.download = "factory-product-traceability.csv";
