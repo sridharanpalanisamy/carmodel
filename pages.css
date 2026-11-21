@@ -2421,7 +2421,7 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 
 /* Department inventory stock controls and availability indicators. */
 .factory-inventory-register .factory-issue-form{grid-template-columns:repeat(3,minmax(0,1fr))}
-.factory-inventory-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.factory-inventory-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
 .factory-inventory-summary>div{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;border:1px solid #e0e8e2;border-radius:8px;background:#fbfcfb}
 .factory-inventory-summary span{color:#64746c;font-size:11px}
 .factory-inventory-summary strong{color:#263a30;font-size:20px;font-variant-numeric:tabular-nums}
