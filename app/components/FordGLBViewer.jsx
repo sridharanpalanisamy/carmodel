@@ -85,7 +85,8 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         motionQuery = window.matchMedia?.("(prefers-reduced-motion: reduce)");
         if (motionQuery) {
           syncMotionPreference(motionQuery);
-          motionQuery.addEventListener?.("change", syncMotionPreference);
+          if (motionQuery.addEventListener) motionQuery.addEventListener("change", syncMotionPreference);
+          else motionQuery.addListener?.(syncMotionPreference);
         } else {
           controls.autoRotate = true;
           setAutoRotate(true);
@@ -293,7 +294,8 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
     return () => {
       disposed = true;
       modelRequest.abort();
-      motionQuery?.removeEventListener?.("change", syncMotionPreference);
+      if (motionQuery?.removeEventListener) motionQuery.removeEventListener("change", syncMotionPreference);
+      else motionQuery?.removeListener?.(syncMotionPreference);
       cancelAnimationFrame(frame);
       resizeObserver?.disconnect();
       controls?.stopListenToKeyEvents();
