@@ -418,6 +418,35 @@ export default function AssemblyLineSimulator() {
   };
 
   const departmentCsvInput = useRef(null);
+  function exportProductTraceabilityCsv() {
+    if (!trackedProducts.length) {
+      setDepartmentDataMessage("No product traceability records are available to export yet.");
+      return;
+    }
+    const columns = ["ProductId","ProductStartedAt","DepartmentOrder","DepartmentId","Department","StageStatus","StageCompletedAt","StageElapsedSeconds","ProductElapsedSeconds","ExportedAt"];
+    const exportedAt = new Date().toISOString();
+    const rows = trackedProducts.flatMap(product => departments.map((department,index) => {
+      const event = product.events[index];
+      const previous = index === 0 ? product.createdAt : product.events[index-1]?.timestamp;
+      const stageElapsed = event && previous ? Math.max(0,Math.floor((new Date(event.timestamp)-new Date(previous))/1000)) : "";
+      const productElapsed = Math.max(0,Math.floor(((event ? new Date(event.timestamp) : dashboardNow)-new Date(product.createdAt))/1000));
+      return [product.code,product.createdAt,index+1,department.id,department.name,event?"Completed":index===product.events.length?"In progress":"Waiting",event?.timestamp || "",stageElapsed,productElapsed,exportedAt];
+    }));
+    const csv = [columns,...rows].map(row => row.map(value => {
+      const cell = String(value ?? "");
+      return /[",\\n]/.test(cell) ? '"' + cell.replace(/"/g,'""') + '"' : cell;
+    }).join(",")).join("\\n");
+    const url = URL.createObjectURL(new Blob(["\\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "factory-product-traceability.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setDepartmentDataMessage("Exported " + trackedProducts.length + " product journey record(s), including department timestamps and elapsed times.");
+  }
+
   function exportDepartmentCsv() {
     const columns = ["DepartmentId","Department","Target","Actual","Rejected","CycleTimeSeconds","DowntimeMinutes","ShiftHours","BreakMinutes"];
     const rows = departments.map(item => [item.id,item.name,item.target,item.actual,item.rejected,item.cycleSeconds,item.downtime,item.shiftHours,item.breakMinutes]);
@@ -2202,7 +2231,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
           })}
         </div>
         <section className="factory-product-tracker" aria-labelledby="productTrackerTitle">
-          <div><span className="eyebrow">INDIVIDUAL PRODUCT TRACEABILITY</span><h3 id="productTrackerTitle">Track each product through every department</h3><p>Enter a unique product, chassis, batch or serial number. Record completion in sequence to capture each department timestamp and total elapsed time.</p></div>
+          <div className="factory-product-tracker-heading"><div><span className="eyebrow">INDIVIDUAL PRODUCT TRACEABILITY</span><h3 id="productTrackerTitle">Track each product through every department</h3><p>Enter a unique product, chassis, batch or serial number. Record completion in sequence to capture each department timestamp and total elapsed time.</p></div><button type="button" className="factory-department-restore" onClick={exportProductTraceabilityCsv} disabled={!trackedProducts.length}>Export traceability CSV ↓</button></div>
           <div className="factory-product-entry"><label htmlFor="factoryProductCode">Product / chassis / batch ID</label><div><input id="factoryProductCode" value={productCodeInput} onChange={event=>setProductCodeInput(event.target.value)} placeholder="Example: VEH-2026-0001" maxLength="64"/><button type="button" onClick={addTrackedProduct} disabled={!productCodeInput.trim()}>Start tracking</button></div></div>
           {trackedProducts.length>0?<div className="factory-product-list"><label htmlFor="factoryTrackedProduct">Select tracked product</label><select id="factoryTrackedProduct" value={activeProductId} onChange={event=>setActiveProductId(event.target.value)}>{trackedProducts.map(item=><option key={item.code} value={item.code}>{item.code}</option>)}</select></div>:<p className="factory-product-empty">No product is being tracked yet. Add a product ID to start its department journey.</p>}
           {activeTrackedProduct?<div className="factory-trace-detail">
