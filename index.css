@@ -733,3 +733,83 @@
     min-height: 360px !important;
   }
 }
+
+
+/* DESKTOP SHOWROOM POSITION — move the interactive 3D viewer into the
+   open upper-right column beside the main hero, without changing mobile flow. */
+@media (min-width: 901px) {
+  .home-layout {
+    grid-template-areas:
+      "hero showroom"
+      "story engineering"
+      "collection collection"
+      "models quote" !important;
+    grid-template-columns: minmax(0, 1.04fr) minmax(0, .96fr) !important;
+    align-items: stretch !important;
+    row-gap: clamp(24px, 2.4vw, 34px) !important;
+  }
+  .home-layout > .left-column,
+  .home-layout > .right-column,
+  .home-layout > .home-bottom-row {
+    display: contents !important;
+  }
+  .home-layout > .left-column > .hero-panel { grid-area: hero !important; }
+  .home-layout > .right-column > .innovation-panel { grid-area: story !important; }
+  .home-layout > .left-column > .process-panel { grid-area: engineering !important; }
+  .home-layout > .right-column > .orange-feature { grid-area: collection !important; }
+  .home-layout > .turntable-panel {
+    grid-area: showroom !important;
+    align-self: stretch !important;
+    min-width: 0 !important;
+    padding: 0 0 18px !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--line) !important;
+  }
+  .home-layout > .turntable-panel .turntable-heading {
+    gap: 12px !important;
+    margin: 0 0 10px !important;
+  }
+  .home-layout > .turntable-panel .turntable-heading h2 {
+    font-size: clamp(27px, 2.5vw, 38px) !important;
+    line-height: .98 !important;
+  }
+  .home-layout > .turntable-panel .turntable-heading p {
+    max-width: 38ch !important;
+    margin-top: 8px !important;
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+  }
+  .home-layout > .turntable-panel .turntable-mark { font-size: 42px !important; }
+  .home-layout > .turntable-panel .viewer-toolbar {
+    flex-wrap: wrap !important;
+    gap: 6px 10px !important;
+    margin: 0 0 8px !important;
+    font-size: 10px !important;
+  }
+  .home-layout > .turntable-panel .viewer-frame {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+  }
+  .home-layout > .turntable-panel .ford-glb-stage,
+  .home-layout > .turntable-panel #homeModelTGLBMount {
+    width: 100% !important;
+    height: clamp(390px, 39vw, 540px) !important;
+    min-height: 390px !important;
+    max-height: 540px !important;
+  }
+  .home-layout > .turntable-panel .viewer-credit,
+  .home-layout > .turntable-panel .model-disclaimer {
+    margin-top: 7px !important;
+    font-size: 10px !important;
+    line-height: 1.4 !important;
+  }
+  .home-layout > .home-bottom-row {
+    grid-area: models / models / quote / quote !important;
+    display: contents !important;
+  }
+  .home-layout > .home-bottom-row > .latest-panel { grid-area: models !important; }
+  .home-layout > .home-bottom-row > .quote-panel { grid-area: quote !important; }
+}
