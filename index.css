@@ -796,9 +796,9 @@
   .home-layout > .turntable-panel .ford-glb-stage,
   .home-layout > .turntable-panel #homeModelTGLBMount {
     width: 100% !important;
-    height: clamp(390px, 39vw, 540px) !important;
-    min-height: 390px !important;
-    max-height: 540px !important;
+    height: clamp(480px, 43vw, 640px) !important;
+    min-height: 480px !important;
+    max-height: 640px !important;
   }
   .home-layout > .turntable-panel .viewer-credit,
   .home-layout > .turntable-panel .model-disclaimer {
