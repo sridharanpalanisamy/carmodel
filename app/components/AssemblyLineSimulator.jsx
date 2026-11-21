@@ -13,6 +13,57 @@ const initialStations = [
   { name: "Quality validation", seconds: 45 }
 ];
 
+const initialWeeklyProduction = [
+  { day: "Monday", planned: 350, good: 330, rejected: 8, downtime: 35 },
+  { day: "Tuesday", planned: 350, good: 340, rejected: 5, downtime: 25 },
+  { day: "Wednesday", planned: 350, good: 310, rejected: 12, downtime: 55 },
+  { day: "Thursday", planned: 350, good: 345, rejected: 4, downtime: 20 },
+  { day: "Friday", planned: 350, good: 325, rejected: 9, downtime: 40 },
+  { day: "Saturday", planned: 300, good: 290, rejected: 4, downtime: 25 },
+  { day: "Sunday", planned: 0, good: 0, rejected: 0, downtime: 0 }
+];
+
+function parseWeeklyProductionCsv(text) {
+  const rows = [];
+  let row = [];
+  let cell = "";
+  let quoted = false;
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    if (char === '"') {
+      if (quoted && text[index + 1] === '"') { cell += '"'; index += 1; }
+      else quoted = !quoted;
+    } else if (char === "," && !quoted) {
+      row.push(cell.trim()); cell = "";
+    } else if ((char === "\\n" || char === "\\r") && !quoted) {
+      if (char === "\\r" && text[index + 1] === "\\n") index += 1;
+      row.push(cell.trim()); cell = "";
+      if (row.some(value => value !== "")) rows.push(row);
+      row = [];
+    } else cell += char;
+  }
+  row.push(cell.trim());
+  if (row.some(value => value !== "")) rows.push(row);
+  if (rows.length !== 8) throw new Error("Upload must contain one header row and exactly seven daily rows.");
+  const headers = rows[0].map(value => value.toLowerCase().replace(/[ _-]/g, ""));
+  const required = ["day", "planned", "good", "rejected", "downtime"];
+  const positions = required.map(header => headers.indexOf(header));
+  if (positions.some(index => index < 0)) throw new Error("Required columns: Day, Planned, Good, Rejected, Downtime.");
+  const allowedDays = initialWeeklyProduction.map(item => item.day);
+  const seen = new Set();
+  return rows.slice(1).map(values => {
+    const day = values[positions[0]];
+    if (!allowedDays.includes(day) || seen.has(day)) throw new Error("Use each day Monday through Sunday exactly once.");
+    seen.add(day);
+    const numbers = positions.slice(1).map(index => Number(values[index]));
+    if (numbers.some(value => !Number.isInteger(value) || value < 0)) throw new Error("Production and downtime values must be non-negative whole numbers.");
+    const [planned, good, rejected, downtime] = numbers;
+    if (good + rejected > planned && planned !== 0) throw new Error(day + ": good plus rejected units cannot exceed planned units in this sample format.");
+    if (downtime > 720) throw new Error(day + ": downtime cannot exceed 720 minutes.");
+    return { day, planned, good, rejected, downtime };
+  }).sort((a, b) => allowedDays.indexOf(a.day) - allowedDays.indexOf(b.day));
+}
+
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
 function isValidSavedScenario(value) {
@@ -72,6 +123,10 @@ export default function AssemblyLineSimulator() {
   const [mount, setMount] = useState(null);
   useEffect(() => { setMount(document.getElementById("lineSimulatorMount")); }, []);
   const [stations, setStations] = useState(initialStations);
+  const [weeklyProduction, setWeeklyProduction] = useState(initialWeeklyProduction);
+  const [selectedProductionDay, setSelectedProductionDay] = useState("Monday");
+  const [weeklyDataMessage, setWeeklyDataMessage] = useState("Illustrative sample data · replace with your own weekly CSV when available.");
+  const weeklyCsvInput = useRef(null);
   const [shiftHours, setShiftHours] = useState(8);
   const [breakMinutes, setBreakMinutes] = useState(40);
   const [availability, setAvailability] = useState(90);
@@ -1354,6 +1409,67 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     ));
   }
 
+  const weeklySummary = useMemo(() => weeklyProduction.reduce((summary, day) => ({
+    planned: summary.planned + day.planned,
+    good: summary.good + day.good,
+    rejected: summary.rejected + day.rejected,
+    downtime: summary.downtime + day.downtime
+  }), { planned: 0, good: 0, rejected: 0, downtime: 0 }), [weeklyProduction]);
+  const selectedDayProduction = weeklyProduction.find(day => day.day === selectedProductionDay) || weeklyProduction[0];
+  const weeklyAttainment = weeklySummary.planned > 0 ? weeklySummary.good / weeklySummary.planned * 100 : 0;
+  const weeklyQuality = weeklySummary.good + weeklySummary.rejected > 0
+    ? weeklySummary.good / (weeklySummary.good + weeklySummary.rejected) * 100 : 0;
+  const weeklyPeak = Math.max(1, ...weeklyProduction.map(day => day.good));
+  const weeklyLinePoints = weeklyProduction.map((day, index) => {
+    const x = 24 + index * 92;
+    const y = 108 - day.good / weeklyPeak * 78;
+    return `${x},${y}`;
+  }).join(" ");
+
+  function importWeeklyProductionCsv(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (file.size > 100 * 1024) {
+      setWeeklyDataMessage("CSV is too large. Please upload a file smaller than 100 KB.");
+      event.target.value = "";
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const imported = parseWeeklyProductionCsv(String(reader.result || ""));
+        setWeeklyProduction(imported);
+        setSelectedProductionDay("Monday");
+        setWeeklyDataMessage("Loaded seven days from " + file.name + ". Imported data is shown as user-provided, not verified factory data.");
+      } catch (error) {
+        setWeeklyDataMessage(error.message || "Could not read this weekly CSV.");
+      }
+      event.target.value = "";
+    };
+    reader.onerror = () => {
+      setWeeklyDataMessage("Could not read the selected CSV file.");
+      event.target.value = "";
+    };
+    reader.readAsText(file);
+  }
+
+  function exportWeeklyProductionCsv() {
+    const rows = [
+      ["Day", "Planned", "Good", "Rejected", "Downtime"],
+      ...weeklyProduction.map(day => [day.day, day.planned, day.good, day.rejected, day.downtime])
+    ];
+    const csv = rows.map(row => row.join(",")).join("\\n");
+    const blob = new Blob(["\\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "weekly-manufacturing-production.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
   function exportSimulation() {
     const rows = [
       ["Factory process simulation report"],
@@ -1588,6 +1704,67 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
               <button className="line-reset" type="button" aria-expanded={chartEditMode} onClick={() => setChartEditMode(value => !value)}>{chartEditMode ? "Done editing ✓" : "Edit charts ⚙"}</button>
             </div>
           </div>
+          <section className="factory-weekly-dashboard mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5" aria-label="Weekly manufacturing production dashboard">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <span className="eyebrow">WEEKLY OPERATIONS / 7-DAY VIEW</span>
+                <h3 className="mt-1 text-xl font-semibold text-slate-900">Manufacturing performance dashboard</h3>
+                <p className="mt-1 max-w-2xl text-sm text-slate-600">Review daily output, quality losses and downtime across the production week. Select a day to inspect its production result.</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button type="button" className="line-reset" onClick={() => weeklyCsvInput.current?.click()}>Upload weekly CSV ↑</button>
+                <input ref={weeklyCsvInput} type="file" accept=".csv,text/csv" onChange={importWeeklyProductionCsv} hidden aria-label="Upload weekly manufacturing CSV" />
+                <button type="button" className="line-reset" onClick={exportWeeklyProductionCsv}>Export weekly CSV ↓</button>
+                <button type="button" className="line-reset" onClick={() => { setWeeklyProduction(initialWeeklyProduction); setSelectedProductionDay("Monday"); setWeeklyDataMessage("Restored illustrative one-week sample data."); }}>Restore sample</button>
+              </div>
+            </div>
+            <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600" role="status">{weeklyDataMessage}</p>
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
+              <div className="rounded-xl bg-slate-50 p-3"><span className="block text-xs text-slate-500">Weekly planned</span><strong className="mt-1 block text-2xl text-slate-900">{weeklySummary.planned.toLocaleString("en-IN")}</strong><small className="text-slate-500">vehicles</small></div>
+              <div className="rounded-xl bg-slate-50 p-3"><span className="block text-xs text-slate-500">Good output</span><strong className="mt-1 block text-2xl text-slate-900">{weeklySummary.good.toLocaleString("en-IN")}</strong><small className="text-slate-500">vehicles</small></div>
+              <div className="rounded-xl bg-slate-50 p-3"><span className="block text-xs text-slate-500">Rejected</span><strong className="mt-1 block text-2xl text-slate-900">{weeklySummary.rejected.toLocaleString("en-IN")}</strong><small className="text-slate-500">vehicles</small></div>
+              <div className="rounded-xl bg-slate-50 p-3"><span className="block text-xs text-slate-500">Target attainment</span><strong className="mt-1 block text-2xl text-slate-900">{weeklyAttainment.toFixed(1)}%</strong><small className="text-slate-500">good / planned</small></div>
+              <div className="rounded-xl bg-slate-50 p-3 col-span-2 sm:col-span-1"><span className="block text-xs text-slate-500">Downtime</span><strong className="mt-1 block text-2xl text-slate-900">{weeklySummary.downtime}</strong><small className="text-slate-500">minutes / week</small></div>
+            </div>
+            <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(260px,.8fr)]">
+              <div className="min-w-0 rounded-xl border border-slate-200 p-3 sm:p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2"><strong className="text-sm text-slate-800">Daily good production trend</strong><span className="text-xs text-slate-500">vehicles / day · sample week</span></div>
+                <div className="mt-3 overflow-x-auto">
+                  <svg viewBox="0 0 600 145" role="img" aria-label="Line chart showing daily good production across the week" className="h-auto min-w-[460px] w-full">
+                    {[30,69,108].map(y => <line key={y} x1="18" x2="582" y1={y} y2={y} stroke="#e2e8f0" strokeDasharray="4 5"/> )}
+                    <polyline points={weeklyLinePoints} fill="none" stroke="#0f766e" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                    {weeklyProduction.map((day,index) => {
+                      const x = 24 + index * 92;
+                      const y = 108 - day.good / weeklyPeak * 78;
+                      return <g key={day.day}><circle cx={x} cy={y} r={selectedProductionDay===day.day?6:4} fill={selectedProductionDay===day.day?"#0f766e":"#64748b"}/><text x={x} y="132" textAnchor="middle" fontSize="11" fill="#64748b">{day.day.slice(0,3)}</text><text x={x} y={Math.max(14,y-10)} textAnchor="middle" fontSize="10" fill="#334155">{day.good}</text></g>;
+                    })}
+                  </svg>
+                </div>
+                <div className="mt-2 flex flex-wrap gap-2" aria-label="Select production day">
+                  {weeklyProduction.map(day => <button key={day.day} type="button" onClick={() => setSelectedProductionDay(day.day)} aria-pressed={selectedProductionDay===day.day} className={`rounded-full border px-3 py-1.5 text-xs font-medium ${selectedProductionDay===day.day?"border-teal-700 bg-teal-50 text-teal-900":"border-slate-200 text-slate-600 hover:bg-slate-50"}`}>{day.day}</button>)}
+                </div>
+              </div>
+              <div className="rounded-xl border border-slate-200 p-4">
+                <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Selected day / production detail</span>
+                <h4 className="mt-1 text-lg font-semibold text-slate-900">{selectedDayProduction.day}</h4>
+                <div className="mt-3 space-y-3">
+                  <div className="flex items-center justify-between gap-3"><span className="text-sm text-slate-600">Planned production</span><strong>{selectedDayProduction.planned}</strong></div>
+                  <div className="flex items-center justify-between gap-3"><span className="text-sm text-slate-600">Good vehicles</span><strong>{selectedDayProduction.good}</strong></div>
+                  <div className="flex items-center justify-between gap-3"><span className="text-sm text-slate-600">Rejected vehicles</span><strong>{selectedDayProduction.rejected}</strong></div>
+                  <div className="flex items-center justify-between gap-3"><span className="text-sm text-slate-600">Downtime</span><strong>{selectedDayProduction.downtime} min</strong></div>
+                  <div className="border-t border-slate-100 pt-3"><div className="flex justify-between text-sm"><span className="text-slate-600">Daily attainment</span><strong>{selectedDayProduction.planned>0?(selectedDayProduction.good/selectedDayProduction.planned*100).toFixed(1):"—"}%</strong></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-teal-700" style={{width:`${selectedDayProduction.planned>0?clamp(selectedDayProduction.good/selectedDayProduction.planned*100,0,100):0}%`}}/></div></div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-5 overflow-x-auto rounded-xl border border-slate-200">
+              <table className="w-full min-w-[620px] text-left text-sm">
+                <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500"><tr><th className="px-3 py-3">Day</th><th className="px-3 py-3 text-right">Planned</th><th className="px-3 py-3 text-right">Good</th><th className="px-3 py-3 text-right">Rejected</th><th className="px-3 py-3 text-right">Attainment</th><th className="px-3 py-3 text-right">Downtime</th></tr></thead>
+                <tbody>{weeklyProduction.map(day => <tr key={day.day} className={selectedProductionDay===day.day?"bg-teal-50/60":"border-t border-slate-100"}><th className="px-3 py-3 font-medium text-slate-800"><button type="button" onClick={() => setSelectedProductionDay(day.day)} className="underline-offset-2 hover:underline">{day.day}</button></th><td className="px-3 py-3 text-right tabular-nums">{day.planned}</td><td className="px-3 py-3 text-right tabular-nums">{day.good}</td><td className="px-3 py-3 text-right tabular-nums">{day.rejected}</td><td className="px-3 py-3 text-right tabular-nums">{day.planned>0?(day.good/day.planned*100).toFixed(1)+"%":"—"}</td><td className="px-3 py-3 text-right tabular-nums">{day.downtime} min</td></tr>)}</tbody>
+                <tfoot className="border-t-2 border-slate-200 bg-slate-50 font-semibold"><tr><th className="px-3 py-3">Weekly total</th><td className="px-3 py-3 text-right">{weeklySummary.planned}</td><td className="px-3 py-3 text-right">{weeklySummary.good}</td><td className="px-3 py-3 text-right">{weeklySummary.rejected}</td><td className="px-3 py-3 text-right">{weeklyAttainment.toFixed(1)}%</td><td className="px-3 py-3 text-right">{weeklySummary.downtime} min</td></tr></tfoot>
+              </table>
+            </div>
+            <p className="mt-3 text-xs leading-relaxed text-slate-500">Sample figures are illustrative and independent of the live cycle-time simulator above. CSV import expects exactly seven rows with columns Day, Planned, Good, Rejected and Downtime. Sunday may be entered as zero for a non-production day.</p>
+          </section>
           {chartEditMode && (
             <div className="factory-chart-editor" aria-label="Edit chart visibility and titles">
               <div className="factory-chart-editor-heading"><strong>Customize chart view</strong><small>Show or hide charts and rename their headings.</small></div>
