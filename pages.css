@@ -2223,3 +2223,83 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
   .factory-scenario-comparison-print .factory-scenario-station-compare-scroll { overflow: visible !important; }
   .factory-scenario-comparison-print small { color: #333 !important; }
 }
+
+
+/* Factory workspace: use the available page width and keep settings together. */
+.factory-page{
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding-left:clamp(14px,2vw,28px)!important;
+  padding-right:clamp(14px,2vw,28px)!important;
+}
+.factory-explorer,.line-simulator{
+  width:100%!important;
+  max-width:none!important;
+}
+.line-simulator{
+  padding-top:32px;
+  margin-top:24px;
+}
+.line-simulator-heading{
+  margin-bottom:18px;
+}
+.line-sim-layout{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:14px!important;
+  align-items:start!important;
+}
+.line-sim-controls{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  column-gap:16px;
+  row-gap:0;
+  width:100%;
+  padding:18px;
+}
+.line-sim-controls>.line-sim-section-title{
+  grid-column:1/-1;
+}
+.line-sim-controls>.line-station-row{
+  min-width:0;
+  padding:12px 10px 10px;
+  border:1px solid #d9d3d7;
+  margin-top:10px;
+  background:#faf9f9;
+}
+.line-sim-controls>.line-station-row.is-bottleneck{
+  background:#f8e9e4;
+}
+.line-sim-controls>.line-sim-settings-title{
+  grid-column:1/-1;
+  margin-top:18px;
+}
+.line-sim-controls>.line-settings-grid{
+  grid-column:1/-1;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:12px 18px;
+}
+.line-sim-results{
+  position:static!important;
+  width:100%;
+}
+.line-sim-results>.factory-chart-toolbar{
+  align-items:center;
+}
+.factory-live-charts{
+  width:100%;
+}
+@media(max-width:1000px){
+  .line-sim-controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .line-sim-controls>.line-settings-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:620px){
+  .factory-page{padding-left:12px!important;padding-right:12px!important}
+  .line-sim-controls{grid-template-columns:minmax(0,1fr);padding:12px}
+  .line-sim-controls>.line-settings-grid{grid-template-columns:minmax(0,1fr)}
+  .line-sim-controls>.line-settings-grid>.line-target-setting{grid-column:auto}
+  .line-sim-controls>.line-station-row{margin-top:8px}
+  .line-sim-controls>.line-sim-settings-title{margin-top:16px}
+  .line-sim-results{padding:14px}
+}
