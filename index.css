@@ -305,3 +305,14 @@
     row-gap: 0 !important;
   }
 }
+
+
+/* Keep the shared navigation usable on tablets as well as phones. */
+@media (min-width:601px) and (max-width:900px) {
+  .site-header{height:70px;padding:0 20px}
+  .menu-toggle{display:block}
+  .header-cta{display:none}
+  .main-nav{display:none;position:absolute;top:70px;left:0;right:0;background:var(--paper);padding:18px 22px;flex-direction:column;gap:16px;border-bottom:1px solid var(--line);box-shadow:0 12px 22px rgba(0,0,0,.08)}
+  .main-nav.open{display:flex}
+  .main-nav a{font-size:12px}
+}
