@@ -146,14 +146,17 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
             const getFitDistance = () => {
               const verticalFov = THREE.MathUtils.degToRad(camera.fov);
               const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * Math.max(camera.aspect, 0.35));
-              const limitingFov = Math.min(verticalFov, horizontalFov);
-              return Math.max(sphere.radius / Math.sin(limitingFov / 2) * 0.78, maxDimension * 0.88);
+              // On wide desktop canvases, fit the car to the horizontal field of view.
+              // Using the narrower vertical FOV for a long, low vehicle leaves it tiny
+              // in the middle of an otherwise empty showroom.
+              const limitingFov = camera.aspect >= 1 ? horizontalFov : verticalFov;
+              return Math.max(sphere.radius / Math.sin(limitingFov / 2) * 0.78, maxDimension * 0.72);
             };
             getResponsiveFitDistance = getFitDistance;
             fittedDistance = getFitDistance();
             camera.position.copy(viewDirection.clone().multiplyScalar(fittedDistance));
             camera.near = Math.max(maxDimension / 1000, 0.001);
-            camera.far = Math.max(maxDimension * 100, distance * 20);
+            camera.far = Math.max(maxDimension * 100, fittedDistance * 20);
             camera.lookAt(0, 0, 0);
             camera.updateProjectionMatrix();
             controls.target.set(0, 0, 0);
