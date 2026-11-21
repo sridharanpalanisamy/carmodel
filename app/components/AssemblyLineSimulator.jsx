@@ -418,6 +418,47 @@ export default function AssemblyLineSimulator() {
   };
 
   const departmentCsvInput = useRef(null);
+  function downloadDepartmentClientReport() {
+    const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    })[char]);
+    const isSample = /illustrative|sample/i.test(departmentDataMessage);
+    const departmentRows = departments.map((department,index) => {
+      const good = Math.max(0,department.actual-department.rejected);
+      const capacity = department.cycleSeconds > 0 ? Math.floor(Math.max(0,department.shiftHours*3600-department.breakMinutes*60-department.downtime*60)/department.cycleSeconds) : 0;
+      const yieldRate = department.actual > 0 ? (good/department.actual*100).toFixed(1) : "0.0";
+      const gap = good-department.target;
+      return "<tr><td>"+(index+1)+"</td><td>"+escapeHtml(department.name)+"</td><td>"+department.target.toLocaleString("en-IN")+"</td><td>"+department.actual.toLocaleString("en-IN")+"</td><td>"+good.toLocaleString("en-IN")+"</td><td>"+department.rejected.toLocaleString("en-IN")+"</td><td>"+yieldRate+"%</td><td>"+capacity.toLocaleString("en-IN")+"</td><td>"+escapeHtml(formatDuration(department.downtime*60))+"</td><td>"+(gap>0?"+":"")+gap.toLocaleString("en-IN")+"</td></tr>";
+    }).join("");
+    const traceRows = trackedProducts.length ? trackedProducts.flatMap(product => departments.map((department,index) => {
+      const event = product.events[index];
+      const previous = index===0 ? product.createdAt : product.events[index-1]?.timestamp;
+      const elapsed = event && previous ? formatDuration(Math.max(0,Math.floor((new Date(event.timestamp)-new Date(previous))/1000))) : "—";
+      return "<tr><td>"+escapeHtml(product.code)+"</td><td>"+escapeHtml(department.name)+"</td><td>"+(event?"Completed":index===product.events.length?"In progress":"Waiting")+"</td><td>"+(event?escapeHtml(new Date(event.timestamp).toLocaleString("en-IN")):"—")+"</td><td>"+elapsed+"</td></tr>";
+    })).join("") : "<tr><td colspan='5'>No product traceability records were available when this report was generated.</td></tr>";
+    const status = isSample ? "ILLUSTRATIVE SAMPLE DATA — NOT VERIFIED PLANT RESULTS" : "USER-ENTERED DATA — NOT INDEPENDENTLY VERIFIED";
+    const warning = isSample ? "These department figures are illustrative samples. Replace them with verified shift records before presenting operational performance as actual results." : "The department figures were entered by the user and have not been independently verified.";
+    const html = [
+      "<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Factory Department Client Review</title>",
+      "<style>*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#1d2c27;margin:0;background:#f3f6f4}.page{max-width:1250px;margin:28px auto;background:#fff;padding:34px}header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;border-bottom:2px solid #dfe8e3;padding-bottom:18px}.eyebrow{font-size:10px;letter-spacing:1.5px;color:#65776e;font-weight:700}h1{font-size:25px;margin:8px 0}.sub{font-size:12px;color:#65736c;line-height:1.5}.status{display:inline-block;margin-top:8px;padding:7px 10px;border-radius:5px;background:#fff3d7;color:#79551a;font-size:10px;font-weight:700}.actions button{border:0;border-radius:6px;padding:10px 14px;background:#174d43;color:#fff;font-weight:700;cursor:pointer}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}.metric{border:1px solid #e0e8e3;border-radius:8px;padding:14px}.metric span{display:block;font-size:11px;color:#65736c}.metric strong{display:block;font-size:22px;margin-top:7px}.section{margin-top:24px}h2{font-size:16px;margin:0 0 10px}table{width:100%;border-collapse:collapse;font-size:10px;margin-top:12px}th,td{border:1px solid #dce5df;padding:8px 6px;text-align:left;vertical-align:top}th{background:#edf3ef;font-size:9px}.note{margin-top:18px;padding:13px;background:#fff8e8;border-left:3px solid #d89b27;color:#6b5429;font-size:11px;line-height:1.6}.foot{border-top:1px solid #e1e8e3;margin-top:22px;padding-top:12px;color:#738078;font-size:10px}@media(max-width:760px){.page{margin:0;padding:16px}.metrics{grid-template-columns:repeat(2,1fr)}header{display:block}.actions{margin-top:12px}table{font-size:9px}th,td{padding:5px 4px}}@media print{body{background:#fff}.page{max-width:none;margin:0;padding:8mm}.actions{display:none}thead{display:table-header-group}tr{break-inside:avoid}@page{size:A4 landscape;margin:8mm}}</style></head><body><main class='page'>",
+      "<header><div><div class='eyebrow'>FACTORY OPERATIONS / CLIENT REVIEW</div><h1>Nine-Department Production Review</h1><p class='sub'>Daily target, actual output, quality yield, estimated capacity and downtime by department<br>Report generated: "+escapeHtml(new Date().toLocaleString("en-IN"))+"</p><span class='status'>"+status+"</span></div><div class='actions'><button onclick='window.print()'>Print / Save as PDF</button></div></header>",
+      "<section class='metrics'><div class='metric'><span>Department target total*</span><strong>"+departmentTotals.target.toLocaleString("en-IN")+"</strong></div><div class='metric'><span>Good output total*</span><strong>"+departmentTotals.actual.toLocaleString("en-IN")+"</strong></div><div class='metric'><span>Rejected / rework records</span><strong>"+departmentTotals.rejected.toLocaleString("en-IN")+"</strong></div><div class='metric'><span>Recorded department downtime</span><strong>"+escapeHtml(formatDuration(departmentTotals.downtime*60))+"</strong></div></section>",
+      "<section class='section'><h2>Department-by-department performance</h2><table><thead><tr><th>#</th><th>Department</th><th>Target</th><th>Processed</th><th>Good output</th><th>Rejected</th><th>Yield</th><th>Estimated capacity</th><th>Downtime</th><th>Gap</th></tr></thead><tbody>"+departmentRows+"</tbody></table><p class='sub'>*Department totals combine different units and process stages. They are workload summaries, not unique finished-vehicle counts. Capacity is an estimate based on shift time less breaks and downtime divided by entered cycle time.</p></section>",
+      "<section class='section'><h2>Product and chassis traceability</h2><p class='sub'>Operator-recorded department completion timestamps and elapsed time between stages.</p><table><thead><tr><th>Product / chassis / batch ID</th><th>Department</th><th>Status</th><th>Completion timestamp</th><th>Stage elapsed time</th></tr></thead><tbody>"+traceRows+"</tbody></table></section>",
+      "<div class='note'><b>Data quality and limitations:</b> "+warning+" Product timestamps are recorded manually when an operator selects “Record completion”; this prototype is not connected to machine controllers, barcode scanners or an ERP/MES system. Confirm reporting date, shift, units and source records with the factory data owner before client sign-off.</div>",
+      "<div class='foot'>Prepared from the current browser dashboard data · "+escapeHtml(new Date().toLocaleDateString("en-IN"))+"</div></main></body></html>"
+    ].join("");
+    const url = URL.createObjectURL(new Blob([html],{type:"text/html;charset=utf-8"}));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "factory-nine-department-client-review.html";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setDepartmentDataMessage("Nine-department client review report prepared with current production and product traceability records.");
+  }
+
   function exportProductTraceabilityCsv() {
     if (!trackedProducts.length) {
       setDepartmentDataMessage("No product traceability records are available to export yet.");
@@ -2194,6 +2235,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
             <input ref={departmentCsvInput} type="file" accept=".csv,text/csv" onChange={importDepartmentCsv} hidden aria-label="Import department production CSV"/>
             <button type="button" className="factory-department-restore" onClick={()=>departmentCsvInput.current?.click()}>Import CSV ↑</button>
             <button type="button" className="factory-department-restore" onClick={exportDepartmentCsv}>Export CSV ↓</button>
+            <button type="button" className="factory-department-restore" onClick={downloadDepartmentClientReport}>Client report ↓</button>
             <button type="button" className="factory-department-restore" onClick={restoreDepartmentSamples}>Restore samples</button>
           </div>
         </div>
