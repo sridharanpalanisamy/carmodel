@@ -741,8 +741,8 @@
   .home-layout {
     grid-template-areas:
       "hero showroom"
-      "story engineering"
-      "collection collection"
+      "engineering showroom"
+      "story collection"
       "models quote" !important;
     grid-template-columns: minmax(0, 1.04fr) minmax(0, .96fr) !important;
     align-items: stretch !important;
