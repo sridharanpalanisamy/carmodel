@@ -67,6 +67,7 @@ export default function FordDashboardOverview() {
   const categoryGradient = "conic-gradient(" + categoryDonut.stops.join(", ") + ")";
 
   return (
+    <>
     <main className="page-shell inner-page models-directory-page ford-command-dashboard">
       <section className="az-page-heading">
         <span className="eyebrow">FORD / VEHICLE KNOWLEDGE CENTRE</span>
@@ -162,5 +163,6 @@ export default function FordDashboardOverview() {
       <p>Ford model, engineering and heritage reference workspace.</p>
       <div className="footer-bottom"><span>© 2026 Classic Ford Collection</span><span>Built for automotive enthusiasts</span></div>
     </footer>
+    </>
   );
 }
