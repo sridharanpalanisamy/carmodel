@@ -52,6 +52,22 @@ function getScenarioProjection(snapshot) {
   };
 }
 
+function getScenarioCapacityMetrics(snapshot, projection = getScenarioProjection(snapshot)) {
+  const netMinutes = Math.max(0, snapshot.shiftHours * 60 - snapshot.breakMinutes);
+  const ideal = projection.bottleneck > 0 ? Math.floor(netMinutes * 60 / projection.bottleneck) : 0;
+  const available = Math.floor(ideal * snapshot.availability / 100);
+  const requiredAvailable = snapshot.target > 0 && snapshot.yieldRate > 0
+    ? Math.ceil(snapshot.target / (snapshot.yieldRate / 100)) : 0;
+  const requiredIdeal = requiredAvailable > 0 && snapshot.availability > 0
+    ? Math.ceil(requiredAvailable / (snapshot.availability / 100)) : 0;
+  const requiredCycle = requiredIdeal > 0 ? Math.floor(netMinutes * 60 / requiredIdeal) : 0;
+  const feasible = snapshot.target === 0 || (requiredCycle >= 20 && snapshot.availability > 0 && snapshot.yieldRate > 0);
+  return {
+    netMinutes, ideal, available, requiredCycle, feasible,
+    taktSeconds: snapshot.target > 0 ? netMinutes * 60 / snapshot.target : 0
+  };
+}
+
 export default function AssemblyLineSimulator() {
   const [mount, setMount] = useState(null);
   useEffect(() => { setMount(document.getElementById("lineSimulatorMount")); }, []);
@@ -680,6 +696,12 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
       ["Good vehicles / shift", firstProjection.good, secondProjection.good, secondProjection.good - firstProjection.good],
       ["Target", first.snapshot.target, second.snapshot.target, second.snapshot.target - first.snapshot.target],
       ["Target gap", firstProjection.gap, secondProjection.gap, secondProjection.gap - firstProjection.gap],
+      ["Target attainment (%)", Number(firstProjection.attainmentPercent.toFixed(1)), Number(secondProjection.attainmentPercent.toFixed(1)), Number((secondProjection.attainmentPercent - firstProjection.attainmentPercent).toFixed(1))],
+      ["Ideal capacity (vehicles / shift)", getScenarioCapacityMetrics(first.snapshot, firstProjection).ideal, getScenarioCapacityMetrics(second.snapshot, secondProjection).ideal, getScenarioCapacityMetrics(second.snapshot, secondProjection).ideal - getScenarioCapacityMetrics(first.snapshot, firstProjection).ideal],
+      ["Available capacity (vehicles / shift)", getScenarioCapacityMetrics(first.snapshot, firstProjection).available, getScenarioCapacityMetrics(second.snapshot, secondProjection).available, getScenarioCapacityMetrics(second.snapshot, secondProjection).available - getScenarioCapacityMetrics(first.snapshot, firstProjection).available],
+      ["Net production time (minutes)", getScenarioCapacityMetrics(first.snapshot, firstProjection).netMinutes, getScenarioCapacityMetrics(second.snapshot, secondProjection).netMinutes, getScenarioCapacityMetrics(second.snapshot, secondProjection).netMinutes - getScenarioCapacityMetrics(first.snapshot, firstProjection).netMinutes],
+      ["Required cycle after losses (seconds)", getScenarioCapacityMetrics(first.snapshot, firstProjection).feasible ? getScenarioCapacityMetrics(first.snapshot, firstProjection).requiredCycle : "Not feasible", getScenarioCapacityMetrics(second.snapshot, secondProjection).feasible ? getScenarioCapacityMetrics(second.snapshot, secondProjection).requiredCycle : "Not feasible", ""],
+      ["Target pace feasibility", first.snapshot.target === 0 ? "No target" : getScenarioCapacityMetrics(first.snapshot, firstProjection).feasible ? "Feasible" : "Not feasible", second.snapshot.target === 0 ? "No target" : getScenarioCapacityMetrics(second.snapshot, secondProjection).feasible ? "Feasible" : "Not feasible", ""],
       ["Bottleneck station", firstProjection.bottleneckName, secondProjection.bottleneckName, ""],
       ["Bottleneck cycle (sec)", firstProjection.bottleneck, secondProjection.bottleneck, secondProjection.bottleneck - firstProjection.bottleneck],
       ["Shift hours", first.snapshot.shiftHours, second.snapshot.shiftHours, second.snapshot.shiftHours - first.snapshot.shiftHours],
@@ -851,6 +873,11 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
       `| Good vehicles / shift | ${firstProjection.good} | ${secondProjection.good} | ${secondProjection.good - firstProjection.good > 0 ? "+" : ""}${secondProjection.good - firstProjection.good} |`,
       `| Target | ${first.snapshot.target} | ${second.snapshot.target} | ${second.snapshot.target - first.snapshot.target} |`,
       `| Target gap | ${firstProjection.good - first.snapshot.target} | ${secondProjection.good - second.snapshot.target} | ${(secondProjection.good - second.snapshot.target) - (firstProjection.good - first.snapshot.target)} |`,
+      `| Target attainment | ${firstProjection.attainmentPercent.toFixed(1)}% | ${secondProjection.attainmentPercent.toFixed(1)}% | ${(secondProjection.attainmentPercent - firstProjection.attainmentPercent).toFixed(1)} pp |`,
+      `| Ideal capacity | ${getScenarioCapacityMetrics(first.snapshot, firstProjection).ideal} | ${getScenarioCapacityMetrics(second.snapshot, secondProjection).ideal} | ${getScenarioCapacityMetrics(second.snapshot, secondProjection).ideal - getScenarioCapacityMetrics(first.snapshot, firstProjection).ideal} |`,
+      `| Available capacity | ${getScenarioCapacityMetrics(first.snapshot, firstProjection).available} | ${getScenarioCapacityMetrics(second.snapshot, secondProjection).available} | ${getScenarioCapacityMetrics(second.snapshot, secondProjection).available - getScenarioCapacityMetrics(first.snapshot, firstProjection).available} |`,
+      `| Required cycle after losses | ${getScenarioCapacityMetrics(first.snapshot, firstProjection).feasible ? getScenarioCapacityMetrics(first.snapshot, firstProjection).requiredCycle + " s" : "Not feasible"} | ${getScenarioCapacityMetrics(second.snapshot, secondProjection).feasible ? getScenarioCapacityMetrics(second.snapshot, secondProjection).requiredCycle + " s" : "Not feasible"} | — |`,
+      `| Target pace feasibility | ${first.snapshot.target === 0 ? "No target" : getScenarioCapacityMetrics(first.snapshot, firstProjection).feasible ? "Feasible" : "Not feasible"} | ${second.snapshot.target === 0 ? "No target" : getScenarioCapacityMetrics(second.snapshot, secondProjection).feasible ? "Feasible" : "Not feasible"} | — |`,
       `| Bottleneck cycle | ${firstProjection.bottleneck} s | ${secondProjection.bottleneck} s | ${secondProjection.bottleneck - firstProjection.bottleneck} s |`,
       "",
       "## Operating assumptions",
