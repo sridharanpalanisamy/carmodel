@@ -744,7 +744,7 @@
       "engineering showroom"
       "story collection"
       "models quote" !important;
-    grid-template-columns: minmax(0, 1.04fr) minmax(0, .96fr) !important;
+    grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr) !important;
     align-items: stretch !important;
     row-gap: clamp(24px, 2.4vw, 34px) !important;
   }
