@@ -759,7 +759,7 @@
   .home-layout > .right-column > .orange-feature { grid-area: collection !important; }
   .home-layout > .turntable-panel {
     grid-area: showroom !important;
-    align-self: stretch !important;
+    align-self: start !important;
     min-width: 0 !important;
     padding: 0 0 18px !important;
     margin: 0 !important;
