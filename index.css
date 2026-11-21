@@ -364,53 +364,67 @@
 }
 
 
-/* FINAL HOMEPAGE GRID — align every editorial block to a deliberate row. */
+/* RESTORED EDITORIAL HOMEPAGE GRID — keep each section intact.
+   The hero and Ford story share the first row; engineering and collection
+   share the next row; the interactive showroom then spans the full width. */
 @media (min-width: 901px) {
   .home-layout {
     display: grid !important;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr) !important;
     grid-template-areas:
-      "home-photo story-title"
-      "home-intro story-image"
-      "feature-car story-links"
-      "milestones collection"
-      "process process"
+      "hero innovation"
+      "process collection"
       "showroom showroom"
       "latest quote" !important;
-    column-gap: clamp(22px, 2.4vw, 36px) !important;
-    row-gap: 18px !important;
-    align-items: stretch !important;
+    column-gap: clamp(24px, 3vw, 40px) !important;
+    row-gap: 22px !important;
+    align-items: start !important;
   }
   .home-layout > .left-column,
-  .home-layout > .right-column,
+  .home-layout > .right-column { display: contents !important; }
+  .home-layout > .left-column > .hero-panel { grid-area: hero; }
+  .home-layout > .left-column > .process-panel { grid-area: process; }
+  .home-layout > .right-column > .innovation-panel { grid-area: innovation; }
+  .home-layout > .right-column > .orange-feature { grid-area: collection; }
+  .home-layout > .right-column > .turntable-panel { grid-area: showroom; }
+  .home-layout > .right-column > .latest-panel { grid-area: latest; }
+  .home-layout > .right-column > .quote-panel { grid-area: quote; }
+
   .home-layout .hero-panel,
-  .home-layout .innovation-panel {
-    display: contents !important;
+  .home-layout .innovation-panel,
+  .home-layout .process-panel,
+  .home-layout .orange-feature,
+  .home-layout .turntable-panel,
+  .home-layout .latest-panel,
+  .home-layout .quote-panel {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
   }
-  .home-layout .hero-photo { grid-area: home-photo; height: clamp(230px, 24vw, 330px); }
-  .home-layout .hero-intro { grid-area: home-intro; min-height: 150px; }
-  .home-layout .feature-car { grid-area: feature-car; min-height: 210px; }
-  .home-layout .milestone-row { grid-area: milestones; align-self: stretch; }
-  .home-layout .innovation-title { grid-area: story-title; min-height: 110px; padding: 12px 0; }
-  .home-layout .innovation-image { grid-area: story-image; height: clamp(190px, 20vw, 270px); }
-  .home-layout .innovation-grid { grid-area: story-links; align-self: stretch; }
-  .home-layout .orange-feature { grid-area: collection; min-height: 100%; align-self: stretch; }
-  .home-layout .process-panel { grid-area: process; padding: 22px 0 8px; border-top: 1px solid var(--line); }
-  .home-layout .process-visual { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); }
-  .home-layout .turntable-panel { grid-area: showroom; margin: 0; padding: 24px 0 20px; }
-  .home-layout .latest-panel { grid-area: latest; }
-  .home-layout .quote-panel { grid-area: quote; }
-  .home-layout .ford-glb-stage { height: clamp(500px, 58vw, 700px) !important; min-height: 500px !important; }
-  .home-layout .hero-panel,
-  .home-layout .innovation-panel { padding: 0; }
+  .home-layout .hero-photo { height: clamp(190px, 20vw, 270px); }
+  .home-layout .innovation-title { min-height: 100px; padding: 10px 0 14px; }
+  .home-layout .innovation-image { height: clamp(150px, 16vw, 220px); }
+  .home-layout .process-panel { padding-top: 18px; }
+  .home-layout .orange-feature { min-height: 132px; align-self: start; }
+  .home-layout .turntable-panel {
+    padding: 22px 0 18px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .home-layout .ford-glb-stage {
+    height: clamp(420px, 48vw, 600px) !important;
+    min-height: 420px !important;
+  }
 }
 @media (min-width: 601px) and (max-width: 900px) {
   .home-layout > .left-column,
-  .home-layout > .right-column,
-  .home-layout .hero-panel,
-  .home-layout .innovation-panel { display: block !important; }
-  .home-layout { grid-template-columns: minmax(0,1fr) !important; grid-template-areas: none !important; row-gap: 0 !important; }
-  .home-layout .right-column {
+  .home-layout > .right-column { display: block !important; }
+  .home-layout {
+    grid-template-columns: minmax(0,1fr) !important;
+    grid-template-areas: none !important;
+    row-gap: 0 !important;
+  }
+  .home-layout > .right-column {
     display: grid !important;
     grid-template-columns: minmax(0,1fr) minmax(0,1fr) !important;
     column-gap: 18px !important;
@@ -420,21 +434,12 @@
   .home-layout .turntable-panel { grid-column: 1 / -1 !important; }
   .home-layout .latest-panel { grid-column: 1 !important; }
   .home-layout .quote-panel { grid-column: 2 !important; }
-  .home-layout .process-panel { border-top: 1px solid var(--line); }
-  .home-layout .ford-glb-stage { height: min(68vh, 620px) !important; min-height: 420px !important; }
 }
 @media (max-width: 600px) {
   .home-layout > .left-column,
-  .home-layout > .right-column,
-  .home-layout .hero-panel,
-  .home-layout .innovation-panel { display: block !important; }
-  .home-layout .right-column { display: block !important; }
+  .home-layout > .right-column { display: block !important; }
+  .home-layout > .right-column { display: block !important; }
   .home-layout { grid-template-columns: minmax(0,1fr) !important; grid-template-areas: none !important; row-gap: 0 !important; }
-  .home-layout .process-panel { border-top: 1px solid var(--line); }
-  .home-layout .ford-glb-stage { height: min(62vh, 520px) !important; min-height: 360px !important; }
-}
-@media (max-width: 600px) {
-  .home-layout .ford-glb-stage { height: min(62vh, 520px) !important; min-height: 360px !important; }
   .home-layout .hero-photo { height: 190px; }
-  .home-layout .process-panel { padding-top: 20px; }
+  .home-layout .ford-glb-stage { height: min(62vh, 520px) !important; min-height: 360px !important; }
 }
