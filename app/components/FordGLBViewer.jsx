@@ -19,6 +19,8 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
     let resizeObserver;
     let disposed = false;
     let modelRoot;
+    let fittedDistance = 0;
+    let viewDirection;
     let resetView;
 
     async function start() {
@@ -33,6 +35,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         const scene = new THREE.Scene();
         scene.background = new THREE.Color("#e7e6e3");
         const camera = new THREE.PerspectiveCamera(38, 1, 0.01, 1000);
+        viewDirection = new THREE.Vector3(1.35, 0.38, 1.55).normalize();
         renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -140,12 +143,15 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
             }
             const sphere = new THREE.Sphere();
             new THREE.Box3().setFromObject(modelGroup).getBoundingSphere(sphere);
-            const verticalFov = THREE.MathUtils.degToRad(camera.fov);
-            const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * Math.max(camera.aspect, 0.5));
-            const limitingFov = Math.min(verticalFov, horizontalFov);
-            const distance = Math.max(sphere.radius / Math.sin(limitingFov / 2) * 0.78, maxDimension * 0.88);
-            const viewDirection = new THREE.Vector3(1.35, 0.38, 1.55).normalize();
-            camera.position.copy(viewDirection.multiplyScalar(distance));
+            const getFitDistance = () => {
+              const verticalFov = THREE.MathUtils.degToRad(camera.fov);
+              const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * Math.max(camera.aspect, 0.35));
+              const limitingFov = Math.min(verticalFov, horizontalFov);
+              return Math.max(sphere.radius / Math.sin(limitingFov / 2) * 0.78, maxDimension * 0.88);
+            };
+            getResponsiveFitDistance = getFitDistance;
+            fittedDistance = getFitDistance();
+            camera.position.copy(viewDirection.clone().multiplyScalar(fittedDistance));
             camera.near = Math.max(maxDimension / 1000, 0.001);
             camera.far = Math.max(maxDimension * 100, distance * 20);
             camera.lookAt(0, 0, 0);
@@ -155,7 +161,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
             controls.maxDistance = maxDimension * 8;
             controls.update();
             resetView = () => {
-              camera.position.copy(new THREE.Vector3(1.35, 0.38, 1.55).normalize().multiplyScalar(distance));
+              camera.position.copy(viewDirection.clone().multiplyScalar(fittedDistance));
               controls.target.set(0, 0, 0);
               controls.update();
             };
@@ -172,12 +178,22 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
           }
         );
 
+        let getResponsiveFitDistance = () => fittedDistance;
         const resize = () => {
           if (!hostRef.current || !renderer) return;
           const width = Math.max(host.clientWidth, 1);
           const height = Math.max(host.clientHeight, 1);
+          const previousFit = fittedDistance;
           camera.aspect = width / height;
           camera.updateProjectionMatrix();
+          if (modelRoot && previousFit > 0) {
+            const nextFit = getResponsiveFitDistance();
+            const currentDistance = camera.position.distanceTo(controls?.target || new THREE.Vector3());
+            const zoomRatio = currentDistance / previousFit;
+            fittedDistance = nextFit;
+            camera.position.copy(viewDirection.clone().multiplyScalar(nextFit * zoomRatio));
+            controls?.update();
+          }
           renderer.setSize(width, height, false);
         };
         resizeObserver = new ResizeObserver(resize);
