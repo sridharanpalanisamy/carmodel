@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const links = [
   { href: "/", label: "Home", page: "home" },
@@ -19,6 +19,15 @@ export default function SiteHeader() {
   const currentPath = usePathname() || "/";
   const pathname = currentPath.length > 1 && currentPath.endsWith("/") ? currentPath.slice(0, -1) : currentPath;
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const closeOnEscape = event => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [open]);
   const activePage = pathname === "/ford-dashboard" ? "dashboard"
     : pathname === "/models" ? "models"
     : pathname === "/specifications" ? "specifications"
@@ -34,7 +43,7 @@ export default function SiteHeader() {
         <span>CLASSIC FORD<small>THE HERITAGE COLLECTION</small></span>
       </Link>
       <button className="menu-toggle" id="menuToggle" type="button"
-        aria-label="Toggle navigation" aria-expanded={open}
+        aria-label={open ? "Close navigation" : "Open navigation"} aria-controls="mainNav" aria-expanded={open}
         onClick={() => setOpen(value => !value)}>☰</button>
       <nav className={`main-nav${open ? " open" : ""}`} id="mainNav" aria-label="Main navigation">
         {links.map(link => (
