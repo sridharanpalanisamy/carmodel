@@ -328,7 +328,7 @@ export default function AssemblyLineSimulator() {
   const [departmentIssues, setDepartmentIssues] = useState([]);
   const [issueDraft, setIssueDraft] = useState({ departmentId: "supplier", title: "", rootCause: "", correctiveAction: "", owner: "", dueDate: "", priority: "Medium" });
   const [maintenanceRecords, setMaintenanceRecords] = useState([]);
-  const [maintenanceDraft, setMaintenanceDraft] = useState({ departmentId: "machine-shop", asset: "", maintenanceType: "Preventive", serviceDescription: "", technician: "", lastServiceDate: "", nextServiceDate: "", priority: "Medium" });
+  const [maintenanceDraft, setMaintenanceDraft] = useState({ departmentId: "machine", asset: "", maintenanceType: "Preventive", serviceDescription: "", technician: "", lastServiceDate: "", nextServiceDate: "", priority: "Medium" });
   const [comparisonOlderId, setComparisonOlderId] = useState("");
   const [comparisonNewerId, setComparisonNewerId] = useState("");
   const [productCodeInput, setProductCodeInput] = useState("");
