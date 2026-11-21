@@ -64,6 +64,55 @@ function parseWeeklyProductionCsv(text) {
   }).sort((a, b) => allowedDays.indexOf(a.day) - allowedDays.indexOf(b.day));
 }
 
+function parseStationPerformanceCsv(text) {
+  const rows = [];
+  let row = [], cell = "", quoted = false;
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    if (char === '"') {
+      if (quoted && text[index + 1] === '"') { cell += '"'; index += 1; }
+      else quoted = !quoted;
+    } else if (char === "," && !quoted) { row.push(cell.trim()); cell = ""; }
+    else if ((char === "\\n" || char === "\\r") && !quoted) {
+      if (char === "\\r" && text[index + 1] === "\\n") index += 1;
+      row.push(cell.trim()); cell = "";
+      if (row.some(value => value !== "")) rows.push(row);
+      row = [];
+    } else cell += char;
+  }
+  row.push(cell.trim());
+  if (row.some(value => value !== "")) rows.push(row);
+  if (rows.length !== initialStations.length + 1) throw new Error("Upload must contain a header and exactly seven station rows.");
+  const headers = rows[0].map(value => value.toLowerCase().replace(/[ _-]/g, ""));
+  const required = ["station", "processed", "rejected", "downtime", "avgcycletime"];
+  const positions = required.map(header => headers.indexOf(header));
+  if (positions.some(index => index < 0)) throw new Error("Required columns: Station, Processed, Rejected, Downtime, AvgCycleTime.");
+  const seen = new Set();
+  return rows.slice(1).map(values => {
+    const name = values[positions[0]];
+    if (!initialStations.some(station => station.name === name) || seen.has(name)) throw new Error("Use each of the seven station names exactly once.");
+    seen.add(name);
+    const [processed, rejected, downtime, avgCycleSeconds] = positions.slice(1).map(index => Number(values[index]));
+    if (![processed, rejected, downtime, avgCycleSeconds].every(Number.isFinite) ||
+      !Number.isInteger(processed) || !Number.isInteger(rejected) || !Number.isInteger(downtime) ||
+      processed < 0 || rejected < 0 || downtime < 0 || downtime > 720 || avgCycleSeconds < 1 || avgCycleSeconds > 600) {
+      throw new Error(name + ": enter whole non-negative counts/minutes and an average cycle time from 1 to 600 seconds.");
+    }
+    if (rejected > processed) throw new Error(name + ": rejected units cannot exceed processed units.");
+    return { name, processed, rejected, downtime, avgCycleSeconds };
+  }).sort((a, b) => initialStations.findIndex(station => station.name === a.name) - initialStations.findIndex(station => station.name === b.name));
+}
+
+const initialStationPerformance = [
+  { name: "Stamping", processed: 342, rejected: 3, downtime: 18, avgCycleSeconds: 42 },
+  { name: "Body welding", processed: 338, rejected: 4, downtime: 32, avgCycleSeconds: 55 },
+  { name: "Surface preparation", processed: 334, rejected: 5, downtime: 27, avgCycleSeconds: 48 },
+  { name: "Paint finishing", processed: 329, rejected: 9, downtime: 46, avgCycleSeconds: 62 },
+  { name: "Powertrain preparation", processed: 326, rejected: 2, downtime: 21, avgCycleSeconds: 50 },
+  { name: "Final assembly", processed: 324, rejected: 3, downtime: 38, avgCycleSeconds: 68 },
+  { name: "Quality validation", processed: 321, rejected: 7, downtime: 16, avgCycleSeconds: 45 }
+];
+
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
 function isValidSavedScenario(value) {
@@ -123,7 +172,7 @@ export default function AssemblyLineSimulator() {
   const [mount, setMount] = useState(null);
   useEffect(() => { setMount(document.getElementById("lineSimulatorMount")); }, []);
   const [stations, setStations] = useState(initialStations);
-  const [weeklyProduction, setWeeklyProduction] = useState(initialWeeklyProduction);
+  const [weeklyProduction, setWeeklyProduction] = useState(initialWeeklyProduction);\n  const [stationPerformance, setStationPerformance] = useState(initialStationPerformance);\n  const [stationDataMessage, setStationDataMessage] = useState("Illustrative station-level sample · upload a station CSV to replace it.");\n  const stationCsvInput = useRef(null);
   const [selectedProductionDay, setSelectedProductionDay] = useState("Monday");
   const [weeklyDataMessage, setWeeklyDataMessage] = useState("Illustrative sample data · replace with your own weekly CSV when available.");
   const weeklyCsvInput = useRef(null);
@@ -1424,6 +1473,63 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     return `${x},${y}`;
   }).join(" ");
 
+  const stationPerformanceSummary = useMemo(() => {
+    const totals = stationPerformance.reduce((summary, station) => ({
+      processed: summary.processed + station.processed,
+      rejected: summary.rejected + station.rejected,
+      downtime: summary.downtime + station.downtime
+    }), { processed: 0, rejected: 0, downtime: 0 });
+    const bottleneck = stationPerformance.reduce((slowest, station) => station.avgCycleSeconds > slowest.avgCycleSeconds ? station : slowest, stationPerformance[0]);
+    const downtimeLeader = stationPerformance.reduce((highest, station) => station.downtime > highest.downtime ? station : highest, stationPerformance[0]);
+    return { ...totals, bottleneck, downtimeLeader, yieldPercent: totals.processed > 0 ? (totals.processed - totals.rejected) / totals.processed * 100 : 0 };
+  }, [stationPerformance]);
+
+  function importStationPerformanceCsv(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (file.size > 100 * 1024) {
+      setStationDataMessage("CSV is too large. Please upload a file smaller than 100 KB.");
+      event.target.value = "";
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const imported = parseStationPerformanceCsv(String(reader.result || ""));
+        setStationPerformance(imported);
+        setStationDataMessage("Loaded station-level metrics from " + file.name + ". Values are user-provided and have not been independently verified.");
+      } catch (error) {
+        setStationDataMessage(error.message || "Could not read station performance CSV.");
+      }
+      event.target.value = "";
+    };
+    reader.onerror = () => {
+      setStationDataMessage("Could not read the selected station CSV.");
+      event.target.value = "";
+    };
+    reader.readAsText(file);
+  }
+
+  function exportStationPerformanceCsv() {
+    const rows = [
+      ["Station", "Processed", "Rejected", "Downtime", "AvgCycleTime"],
+      ...stationPerformance.map(station => [station.name, station.processed, station.rejected, station.downtime, station.avgCycleSeconds])
+    ];
+    const csv = rows.map(row => row.map(value => {
+      const cell = String(value ?? "");
+      return /[",\\n]/.test(cell) ? '"' + cell.replace(/"/g, '""') + '"' : cell;
+    }).join(",")).join("\\n");
+    const blob = new Blob(["\\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "station-performance.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
   function importWeeklyProductionCsv(event) {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -1762,6 +1868,58 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
               </table>
             </div>
             <p className="mt-3 text-xs leading-relaxed text-slate-500">Sample figures are illustrative and independent of the live cycle-time simulator above. CSV import expects exactly seven rows with columns Day, Planned, Good, Rejected and Downtime. Sunday may be entered as zero for a non-production day.</p>
+          </section>
+          <section className="mt-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5" aria-label="Station-wise manufacturing performance">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <span className="eyebrow">PROCESS BREAKDOWN / 7 STATIONS</span>
+                <h3 className="mt-1 text-xl font-semibold text-slate-900">Station-wise performance</h3>
+                <p className="mt-1 max-w-2xl text-sm text-slate-600">Compare processed units, rejects, downtime and average cycle time at each manufacturing stage.</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button type="button" className="line-reset" onClick={() => stationCsvInput.current?.click()}>Upload station CSV ↑</button>
+                <input ref={stationCsvInput} type="file" accept=".csv,text/csv" onChange={importStationPerformanceCsv} hidden aria-label="Upload station performance CSV" />
+                <button type="button" className="line-reset" onClick={exportStationPerformanceCsv}>Export station CSV ↓</button>
+                <button type="button" className="line-reset" onClick={() => { setStationPerformance(initialStationPerformance); setStationDataMessage("Restored illustrative station-level sample data."); }}>Restore sample</button>
+              </div>
+            </div>
+            <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600" role="status">{stationDataMessage}</p>
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+              <div className="rounded-xl bg-slate-50 p-3"><span className="block text-xs text-slate-500">Units processed</span><strong className="mt-1 block text-2xl text-slate-900">{stationPerformanceSummary.processed.toLocaleString("en-IN")}</strong></div>
+              <div className="rounded-xl bg-slate-50 p-3"><span className="block text-xs text-slate-500">Station rejects</span><strong className="mt-1 block text-2xl text-slate-900">{stationPerformanceSummary.rejected.toLocaleString("en-IN")}</strong></div>
+              <div className="rounded-xl bg-slate-50 p-3"><span className="block text-xs text-slate-500">Recorded downtime</span><strong className="mt-1 block text-2xl text-slate-900">{stationPerformanceSummary.downtime} min</strong></div>
+              <div className="rounded-xl bg-slate-50 p-3"><span className="block text-xs text-slate-500">Station yield</span><strong className="mt-1 block text-2xl text-slate-900">{stationPerformanceSummary.yieldPercent.toFixed(1)}%</strong></div>
+            </div>
+            <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+              <div className="rounded-xl border border-amber-200 bg-amber-50/60 p-3">
+                <span className="text-xs font-semibold uppercase tracking-wide text-amber-800">Slowest recorded station</span>
+                <div className="mt-1 flex items-baseline justify-between gap-2"><strong className="text-slate-900">{stationPerformanceSummary.bottleneck.name}</strong><strong className="text-lg text-slate-900">{stationPerformanceSummary.bottleneck.avgCycleSeconds}s</strong></div>
+                <p className="mt-1 text-xs text-slate-600">Highest average cycle time in this station dataset.</p>
+              </div>
+              <div className="rounded-xl border border-sky-200 bg-sky-50/60 p-3">
+                <span className="text-xs font-semibold uppercase tracking-wide text-sky-800">Highest recorded downtime</span>
+                <div className="mt-1 flex items-baseline justify-between gap-2"><strong className="text-slate-900">{stationPerformanceSummary.downtimeLeader.name}</strong><strong className="text-lg text-slate-900">{stationPerformanceSummary.downtimeLeader.downtime} min</strong></div>
+                <p className="mt-1 text-xs text-slate-600">Prioritize this station when reviewing stoppage causes.</p>
+              </div>
+            </div>
+            <div className="mt-4 overflow-x-auto rounded-xl border border-slate-200">
+              <table className="w-full min-w-[720px] text-left text-sm">
+                <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500"><tr><th className="px-3 py-3">Manufacturing station</th><th className="px-3 py-3 text-right">Processed</th><th className="px-3 py-3 text-right">Rejected</th><th className="px-3 py-3 text-right">Reject rate</th><th className="px-3 py-3 text-right">Downtime</th><th className="px-3 py-3 text-right">Avg cycle</th></tr></thead>
+                <tbody>{stationPerformance.map(station => {
+                  const rejectRate = station.processed > 0 ? station.rejected / station.processed * 100 : 0;
+                  const isBottleneck = station.name === stationPerformanceSummary.bottleneck.name;
+                  return <tr key={station.name} className="border-t border-slate-100">
+                    <th className="px-3 py-3 font-medium text-slate-800">{station.name}{isBottleneck && <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-900">Slowest</span>}</th>
+                    <td className="px-3 py-3 text-right tabular-nums">{station.processed}</td>
+                    <td className="px-3 py-3 text-right tabular-nums">{station.rejected}</td>
+                    <td className="px-3 py-3 text-right tabular-nums">{rejectRate.toFixed(1)}%</td>
+                    <td className="px-3 py-3 text-right tabular-nums">{station.downtime} min</td>
+                    <td className="px-3 py-3 text-right tabular-nums">{station.avgCycleSeconds} sec</td>
+                  </tr>;
+                })}</tbody>
+              </table>
+            </div>
+            <p className="mt-3 text-xs leading-relaxed text-slate-500">Station sample figures are illustrative and are not automatically calculated from the weekly totals. For a real comparison, upload station-level CSV data using the exact seven station names and columns: Station, Processed, Rejected, Downtime, AvgCycleTime.</p>
           </section>
           {chartEditMode && (
             <div className="factory-chart-editor" aria-label="Edit chart visibility and titles">
