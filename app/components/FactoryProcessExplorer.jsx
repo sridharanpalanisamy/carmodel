@@ -55,9 +55,9 @@ export default function FactoryProcessExplorer() {
   if (!mount) return null;
   return (
     <section className="factory-explorer w-full max-w-[1440px] mx-auto px-3 sm:px-5 lg:px-8" aria-labelledby="factoryExplorerTitle">
-      <div className="factory-explorer-heading">
-        <div><span className="eyebrow">INTERACTIVE PRODUCTION GUIDE</span><h2 id="factoryExplorerTitle">From raw material<br/>to <em>road-ready.</em></h2><p>Choose a production stage to see what happens, what comes out of the process and which quality checks matter.</p></div>
-        <div className="factory-index"><strong>07</strong><span>PROCESS<br/>STAGES</span></div>
+      <div className="factory-process-overview">
+        <div><span className="eyebrow">MANUFACTURING PROCESS</span><h2 id="factoryExplorerTitle">Production stages</h2></div>
+        <p>Select a stage below to review its operations, output and quality checks.</p>
       </div>
       <div className="factory-flow-header"><span>PRODUCTION FLOW MAP</span><small>Select any node to inspect that manufacturing unit</small></div>
       <div className="factory-flow-scroll">
