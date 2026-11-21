@@ -1976,6 +1976,15 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
               </div>
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 {stationPerformance.map((station, index) => {
+                  const stageDescriptions = [
+                    "Presses sheet metal into panels used for the vehicle body.",
+                    "Joins stamped panels to build the vehicle body structure.",
+                    "Cleans and prepares metal surfaces before painting.",
+                    "Applies and cures paint for appearance and corrosion protection.",
+                    "Prepares engine or motor, transmission and related powertrain parts.",
+                    "Fits major components, electrical systems, interior and exterior parts.",
+                    "Performs final visual, dimensional and functional checks before release."
+                  ];
                   const goodOutput = Math.max(0, station.processed - station.rejected);
                   const upstreamGood = index > 0
                     ? Math.max(0, stationPerformance[index - 1].processed - stationPerformance[index - 1].rejected)
@@ -1989,7 +1998,8 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                           ? <span className="rounded-full bg-amber-100 px-2 py-1 text-[10px] font-semibold text-amber-900">Slowest</span>
                           : null}
                       </div>
-                      <h5 className="mt-2 min-h-10 text-sm font-semibold text-slate-900">{station.name}</h5>
+                      <h5 className="mt-2 text-sm font-semibold text-slate-900">{station.name}</h5>
+                      <p className="mt-1 min-h-[3.25rem] text-xs leading-relaxed text-slate-600"><span className="font-semibold text-slate-700">What happens here:</span> {stageDescriptions[index] || "Records production activity at this manufacturing stage."}</p>
                       <div className="mt-3 grid grid-cols-2 gap-2">
                         <div className="rounded-lg bg-slate-50 p-2">
                           <span className="block text-[10px] text-slate-500">Processed</span>
@@ -2019,7 +2029,17 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                   );
                 })}
               </div>
-              <p className="mt-3 text-xs leading-relaxed text-slate-500">Queue differences are estimates only: they compare the previous station's good output with the next station's processed count. They are meaningful only when both stations use the same reporting period and unit definition. A negative difference may indicate opening WIP consumption or mismatched data. Rejected counts are station-level events and should not be summed as unique vehicle losses without unit-level tracking.</p>
+              <div className="mt-4 rounded-lg bg-slate-50 p-3">
+                <strong className="text-xs font-semibold uppercase tracking-wide text-slate-700">How to explain these figures to a client</strong>
+                <dl className="mt-2 grid grid-cols-1 gap-2 text-xs text-slate-600 sm:grid-cols-2">
+                  <div><dt className="font-semibold text-slate-800">Processed</dt><dd>Total units that entered or were handled by this station during the selected reporting period.</dd></div>
+                  <div><dt className="font-semibold text-emerald-800">Good output</dt><dd>Processed units minus rejects recorded at this station.</dd></div>
+                  <div><dt className="font-semibold text-rose-800">Rejected here</dt><dd>Units rejected at this stage; this is a station-level count, not necessarily unique vehicle losses.</dd></div>
+                  <div><dt className="font-semibold text-slate-800">Cycle time</dt><dd>Average time taken to process one unit at this station.</dd></div>
+                  <div><dt className="font-semibold text-slate-800">Potential queue</dt><dd>Estimated difference between the previous station's good output and this station's processed count.</dd></div>
+                </dl>
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-slate-500">Queue differences are estimates only: they compare the previous station's good output with the next station's processed count. They are meaningful only when both stations use the same reporting period and unit definition. A negative difference may indicate opening WIP consumption or mismatched data. For an accurate live WIP count, record opening WIP, closing WIP or unit-level movement. Sample figures are illustrative until replaced with actual production data.</p>
             </section>
             <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
               <div className="rounded-xl border border-slate-200 p-4">
