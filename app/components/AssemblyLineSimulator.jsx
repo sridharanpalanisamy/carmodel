@@ -535,6 +535,13 @@ export default function AssemblyLineSimulator() {
     }
     const snapshot = item.snapshot;
     const projection = getScenarioProjection(snapshot);
+    const netMinutes = Math.max(0, snapshot.shiftHours * 60 - snapshot.breakMinutes);
+    const idealCapacity = projection.bottleneck > 0 ? Math.floor(netMinutes * 60 / projection.bottleneck) : 0;
+    const availableCapacity = Math.floor(idealCapacity * snapshot.availability / 100);
+    const requiredAvailable = snapshot.target > 0 && snapshot.yieldRate > 0 ? Math.ceil(snapshot.target / (snapshot.yieldRate / 100)) : 0;
+    const requiredIdeal = requiredAvailable > 0 && snapshot.availability > 0 ? Math.ceil(requiredAvailable / (snapshot.availability / 100)) : 0;
+    const requiredCycle = requiredIdeal > 0 ? Math.floor(netMinutes * 60 / requiredIdeal) : 0;
+    const targetFeasible = snapshot.target === 0 || (requiredCycle >= 20 && snapshot.availability > 0 && snapshot.yieldRate > 0);
     const safeCell = value => String(value).replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
     const rows = initialStations.map((station, index) =>
       `| ${safeCell(station.name)} | ${snapshot.cycleTimes[index]} s |`
@@ -552,6 +559,12 @@ export default function AssemblyLineSimulator() {
       `- Target status: **${projection.gap >= 0 ? "Achieved" : "Below target"}**`,
       `- Target attainment: **${projection.attainmentPercent.toFixed(1)}%**`,
       `- Target gap: **${projection.gap > 0 ? "+" : ""}${projection.gap} vehicles**`,
+      `- Ideal capacity: **${idealCapacity} vehicles**`,
+      `- Available capacity: **${availableCapacity} vehicles**`,
+      `- Net production time: **${netMinutes} minutes**`,
+      `- Target takt before losses: **${snapshot.target > 0 ? (netMinutes * 60 / snapshot.target).toFixed(1) + " seconds" : "Not set"}**`,
+      `- Required cycle after availability and quality losses: **${snapshot.target > 0 && targetFeasible ? requiredCycle + " seconds" : "Not feasible / no target"}**`,
+      `- Target pace feasibility: **${snapshot.target === 0 ? "No target selected" : targetFeasible ? "Feasible within 20-second minimum" : "Not feasible within 20-second minimum"}**`,
       `- Bottleneck station: **${safeCell(projection.bottleneckName)}**`,
       `- Bottleneck cycle time: **${projection.bottleneck} seconds**`,
       "",
@@ -592,6 +605,13 @@ export default function AssemblyLineSimulator() {
     }
     const snapshot = item.snapshot;
     const projection = getScenarioProjection(snapshot);
+    const netMinutes = Math.max(0, snapshot.shiftHours * 60 - snapshot.breakMinutes);
+    const idealCapacity = projection.bottleneck > 0 ? Math.floor(netMinutes * 60 / projection.bottleneck) : 0;
+    const availableCapacity = Math.floor(idealCapacity * snapshot.availability / 100);
+    const requiredAvailable = snapshot.target > 0 && snapshot.yieldRate > 0 ? Math.ceil(snapshot.target / (snapshot.yieldRate / 100)) : 0;
+    const requiredIdeal = requiredAvailable > 0 && snapshot.availability > 0 ? Math.ceil(requiredAvailable / (snapshot.availability / 100)) : 0;
+    const requiredCycle = requiredIdeal > 0 ? Math.floor(netMinutes * 60 / requiredIdeal) : 0;
+    const targetFeasible = snapshot.target === 0 || (requiredCycle >= 20 && snapshot.availability > 0 && snapshot.yieldRate > 0);
     const escapeHtml = value => String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
     const stationRows = initialStations.map((station, index) => `<tr><th scope="row">${escapeHtml(station.name)}</th><td>${snapshot.cycleTimes[index]} s</td></tr>`).join("");
     const html = `<!doctype html>
@@ -618,6 +638,12 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 <div class="metric"><span>Target attainment</span><strong>${projection.attainmentPercent.toFixed(1)}%</strong></div>
 <div class="metric"><span>Bottleneck station</span><strong style="font-size:19px">${escapeHtml(projection.bottleneckName)}</strong></div>
 <div class="metric"><span>Bottleneck cycle time</span><strong>${projection.bottleneck} s</strong></div>
+<div class="metric"><span>Ideal capacity</span><strong>${idealCapacity}</strong></div>
+<div class="metric"><span>Available capacity</span><strong>${availableCapacity}</strong></div>
+<div class="metric"><span>Net production time</span><strong>${netMinutes} min</strong></div>
+<div class="metric"><span>Target takt before losses</span><strong>${snapshot.target > 0 ? (netMinutes * 60 / snapshot.target).toFixed(1) + " s" : "N/A"}</strong></div>
+<div class="metric"><span>Required cycle after losses</span><strong style="font-size:19px">${snapshot.target > 0 && targetFeasible ? requiredCycle + " s" : "Not feasible"}</strong></div>
+<div class="metric"><span>Target pace feasibility</span><strong style="font-size:17px">${snapshot.target === 0 ? "No target" : targetFeasible ? "Feasible" : "Not feasible"}</strong></div>
 </div>
 <h2>Operating assumptions</h2><div class="table-wrap"><table><tbody>
 <tr><th>Shift hours</th><td>${snapshot.shiftHours}</td></tr><tr><th>Break minutes</th><td>${snapshot.breakMinutes}</td></tr>
