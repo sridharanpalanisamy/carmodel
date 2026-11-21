@@ -316,3 +316,11 @@
   .main-nav.open{display:flex}
   .main-nav a{font-size:12px}
 }
+
+/* Clear keyboard focus across shared navigation and page controls. */
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{
+  outline:3px solid var(--orange);
+  outline-offset:4px;
+  border-radius:2px;
+}
+.menu-toggle:focus-visible{outline-offset:2px}
