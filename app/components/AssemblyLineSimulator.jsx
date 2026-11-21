@@ -929,6 +929,8 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     const b = second.snapshot;
     const projectionA = getScenarioProjection(a);
     const projectionB = getScenarioProjection(b);
+    const capacityA = getScenarioCapacityMetrics(a, projectionA);
+    const capacityB = getScenarioCapacityMetrics(b, projectionB);
     const conditions = { shiftHours: a.shiftHours, breakMinutes: a.breakMinutes, availability: a.availability, yieldRate: a.yieldRate, target: a.target };
     const normalizedA = getScenarioProjection({ ...a, ...conditions });
     const normalizedB = getScenarioProjection({ ...b, ...conditions });
@@ -971,6 +973,13 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 <tr><th>Good vehicles / shift</th><td>${projectionA.good}</td><td>${projectionB.good}</td><td>${signed(projectionB.good-projectionA.good)}</td></tr>
 <tr><th>Target</th><td>${a.target}</td><td>${b.target}</td><td>${signed(b.target-a.target)}</td></tr>
 <tr><th>Target gap</th><td>${projectionA.good-a.target}</td><td>${projectionB.good-b.target}</td><td>${signed((projectionB.good-b.target)-(projectionA.good-a.target))}</td></tr>
+<tr><th>Target attainment</th><td>${projectionA.attainmentPercent.toFixed(1)}%</td><td>${projectionB.attainmentPercent.toFixed(1)}%</td><td>${signed(Number((projectionB.attainmentPercent-projectionA.attainmentPercent).toFixed(1)))} percentage points</td></tr>
+<tr><th>Ideal capacity</th><td>${capacityA.ideal}</td><td>${capacityB.ideal}</td><td>${signed(capacityB.ideal-capacityA.ideal)}</td></tr>
+<tr><th>Available capacity</th><td>${capacityA.available}</td><td>${capacityB.available}</td><td>${signed(capacityB.available-capacityA.available)}</td></tr>
+<tr><th>Net production time</th><td>${capacityA.netMinutes} min</td><td>${capacityB.netMinutes} min</td><td>${signed(capacityB.netMinutes-capacityA.netMinutes)} min</td></tr>
+<tr><th>Target takt (before losses)</th><td>${capacityA.taktSeconds.toFixed(1)} s</td><td>${capacityB.taktSeconds.toFixed(1)} s</td><td>${signed(Number((capacityB.taktSeconds-capacityA.taktSeconds).toFixed(1)))} s</td></tr>
+<tr><th>Required bottleneck cycle after losses</th><td>${capacityA.requiredCycle || "N/A"} s</td><td>${capacityB.requiredCycle || "N/A"} s</td><td>${capacityA.requiredCycle && capacityB.requiredCycle ? signed(capacityB.requiredCycle-capacityA.requiredCycle)+" s" : "N/A"}</td></tr>
+<tr><th>Target pace feasibility (20 s minimum)</th><td>${capacityA.feasible ? "Feasible" : "Not feasible"}</td><td>${capacityB.feasible ? "Feasible" : "Not feasible"}</td><td>—</td></tr>
 <tr><th>Bottleneck cycle</th><td>${projectionA.bottleneck} s</td><td>${projectionB.bottleneck} s</td><td>${signed(projectionB.bottleneck-projectionA.bottleneck)} s</td></tr>
 </tbody></table></div>
 <h2>Operating assumptions</h2>
