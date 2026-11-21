@@ -328,6 +328,7 @@ export default function AssemblyLineSimulator() {
   const [activeProductId, setActiveProductId] = useState("");
   const [departmentDataReady, setDepartmentDataReady] = useState(false);
   const [departmentDataMessage, setDepartmentDataMessage] = useState("Department settings and product records are saved in this browser.");
+  const [departmentDataIsSample, setDepartmentDataIsSample] = useState(true);
   const updateDepartment = (id, field, value) => {
     const numeric = Number(value);
     if (!Number.isFinite(numeric)) return;
@@ -363,6 +364,7 @@ export default function AssemblyLineSimulator() {
       const saved = window.localStorage.getItem("factory-department-operations-v1");
       if (saved) {
         const parsed = JSON.parse(saved);
+        if (typeof parsed.isSampleData === "boolean") setDepartmentDataIsSample(parsed.isSampleData);
         if (Array.isArray(parsed.departments)) {
           const validById = new Map(parsed.departments.filter(item => item && typeof item.id === "string").map(item => [item.id, item]));
           setDepartments(initialDepartments.map(base => {
@@ -401,16 +403,17 @@ export default function AssemblyLineSimulator() {
     if (!departmentDataReady) return;
     try {
       window.localStorage.setItem("factory-department-operations-v1", JSON.stringify({
-        departments, trackedProducts, activeProductId, savedAt: new Date().toISOString()
+        departments, trackedProducts, activeProductId, isSampleData: departmentDataIsSample, savedAt: new Date().toISOString()
       }));
       setDepartmentDataMessage("Saved on this device · department settings and product timestamps will remain after refresh.");
     } catch {
       setDepartmentDataMessage("Browser storage is unavailable or full. Export or record important production data separately.");
     }
-  }, [departmentDataReady, departments, trackedProducts, activeProductId]);
+  }, [departmentDataReady, departments, trackedProducts, activeProductId, departmentDataIsSample]);
 
   const restoreDepartmentSamples = () => {
     setDepartments(initialDepartments);
+    setDepartmentDataIsSample(true);
     setTrackedProducts([]);
     setActiveProductId("");
     setProductCodeInput("");
@@ -422,7 +425,7 @@ export default function AssemblyLineSimulator() {
     const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
       "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
     })[char]);
-    const isSample = /illustrative|sample/i.test(departmentDataMessage);
+    const isSample = departmentDataIsSample;
     const departmentRows = departments.map((department,index) => {
       const good = Math.max(0,department.actual-department.rejected);
       const capacity = department.cycleSeconds > 0 ? Math.floor(Math.max(0,department.shiftHours*3600-department.breakMinutes*60-department.downtime*60)/department.cycleSeconds) : 0;
@@ -556,6 +559,7 @@ export default function AssemblyLineSimulator() {
         importedById.set(id,fields);
       });
       setDepartments(current => current.map(item => importedById.has(item.id) ? {...item,...importedById.get(item.id)} : item));
+      setDepartmentDataIsSample(false);
       setDepartmentDataMessage("Imported " + importedById.size + " department row(s) from " + file.name + ". Departments omitted from the CSV kept their existing values.");
     } catch (error) {
       setDepartmentDataMessage(error.message || "Could not import department CSV. Existing values were not changed.");
