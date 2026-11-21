@@ -2435,3 +2435,27 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-stock-ok{background:#eaf5ed;color:#286341}
 @media(max-width:900px){.factory-inventory-register .factory-issue-form{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.factory-inventory-register .factory-issue-form{grid-template-columns:1fr}.factory-inventory-summary{grid-template-columns:1fr}}
+
+
+/* Reference dashboard follows the shared inner-page template; chart visuals remain independent. */
+.ford-command-dashboard{
+  background:var(--paper);
+  color:var(--ink);
+  padding-top:34px!important;
+  padding-bottom:56px;
+}
+.ford-command-dashboard>.az-page-heading{
+  max-width:1180px;
+  margin:0 auto 30px;
+  padding:22px 0 8px;
+}
+.ford-command-dashboard>.az-page-heading h1 em{
+  color:var(--orange);
+}
+.ford-command-dashboard+.inner-footer{
+  background:var(--paper);
+}
+@media(max-width:600px){
+  .ford-command-dashboard{padding-top:18px!important}
+  .ford-command-dashboard>.az-page-heading{padding-top:14px}
+}
