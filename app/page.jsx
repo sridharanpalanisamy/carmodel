@@ -1,5 +1,28 @@
 import LegacyPage from "./components/LegacyPage";
 import FordHome3DMount from "./components/FordHome3DMount";
-const markup = "<main class=\\"page-shell home-3d-only\\">\n<section class=\\"turntable-panel home-model-t-panel\\" aria-labelledby=\\"turntableTitle\\">\n<div class=\\"turntable-heading\\"><div><span class=\\"eyebrow\\">LOCAL INTERACTIVE 3D SHOWROOM</span><h2 id=\\"turntableTitle\\">Ford icons<br><em>from every angle.</em></h2><p>The 1967 Mustang Fastback is selected by default. Choose another available Ford model, drag to rotate and scroll or pinch to zoom.</p></div><span class=\\"turntable-mark\\">3D</span></div>\n<div class=\\"viewer-toolbar\\"><span class=\\"viewer-count\\">LOCAL FORD 3D SHOWROOM</span><span id=\\"viewerStatus\\" aria-live=\\"polite\\">Loading the local 3D model…</span></div>\n<div class=\\"viewer-frame\\"><div id=\\"homeModelTGLBMount\\"></div></div>\n<div class=\\"viewer-credit\\"><span>The Mustang is the default 3D model. Other available Ford models can be selected above. Models are hosted locally; no third-party viewer is used.</span></div>\n<p class=\\"model-disclaimer\\">Community-created 3D models; not official Ford factory scans. Creator credits and licenses are listed with each model.</p>\n</section>\n</main>";
-const scripts = ["/carmodel/index.js","/carmodel/assets/js/local-3d-viewer.js"];
-export default function Page() { return <><LegacyPage markup={markup} scripts={scripts} /><FordHome3DMount /></>; }
+
+const markup = `
+<main class="page-shell home-3d-only">
+  <section class="turntable-panel home-model-t-panel" aria-labelledby="turntableTitle">
+    <div class="turntable-heading">
+      <div>
+        <span class="eyebrow">LOCAL INTERACTIVE 3D SHOWROOM</span>
+        <h2 id="turntableTitle">Ford icons<br><em>from every angle.</em></h2>
+        <p>The 1967 Mustang Fastback is selected by default. Choose another available Ford model, drag to rotate and scroll or pinch to zoom.</p>
+      </div>
+      <span class="turntable-mark">3D</span>
+    </div>
+    <div class="viewer-toolbar">
+      <span class="viewer-count">LOCAL FORD 3D SHOWROOM</span>
+      <span id="viewerStatus" aria-live="polite">Loading the local 3D model…</span>
+    </div>
+    <div class="viewer-frame"><div id="homeModelTGLBMount"></div></div>
+    <div class="viewer-credit"><span>The Mustang is the default 3D model. Other available Ford models can be selected above. Models are hosted locally; no third-party viewer is used.</span></div>
+    <p class="model-disclaimer">Community-created 3D models; not official Ford factory scans. Creator credits and licenses are listed with each model.</p>
+  </section>
+</main>`;
+const scripts = ["/carmodel/index.js", "/carmodel/assets/js/local-3d-viewer.js"];
+
+export default function Page() {
+  return <><LegacyPage markup={markup} scripts={scripts} /><FordHome3DMount /></>;
+}
