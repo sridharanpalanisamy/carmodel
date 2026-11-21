@@ -182,6 +182,23 @@ function getScenarioCapacityMetrics(snapshot, projection = getScenarioProjection
   };
 }
 
+function buildImprovementActions(stations) {
+  const sorted = [...stations];
+  const bottleneck = sorted.reduce((slowest, station) => station.avgCycleSeconds > slowest.avgCycleSeconds ? station : slowest, sorted[0]);
+  const downtimeLeader = sorted.reduce((highest, station) => station.downtime > highest.downtime ? station : highest, sorted[0]);
+  const defectLeader = sorted.reduce((highest, station) => station.rejected > highest.rejected ? station : highest, sorted[0]);
+  const dueDate = days => {
+    const date = new Date();
+    date.setDate(date.getDate() + days);
+    return date.toISOString().slice(0, 10);
+  };
+  return [
+    { id: "cycle-time", priority: "High", issue: bottleneck.name + " has the longest average cycle time (" + bottleneck.avgCycleSeconds + " sec).", action: "Observe the work cycle, identify waiting or repeat handling, and trial a balanced work sequence.", owner: "", dueDate: dueDate(7), status: "Not started", kpi: "Average cycle time at " + bottleneck.name },
+    { id: "downtime", priority: "High", issue: downtimeLeader.name + " records the highest downtime (" + downtimeLeader.downtime + " min).", action: "Review stoppage logs and verify the main downtime cause; agree a preventive action with maintenance.", owner: "", dueDate: dueDate(14), status: "Not started", kpi: "Downtime minutes at " + downtimeLeader.name },
+    { id: "quality", priority: "Medium", issue: defectLeader.name + " records the most rejects (" + defectLeader.rejected + ").", action: "Separate defects by type, confirm root cause and introduce a documented check at the source.", owner: "", dueDate: dueDate(14), status: "Not started", kpi: "Reject count at " + defectLeader.name }
+  ];
+}
+
 export default function AssemblyLineSimulator() {
   const [mount, setMount] = useState(null);
   const [dashboardNow, setDashboardNow] = useState(() => new Date());
@@ -194,6 +211,9 @@ export default function AssemblyLineSimulator() {
   const [weeklyProduction, setWeeklyProduction] = useState(initialWeeklyProduction);
   const [stationPerformance, setStationPerformance] = useState(initialStationPerformance);
   const [stationDataMessage, setStationDataMessage] = useState("Illustrative station-level sample · upload a station CSV to replace it.");
+  const [improvementActions, setImprovementActions] = useState(() => buildImprovementActions(initialStationPerformance));
+  const [actionExportMessage, setActionExportMessage] = useState("");
+  useEffect(() => { setImprovementActions(buildImprovementActions(stationPerformance)); setActionExportMessage(""); }, [stationPerformance]);
   const stationCsvInput = useRef(null);
   const [selectedProductionDay, setSelectedProductionDay] = useState("Monday");
   const [weeklyDataMessage, setWeeklyDataMessage] = useState("Illustrative sample data · replace with your own weekly CSV when available.");
@@ -1556,6 +1576,31 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     URL.revokeObjectURL(url);
   }
 
+  function updateImprovementAction(id, field, value) {
+    setImprovementActions(current => current.map(action => action.id === id ? { ...action, [field]: value } : action));
+  }
+
+  function addImprovementAction() {
+    setImprovementActions(current => [...current, {
+      id: "custom-" + Date.now(), priority: "Medium", issue: "Add the observed production issue.",
+      action: "Describe the corrective or preventive action.", owner: "", dueDate: "", status: "Not started", kpi: "Define the measure used to confirm improvement"
+    }]);
+  }
+
+  function exportImprovementActions() {
+    const columns = ["Priority", "Issue", "Recommended action", "Owner", "Due date", "Status", "KPI to verify"];
+    const rows = improvementActions.map(action => [action.priority, action.issue, action.action, action.owner, action.dueDate, action.status, action.kpi]);
+    const csv = [columns, ...rows].map(row => row.map(value => {
+      const cell = String(value ?? "");
+      return /[",\\n]/.test(cell) ? '"' + cell.replace(/"/g, '""') + '"' : cell;
+    }).join(",")).join("\\n");
+    const url = URL.createObjectURL(new Blob(["\\uFEFF" + csv], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url; link.download = "manufacturing-improvement-action-register.csv";
+    document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+    setActionExportMessage("Action register CSV prepared. Review owners, dates and actions before sharing.");
+  }
+
   function downloadClientReviewReport() {
     const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -2056,6 +2101,59 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                 })}</tbody>
               </table>
             </div>
+            <section className="mt-5 rounded-xl border border-indigo-200 bg-indigo-50/30 p-4" aria-label="Manufacturing improvement action register">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <span className="text-xs font-semibold uppercase tracking-wide text-indigo-800">CONTINUOUS IMPROVEMENT / ACTION TRACKING</span>
+                  <h4 className="mt-1 text-lg font-semibold text-slate-900">Improvement action register</h4>
+                  <p className="mt-1 max-w-3xl text-sm leading-relaxed text-slate-600">Starter actions are generated from the current station dataset. Edit the issue, action, owner, due date and KPI with the factory team; export the agreed register for follow-up.</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" className="line-reset" onClick={addImprovementAction}>Add action +</button>
+                  <button type="button" className="line-reset" onClick={exportImprovementActions}>Export action register ↓</button>
+                </div>
+              </div>
+              <div className="mt-3 space-y-3">
+                {improvementActions.map((action, index) => (
+                  <article key={action.id} className="rounded-xl border border-slate-200 bg-white p-3 sm:p-4">
+                    <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                      <strong className="text-sm text-slate-900">Action {String(index + 1).padStart(2, "0")}</strong>
+                      <div className="flex items-center gap-2">
+                        <label className="sr-only" htmlFor={action.id + "-priority"}>Priority</label>
+                        <select id={action.id + "-priority"} value={action.priority} onChange={event => updateImprovementAction(action.id, "priority", event.target.value)} className="rounded-lg border border-slate-300 px-2 py-1.5 text-xs text-slate-700">
+                          <option>High</option><option>Medium</option><option>Low</option>
+                        </select>
+                        <label className="sr-only" htmlFor={action.id + "-status"}>Action status</label>
+                        <select id={action.id + "-status"} value={action.status} onChange={event => updateImprovementAction(action.id, "status", event.target.value)} className="rounded-lg border border-slate-300 px-2 py-1.5 text-xs text-slate-700">
+                          <option>Not started</option><option>In progress</option><option>Blocked</option><option>Completed</option>
+                        </select>
+                        {action.id.startsWith("custom-") && <button type="button" className="text-xs font-medium text-rose-700" onClick={() => setImprovementActions(current => current.filter(item => item.id !== action.id))}>Remove</button>}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                      <label className="block text-xs font-medium text-slate-600">Observed issue
+                        <textarea rows={2} value={action.issue} onChange={event => updateImprovementAction(action.id, "issue", event.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-800 focus:border-indigo-500 focus:outline-none" />
+                      </label>
+                      <label className="block text-xs font-medium text-slate-600">Recommended action
+                        <textarea rows={2} value={action.action} onChange={event => updateImprovementAction(action.id, "action", event.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-800 focus:border-indigo-500 focus:outline-none" />
+                      </label>
+                      <label className="block text-xs font-medium text-slate-600">Responsible owner / team
+                        <input value={action.owner} onChange={event => updateImprovementAction(action.id, "owner", event.target.value)} placeholder="Enter person or department" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-800 focus:border-indigo-500 focus:outline-none" />
+                      </label>
+                      <label className="block text-xs font-medium text-slate-600">KPI to verify
+                        <input value={action.kpi} onChange={event => updateImprovementAction(action.id, "kpi", event.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-800 focus:border-indigo-500 focus:outline-none" />
+                      </label>
+                    </div>
+                    <div className="mt-3 flex flex-wrap items-center gap-3">
+                      <label className="text-xs font-medium text-slate-600">Due date <input type="date" value={action.dueDate} onChange={event => updateImprovementAction(action.id, "dueDate", event.target.value)} className="ml-2 rounded-lg border border-slate-300 px-2 py-1.5 text-xs text-slate-700" /></label>
+                      <span className="text-xs text-slate-500">Confirm the baseline and target value with the plant team before closing this action.</span>
+                    </div>
+                  </article>
+                ))}
+              </div>
+              {actionExportMessage && <p className="mt-3 text-xs text-emerald-700" role="status">{actionExportMessage}</p>}
+              <p className="mt-3 text-xs leading-relaxed text-slate-500">These are suggested starting points based on the uploaded station figures, not verified root causes. Assign an owner and agree a measurable target before treating an action as approved.</p>
+            </section>
             <section className="mt-5 rounded-xl border border-slate-200 p-4" aria-label="Seven station production flow">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
