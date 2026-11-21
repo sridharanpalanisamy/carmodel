@@ -1556,6 +1556,42 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     URL.revokeObjectURL(url);
   }
 
+  function downloadClientReviewReport() {
+    const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[char]);
+    const isSample = /illustrative|sample/i.test(stationDataMessage);
+    const rows = stationPerformance.map(station => {
+      const good = Math.max(0, station.processed - station.rejected);
+      const rejectRate = station.processed > 0 ? (station.rejected / station.processed * 100).toFixed(1) : "0.0";
+      return "<tr><td>" + escapeHtml(station.name) + "</td><td>" + station.processed + "</td><td>" + good + "</td><td>" + station.rejected + "</td><td>" + rejectRate + "%</td><td>" + station.downtime + " min</td><td>" + escapeHtml(formatDuration(station.avgCycleSeconds)) + "</td><td>" + escapeHtml(station.defectCategory || "Not specified") + "</td><td>" + escapeHtml(station.downtimeCause || "Not specified") + "</td></tr>";
+    }).join("");
+    const statusLabel = isSample ? "ILLUSTRATIVE SAMPLE DATA — NOT VERIFIED PLANT RESULTS" : "USER-PROVIDED DATA — NOT INDEPENDENTLY VERIFIED";
+    const warning = isSample
+      ? "This report contains illustrative sample data; replace it with verified factory records before presenting it as actual performance."
+      : "The uploaded values are user-provided and have not been independently verified.";
+    const html = [
+      "<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>Manufacturing Station Performance - Client Review</title>",
+      "<style>*{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#172033;margin:0;background:#f3f5f8}.page{max-width:1180px;margin:32px auto;background:#fff;padding:36px;border-radius:14px}header{display:flex;justify-content:space-between;gap:20px;border-bottom:2px solid #dce3ed;padding-bottom:18px}h1{font-size:25px;margin:5px 0 8px}.eyebrow{font-size:11px;letter-spacing:1.5px;color:#52627a;font-weight:700}.subtle{color:#637188;font-size:13px;line-height:1.5}.status{display:inline-block;padding:7px 10px;border-radius:20px;background:#fff3d8;color:#8a5a00;font-size:11px;font-weight:700}.metrics,.focus{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}.metric,.focus article{border:1px solid #e1e7ef;border-radius:9px;padding:14px}.metric span{display:block;color:#64748b;font-size:12px}.metric strong{display:block;font-size:24px;margin-top:6px}.section{margin-top:24px}h2{font-size:17px;margin:0 0 10px}.focus{grid-template-columns:repeat(3,1fr)}.focus b{font-size:13px}.focus p{font-size:12px;color:#52627a;line-height:1.5}table{width:100%;border-collapse:collapse;font-size:11px;margin-top:12px}th,td{border:1px solid #dfe5ed;padding:9px 7px;text-align:left;vertical-align:top}th{background:#edf2f7;font-size:10px}ul{padding-left:20px;color:#52627a;font-size:13px;line-height:1.7}.note{margin-top:18px;padding:13px;background:#fff8e8;border-left:3px solid #d89b27;font-size:11px;line-height:1.6;color:#68501f}.foot{border-top:1px solid #e1e7ef;margin-top:24px;padding-top:12px;color:#718096;font-size:10px}.actions{display:flex;gap:8px}button{border:0;border-radius:7px;padding:10px 14px;background:#183b63;color:white;font-weight:700;cursor:pointer}@media(max-width:760px){.page{margin:0;padding:18px}.metrics{grid-template-columns:repeat(2,1fr)}.focus{grid-template-columns:1fr}header{display:block}table{font-size:9px}th,td{padding:5px 4px}}@media print{body{background:white}.page{max-width:none;margin:0;padding:10mm}.actions{display:none}thead{display:table-header-group}tr{break-inside:avoid}@page{size:A4 landscape;margin:10mm}}</style></head><body><main class='page'>",
+      "<header><div><div class='eyebrow'>MANUFACTURING PERFORMANCE / CLIENT REVIEW</div><h1>Seven-Station Production Review</h1><p class='subtle'>Station-level output, quality, cycle time and downtime overview</p><span class='status'>" + statusLabel + "</span></div><div class='actions'><button onclick='window.print()'>Print / Save as PDF</button></div></header>",
+      "<section class='metrics'><div class='metric'><span>Station operations processed</span><strong>" + stationPerformanceSummary.processed.toLocaleString("en-IN") + "</strong></div><div class='metric'><span>Station rejection records</span><strong>" + stationPerformanceSummary.rejected.toLocaleString("en-IN") + "</strong></div><div class='metric'><span>Recorded downtime</span><strong>" + stationPerformanceSummary.downtime + " min</strong></div><div class='metric'><span>Calculated station yield</span><strong>" + stationPerformanceSummary.yieldPercent.toFixed(1) + "%</strong></div></section>",
+      "<section class='section'><h2>Management review priorities</h2><div class='focus'><article><b>Cycle-time focus · " + escapeHtml(stationPerformanceSummary.bottleneck.name) + "</b><p>Longest average cycle time: " + escapeHtml(formatDuration(stationPerformanceSummary.bottleneck.avgCycleSeconds)) + ". Validate the measured cycle and check for waiting, changeover or equipment constraints.</p></article><article><b>Downtime focus · " + escapeHtml(stationPerformanceSummary.downtimeLeader.name) + "</b><p>" + stationPerformanceSummary.downtimeLeader.downtime + " minutes recorded. Review the stated cause: " + escapeHtml(stationPerformanceSummary.downtimeLeader.downtimeCause || "Not specified") + ".</p></article><article><b>Quality focus · " + escapeHtml(stationPerformanceSummary.topDefect[0]) + "</b><p>" + stationPerformanceSummary.topDefect[1] + " rejection records associated with this category. Confirm classification and investigate root cause.</p></article></div></section>",
+      "<section class='section'><h2>Station-by-station performance</h2><table><thead><tr><th>Manufacturing station</th><th>Processed</th><th>Good output*</th><th>Rejected</th><th>Reject rate</th><th>Downtime</th><th>Avg. cycle time</th><th>Defect category</th><th>Downtime cause</th></tr></thead><tbody>" + rows + "</tbody></table><p class='subtle'>*Good output is calculated as processed minus rejected at each station.</p></section>",
+      "<section class='section'><h2>Recommended discussion and next actions</h2><ul><li>Confirm all seven station records cover the same shift, day or reporting period.</li><li>Validate the slowest station's average cycle time and identify the constraint.</li><li>Review downtime events and record duration, frequency and corrective action.</li><li>Confirm defect counts and root causes with quality inspection records.</li><li>Agree an owner, target date and measurable KPI for each improvement action.</li></ul></section>",
+      "<div class='note'><b>Data interpretation:</b> Processed and rejected totals are station-level records. The same physical unit may be counted at multiple stations, so these totals must not be interpreted as unique vehicles. Station yield is a combined station-record calculation, not final-line first-pass yield. Queue differences are estimates unless unit-level movement and opening/closing WIP are recorded. " + warning + "</div>",
+      "<div class='foot'>Prepared from the current dashboard dataset · Reporting period should be confirmed with the data owner before client sign-off.</div></main></body></html>"
+    ].join("");
+    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "manufacturing-client-review-report.html";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
   function downloadStationCsvTemplate() {
     const rows = [
       ["Station", "Processed", "Rejected", "Downtime", "AvgCycleTime", "DefectCategory", "DowntimeCause"],
@@ -1956,6 +1992,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                 <input ref={stationCsvInput} type="file" accept=".csv,text/csv" onChange={importStationPerformanceCsv} hidden aria-label="Upload station performance CSV" />
                 <button type="button" className="line-reset" onClick={exportStationPerformanceCsv}>Export station CSV ↓</button>
                 <button type="button" className="line-reset" onClick={downloadStationCsvTemplate}>Download CSV template ↓</button>
+                <button type="button" className="line-reset" onClick={downloadClientReviewReport}>Download client report ↓</button>
                 <button type="button" className="line-reset" onClick={() => { setStationPerformance(initialStationPerformance); setStationDataMessage("Restored illustrative station-level sample data."); }}>Restore sample</button>
               </div>
             </div>
