@@ -117,6 +117,18 @@ const initialStationPerformance = [
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
 
+function formatDuration(totalSeconds) {
+  const safeSeconds = Math.max(0, Math.floor(Number(totalSeconds) || 0));
+  const hours = Math.floor(safeSeconds / 3600);
+  const minutes = Math.floor((safeSeconds % 3600) / 60);
+  const seconds = safeSeconds % 60;
+  return [hours, minutes, seconds].map(value => String(value).padStart(2, "0")).join(":");
+}
+
+function formatMinutesAsClock(totalMinutes) {
+  return formatDuration(Math.max(0, Number(totalMinutes) || 0) * 60);
+}
+
 function isValidSavedScenario(value) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const inRange = (number, min, max) => Number.isFinite(number) && number >= min && number <= max;
@@ -172,9 +184,17 @@ function getScenarioCapacityMetrics(snapshot, projection = getScenarioProjection
 
 export default function AssemblyLineSimulator() {
   const [mount, setMount] = useState(null);
+  const [dashboardNow, setDashboardNow] = useState(() => new Date());
+  useEffect(() => {
+    const timer = window.setInterval(() => setDashboardNow(new Date()), 1000);
+    return () => window.clearInterval(timer);
+  }, []);
   useEffect(() => { setMount(document.getElementById("lineSimulatorMount")); }, []);
   const [stations, setStations] = useState(initialStations);
-  const [weeklyProduction, setWeeklyProduction] = useState(initialWeeklyProduction);\n  const [stationPerformance, setStationPerformance] = useState(initialStationPerformance);\n  const [stationDataMessage, setStationDataMessage] = useState("Illustrative station-level sample · upload a station CSV to replace it.");\n  const stationCsvInput = useRef(null);
+  const [weeklyProduction, setWeeklyProduction] = useState(initialWeeklyProduction);
+  const [stationPerformance, setStationPerformance] = useState(initialStationPerformance);
+  const [stationDataMessage, setStationDataMessage] = useState("Illustrative station-level sample · upload a station CSV to replace it.");
+  const stationCsvInput = useRef(null);
   const [selectedProductionDay, setSelectedProductionDay] = useState("Monday");
   const [weeklyDataMessage, setWeeklyDataMessage] = useState("Illustrative sample data · replace with your own weekly CSV when available.");
   const weeklyCsvInput = useRef(null);
@@ -1739,7 +1759,14 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
           <h2 id="lineSimulatorTitle">Test the <em>production line.</em></h2>
           <p>Change station cycle times and shift conditions to understand how a bottleneck affects the output of a balanced production line.</p>
         </div>
-        <button className="line-reset" type="button" onClick={reset}>Reset example ↺</button>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-right shadow-sm" aria-label="Live local dashboard clock">
+            <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Live local time</span>
+            <strong className="block font-mono text-xl tabular-nums text-slate-900">{dashboardNow.toLocaleTimeString("en-GB", { hour12: false })}</strong>
+            <span className="block text-[10px] text-slate-500">{dashboardNow.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</span>
+          </div>
+          <button className="line-reset" type="button" onClick={reset}>Reset example ↺</button>
+        </div>
       </div>
 
       <div className="line-sim-layout">
@@ -1791,8 +1818,8 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
           </div>
           <div className="line-result-list">
             <div><span>Slowest station</span><strong>{result.bottleneckName}</strong></div>
-            <div><span>Bottleneck cycle time</span><strong>{result.bottleneck} sec / vehicle</strong></div>
-            <div><span>Net production time</span><strong>{result.netMinutes} minutes</strong></div>
+            <div><span>Bottleneck cycle time</span><strong>{formatDuration(result.bottleneck)} / vehicle</strong></div>
+            <div><span>Net production time</span><strong>{formatMinutesAsClock(result.netMinutes)} ({result.netMinutes} min)</strong></div>
             <div><span>Ideal line capacity</span><strong>{result.ideal} vehicles</strong></div>
             <div><span>After availability</span><strong>{result.available} vehicles</strong></div>
             <div><span>Good output per hour</span><strong>{result.hourly.toFixed(1)} vehicles</strong></div>
@@ -1899,12 +1926,12 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
             <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
               <div className="rounded-xl border border-amber-200 bg-amber-50/60 p-3">
                 <span className="text-xs font-semibold uppercase tracking-wide text-amber-800">Slowest recorded station</span>
-                <div className="mt-1 flex items-baseline justify-between gap-2"><strong className="text-slate-900">{stationPerformanceSummary.bottleneck.name}</strong><strong className="text-lg text-slate-900">{stationPerformanceSummary.bottleneck.avgCycleSeconds}s</strong></div>
+                <div className="mt-1 flex items-baseline justify-between gap-2"><strong className="text-slate-900">{stationPerformanceSummary.bottleneck.name}</strong><strong className="text-lg text-slate-900">{formatDuration(stationPerformanceSummary.bottleneck.avgCycleSeconds)}</strong></div>
                 <p className="mt-1 text-xs text-slate-600">Highest average cycle time in this station dataset.</p>
               </div>
               <div className="rounded-xl border border-sky-200 bg-sky-50/60 p-3">
                 <span className="text-xs font-semibold uppercase tracking-wide text-sky-800">Highest recorded downtime</span>
-                <div className="mt-1 flex items-baseline justify-between gap-2"><strong className="text-slate-900">{stationPerformanceSummary.downtimeLeader.name}</strong><strong className="text-lg text-slate-900">{stationPerformanceSummary.downtimeLeader.downtime} min</strong></div>
+                <div className="mt-1 flex items-baseline justify-between gap-2"><strong className="text-slate-900">{stationPerformanceSummary.downtimeLeader.name}</strong><strong className="text-lg text-slate-900">{formatMinutesAsClock(stationPerformanceSummary.downtimeLeader.downtime)}</strong></div>
                 <p className="mt-1 text-xs text-slate-600">Prioritize this station when reviewing stoppage causes.</p>
               </div>
             </div>
@@ -1919,8 +1946,8 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                     <td className="px-3 py-3 text-right tabular-nums">{station.processed}</td>
                     <td className="px-3 py-3 text-right tabular-nums">{station.rejected}</td>
                     <td className="px-3 py-3 text-right tabular-nums">{rejectRate.toFixed(1)}%</td>
-                    <td className="px-3 py-3 text-right tabular-nums">{station.downtime} min</td>
-                    <td className="px-3 py-3 text-right tabular-nums">{station.avgCycleSeconds} sec</td>
+                    <td className="px-3 py-3 text-right tabular-nums">{formatMinutesAsClock(station.downtime)}</td>
+                    <td className="px-3 py-3 text-right tabular-nums">{formatDuration(station.avgCycleSeconds)}</td>
                   </tr>;
                 })}</tbody>
               </table>
@@ -1941,7 +1968,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
               <strong className="text-sm text-slate-900">Improvement review priorities</strong>
               <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-slate-700">
                 <li>Review <strong>{stationPerformanceSummary.bottleneck.name}</strong> first: it has the longest average cycle time ({stationPerformanceSummary.bottleneck.avgCycleSeconds}s).</li>
-                <li>Investigate <strong>{stationPerformanceSummary.downtimeLeader.name}</strong> and its recorded cause, <strong>{stationPerformanceSummary.downtimeLeader.downtimeCause || "Not specified"}</strong> ({stationPerformanceSummary.downtimeLeader.downtime} min).</li>
+                <li>Investigate <strong>{stationPerformanceSummary.downtimeLeader.name}</strong> and its recorded cause, <strong>{stationPerformanceSummary.downtimeLeader.downtimeCause || "Not specified"}</strong> ({formatMinutesAsClock(stationPerformanceSummary.downtimeLeader.downtime)}).</li>
                 <li>Start defect containment at <strong>{stationPerformance.find(station => station.defectCategory === stationPerformanceSummary.topDefect[0])?.name || "the reporting station"}</strong> for <strong>{stationPerformanceSummary.topDefect[0]}</strong>; verify the root cause before changing the process.</li>
               </ol>
             </div>
@@ -2040,7 +2067,8 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                     <button type="button" className="line-reset" onClick={() => exportNamedScenarioJson(item)}>Export JSON</button>
                     <button type="button" className="line-reset" onClick={() => exportNamedScenarioCsv(item)}>Export CSV</button>
                     <button type="button" className="line-reset" onClick={() => exportNamedScenarioHtml(item)}>Export report</button>
-                    <button type="button" className="line-reset" onClick={() => exportNamedScenarioMarkdown(item)}>Export Markdown</button>\n                    <button type="button" className="line-reset" onClick={() => copyNamedScenarioSummary(item)}>Copy summary</button>
+                    <button type="button" className="line-reset" onClick={() => exportNamedScenarioMarkdown(item)}>Export Markdown</button>
+                    <button type="button" className="line-reset" onClick={() => copyNamedScenarioSummary(item)}>Copy summary</button>
                     <button type="button" className="line-reset" onClick={() => loadNamedScenario(item)}>Load</button>
                     <button type="button" className="line-reset" onClick={() => duplicateNamedScenario(item)} disabled={scenarioLibrary.length >= 10} aria-label={`Duplicate ${item.name}`}>Duplicate</button>
                     {pendingDeleteScenario === item.name ? <>
