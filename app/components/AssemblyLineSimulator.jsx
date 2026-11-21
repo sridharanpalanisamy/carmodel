@@ -325,6 +325,8 @@ export default function AssemblyLineSimulator() {
   const [departments, setDepartments] = useState(initialDepartments);
   const [trackedProducts, setTrackedProducts] = useState([]);
   const [productionHistory, setProductionHistory] = useState([]);
+  const [comparisonOlderId, setComparisonOlderId] = useState("");
+  const [comparisonNewerId, setComparisonNewerId] = useState("");
   const [productCodeInput, setProductCodeInput] = useState("");
   const [activeProductId, setActiveProductId] = useState("");
   const [departmentDataReady, setDepartmentDataReady] = useState(false);
@@ -456,6 +458,16 @@ export default function AssemblyLineSimulator() {
     setDepartmentDataMessage("Production history CSV prepared with " + productionHistory.length + " saved snapshot(s).");
   }
 
+  const compareNewer = productionHistory.find(item => item.id === comparisonNewerId) || productionHistory[0] || null;
+  const compareOlder = productionHistory.find(item => item.id === comparisonOlderId) || productionHistory[1] || null;
+  const comparisonDepartments = compareNewer && compareOlder
+    ? compareNewer.departments.map(current => {
+        const previous = compareOlder.departments.find(item => item.id === current.id);
+        const good = Math.max(0,current.actual-current.rejected);
+        const oldGood = previous ? Math.max(0,previous.actual-previous.rejected) : 0;
+        return { id:current.id,name:current.name,unit:current.unit,targetDelta:current.target-(previous?.target ?? 0),goodDelta:good-oldGood,rejectedDelta:current.rejected-(previous?.rejected ?? 0),downtimeDelta:current.downtime-(previous?.downtime ?? 0),yieldDelta:(current.actual>0?good/current.actual*100:0)-(previous?.actual>0?oldGood/previous.actual*100:0) };
+      })
+    : [];
   const restoreDepartmentSamples = () => {
     setDepartments(initialDepartments);
     setDepartmentDataIsSample(true);
@@ -2346,6 +2358,15 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
             </div>
           </div>
           {productionHistory.length ? <div className="factory-department-summary-table"><table><thead><tr><th>Saved date &amp; time</th><th>Data source</th><th>Departments</th><th>Combined target*</th><th>Good output*</th><th>Rejected records</th><th>Downtime</th></tr></thead><tbody>{productionHistory.map(snapshot=>{const totals=snapshot.departments.reduce((acc,item)=>{const good=Math.max(0,item.actual-item.rejected);return {target:acc.target+item.target,good:acc.good+good,rejected:acc.rejected+item.rejected,downtime:acc.downtime+item.downtime};},{target:0,good:0,rejected:0,downtime:0});return <tr key={snapshot.id}><th>{new Date(snapshot.savedAt).toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"})}</th><td>{snapshot.isSampleData?"Illustrative sample":"User entered"}</td><td>{snapshot.departments.length}</td><td>{totals.target.toLocaleString("en-IN")}</td><td>{totals.good.toLocaleString("en-IN")}</td><td>{totals.rejected.toLocaleString("en-IN")}</td><td>{formatDuration(totals.downtime*60)}</td></tr>;})}</tbody></table><p className="factory-sample-note">*Totals combine different units and process stages. They are workload indicators, not unique finished-vehicle counts. Up to 60 snapshots are retained in this browser.</p></div> : <p className="factory-sample-note">No historical snapshots saved yet. Enter the department figures for a shift, then select “Save current snapshot”.</p>}
+          {productionHistory.length >= 2 ? <div className="factory-department-comparison">
+            <h4>Compare two production snapshots</h4>
+            <p className="factory-sample-note">Select two saved dates to compare each department. Positive downtime or rejection changes mean those figures increased.</p>
+            <div className="factory-department-tools">
+              <label>Earlier snapshot<select value={comparisonOlderId || productionHistory[1]?.id || ""} onChange={event=>setComparisonOlderId(event.target.value)}>{productionHistory.map(item=><option key={item.id} value={item.id}>{new Date(item.savedAt).toLocaleString("en-IN")}</option>)}</select></label>
+              <label>Later snapshot<select value={comparisonNewerId || productionHistory[0]?.id || ""} onChange={event=>setComparisonNewerId(event.target.value)}>{productionHistory.map(item=><option key={item.id} value={item.id}>{new Date(item.savedAt).toLocaleString("en-IN")}</option>)}</select></label>
+            </div>
+            {compareNewer && compareOlder && compareNewer.id !== compareOlder.id ? <div className="factory-department-summary-table"><table><thead><tr><th>Department</th><th>Good output change</th><th>Target change</th><th>Rejected change</th><th>Downtime change</th><th>Yield change</th><th>Assessment</th></tr></thead><tbody>{comparisonDepartments.map(item=><tr key={item.id}><th>{item.name}</th><td className={item.goodDelta>=0?"is-positive":"is-negative"}>{item.goodDelta>0?"+":""}{item.goodDelta} {item.unit}</td><td>{item.targetDelta>0?"+":""}{item.targetDelta} {item.unit}</td><td className={item.rejectedDelta<=0?"is-positive":"is-negative"}>{item.rejectedDelta>0?"+":""}{item.rejectedDelta}</td><td className={item.downtimeDelta<=0?"is-positive":"is-negative"}>{item.downtimeDelta>0?"+":""}{item.downtimeDelta} min</td><td>{item.yieldDelta>0?"+":""}{item.yieldDelta.toFixed(1)} percentage points</td><td>{item.goodDelta>0&&item.rejectedDelta<=0&&item.downtimeDelta<=0?"Improved":item.goodDelta<0||item.rejectedDelta>0||item.downtimeDelta>0?"Review needed":"Mixed / unchanged"}</td></tr>)}</tbody></table><p className="factory-sample-note">Comparison uses the selected snapshot values. Output changes are shown in each department’s own unit; department quantities are not combined into vehicle totals.</p></div> : <p className="factory-sample-note">Choose two different snapshots to display the department comparison.</p>}
+          </div> : null}
         </section>
         <p className="factory-sample-note" role="status">{departmentDataMessage}</p><p className="factory-sample-note">All starting department values are illustrative sample figures. Replace them with verified daily production records before presenting operational performance to a client.</p>
       </section>
