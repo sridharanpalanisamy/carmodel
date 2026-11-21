@@ -2402,3 +2402,13 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-product-tracker-heading>div{min-width:0}
 .factory-product-tracker-heading .factory-department-restore{flex:0 0 auto}
 @media(max-width:700px){.factory-product-tracker-heading{flex-direction:column;align-items:stretch}.factory-product-tracker-heading .factory-department-restore{align-self:flex-start}}
+
+/* Department issue register form and inline follow-up controls. */
+.factory-issue-form{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;align-items:end;margin:16px 0 18px;padding:16px;border:1px solid #e1e8e3;border-radius:10px;background:#f8faf9}
+.factory-issue-form label{display:flex;min-width:0;flex-direction:column;gap:6px;color:#52635b;font-size:11px;font-weight:650}
+.factory-issue-form input,.factory-issue-form select,.factory-issue-register td input,.factory-issue-register td select{width:100%;min-width:90px;min-height:36px;padding:7px 9px;border:1px solid #d7e0da;border-radius:6px;background:#fff;color:#24352e;font:inherit;font-size:12px}
+.factory-issue-form button{min-height:36px}
+.factory-issue-register td input{min-width:145px}
+.factory-issue-register td select{min-width:112px}
+@media(max-width:900px){.factory-issue-form{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.factory-issue-form{grid-template-columns:1fr;padding:12px}}
