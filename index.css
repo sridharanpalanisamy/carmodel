@@ -643,3 +643,93 @@
     min-height:420px!important;
   }
 }
+
+
+/* FIRST-LAYOUT ALIGNMENT — paired editorial rows with a dedicated full-width showroom. */
+@media (min-width: 901px) {
+  .home-layout {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr) !important;
+    grid-template-areas:
+      "hero story"
+      "engineering collection"
+      "showroom showroom"
+      "models quote" !important;
+    column-gap: clamp(24px, 2.6vw, 38px) !important;
+    row-gap: 24px !important;
+    align-items: start !important;
+  }
+  .home-layout > .left-column,
+  .home-layout > .right-column,
+  .home-layout > .home-bottom-row {
+    display: contents !important;
+  }
+  .home-layout > .left-column > .hero-panel { grid-area: hero !important; }
+  .home-layout > .right-column > .innovation-panel { grid-area: story !important; }
+  .home-layout > .left-column > .process-panel { grid-area: engineering !important; }
+  .home-layout > .right-column > .orange-feature { grid-area: collection !important; }
+  .home-layout > .turntable-panel { grid-area: showroom !important; }
+  .home-layout > .home-bottom-row > .latest-panel { grid-area: models !important; }
+  .home-layout > .home-bottom-row > .quote-panel { grid-area: quote !important; }
+  .home-layout .hero-panel,
+  .home-layout .innovation-panel,
+  .home-layout .process-panel,
+  .home-layout .orange-feature,
+  .home-layout .turntable-panel,
+  .home-layout .latest-panel,
+  .home-layout .quote-panel {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    align-self: start !important;
+  }
+  .home-layout .hero-panel { padding: 0 !important; }
+  .home-layout .process-panel { padding: 18px 0 0 !important; }
+  .home-layout .innovation-panel { padding: 0 0 14px !important; }
+  .home-layout .orange-feature { min-height: 180px !important; }
+  .home-layout .turntable-panel {
+    padding: 22px 0 !important;
+    border-top: 1px solid var(--line) !important;
+    border-bottom: 1px solid var(--line) !important;
+  }
+  .home-layout .ford-glb-stage {
+    height: clamp(430px, 48vw, 620px) !important;
+    min-height: 430px !important;
+  }
+  .home-layout .latest-panel,
+  .home-layout .quote-panel {
+    padding: 16px 0 !important;
+  }
+}
+@media (max-width: 900px) {
+  .home-layout {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-areas: none !important;
+    row-gap: 18px !important;
+  }
+  .home-layout > .left-column,
+  .home-layout > .right-column {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 18px !important;
+  }
+  .home-layout > .home-bottom-row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    gap: 18px !important;
+  }
+  .home-layout .ford-glb-stage {
+    height: min(68vh, 620px) !important;
+    min-height: 420px !important;
+  }
+}
+@media (max-width: 600px) {
+  .home-layout > .home-bottom-row {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .home-layout .ford-glb-stage {
+    height: min(62vh, 520px) !important;
+    min-height: 360px !important;
+  }
+}
