@@ -22,6 +22,15 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
     let fittedDistance = 0;
     let viewDirection;
     let resetView;
+    let motionQuery;
+    const syncMotionPreference = (event) => {
+      const reducedMotion = event.matches;
+      setPrefersReducedMotion(reducedMotion);
+      if (controls) {
+        controls.autoRotate = !reducedMotion;
+        setAutoRotate(!reducedMotion);
+      }
+    };
 
     async function start() {
       try {
@@ -69,10 +78,14 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         controls = new OrbitControls(camera, renderer.domElement);
         controlsRef.current = controls;
         controls.enableDamping = true;
-        const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
-        setPrefersReducedMotion(reducedMotion);
-        controls.autoRotate = !reducedMotion;
-        setAutoRotate(!reducedMotion);
+        motionQuery = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+        if (motionQuery) {
+          syncMotionPreference(motionQuery);
+          motionQuery.addEventListener?.("change", syncMotionPreference);
+        } else {
+          controls.autoRotate = true;
+          setAutoRotate(true);
+        }
         controls.autoRotateSpeed = 1.35;
         controls.enableKeys = true;
         controls.enableRotate = true;
@@ -245,6 +258,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
     start();
     return () => {
       disposed = true;
+      motionQuery?.removeEventListener?.("change", syncMotionPreference);
       cancelAnimationFrame(frame);
       resizeObserver?.disconnect();
       controls?.dispose();
