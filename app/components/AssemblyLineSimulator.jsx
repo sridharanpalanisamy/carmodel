@@ -1965,6 +1965,62 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                 })}</tbody>
               </table>
             </div>
+            <section className="mt-5 rounded-xl border border-slate-200 p-4" aria-label="Seven station production flow">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                  <span className="eyebrow">UNIT MOVEMENT / UPSTREAM TO DOWNSTREAM</span>
+                  <h4 className="mt-1 text-lg font-semibold text-slate-900">Production flow across seven stations</h4>
+                  <p className="mt-1 text-sm text-slate-600">Follow good units and station rejects through the manufacturing sequence.</p>
+                </div>
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-600">Flow view · no bar charts</span>
+              </div>
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                {stationPerformance.map((station, index) => {
+                  const goodOutput = Math.max(0, station.processed - station.rejected);
+                  const upstreamGood = index > 0
+                    ? Math.max(0, stationPerformance[index - 1].processed - stationPerformance[index - 1].rejected)
+                    : null;
+                  const flowDifference = upstreamGood === null ? null : upstreamGood - station.processed;
+                  return (
+                    <article key={station.name} className="relative rounded-xl border border-slate-200 bg-white p-4">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">STAGE {String(index + 1).padStart(2, "0")}</span>
+                        {station.name === stationPerformanceSummary.bottleneck.name
+                          ? <span className="rounded-full bg-amber-100 px-2 py-1 text-[10px] font-semibold text-amber-900">Slowest</span>
+                          : null}
+                      </div>
+                      <h5 className="mt-2 min-h-10 text-sm font-semibold text-slate-900">{station.name}</h5>
+                      <div className="mt-3 grid grid-cols-2 gap-2">
+                        <div className="rounded-lg bg-slate-50 p-2">
+                          <span className="block text-[10px] text-slate-500">Processed</span>
+                          <strong className="mt-1 block text-xl tabular-nums text-slate-900">{station.processed.toLocaleString("en-IN")}</strong>
+                        </div>
+                        <div className="rounded-lg bg-emerald-50 p-2">
+                          <span className="block text-[10px] text-emerald-700">Good output</span>
+                          <strong className="mt-1 block text-xl tabular-nums text-emerald-900">{goodOutput.toLocaleString("en-IN")}</strong>
+                        </div>
+                        <div className="rounded-lg bg-rose-50 p-2">
+                          <span className="block text-[10px] text-rose-700">Rejected here</span>
+                          <strong className="mt-1 block text-lg tabular-nums text-rose-900">{station.rejected.toLocaleString("en-IN")}</strong>
+                        </div>
+                        <div className="rounded-lg bg-slate-50 p-2">
+                          <span className="block text-[10px] text-slate-500">Cycle time</span>
+                          <strong className="mt-1 block text-sm tabular-nums text-slate-900">{formatDuration(station.avgCycleSeconds)}</strong>
+                        </div>
+                      </div>
+                      {index > 0 && (
+                        <div className={`mt-3 rounded-lg p-2 text-xs ${flowDifference > 0 ? "bg-amber-50 text-amber-900" : flowDifference < 0 ? "bg-sky-50 text-sky-900" : "bg-slate-50 text-slate-600"}`}>
+                          <span className="block font-semibold">{flowDifference > 0 ? `Potential queue: +${flowDifference} units` : flowDifference < 0 ? `Prior WIP drawdown / mismatch: ${Math.abs(flowDifference)} units` : "No throughput difference"}</span>
+                          <span className="mt-1 block opacity-80">Previous station good output: {upstreamGood.toLocaleString("en-IN")} · processed here: {station.processed.toLocaleString("en-IN")}</span>
+                        </div>
+                      )}
+                      {index < stationPerformance.length - 1 && <span aria-hidden="true" className="absolute -right-3 top-1/2 z-10 hidden h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 xl:flex">→</span>}
+                    </article>
+                  );
+                })}
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-slate-500">Queue differences are estimates only: they compare the previous station's good output with the next station's processed count. They are meaningful only when both stations use the same reporting period and unit definition. A negative difference may indicate opening WIP consumption or mismatched data. Rejected counts are station-level events and should not be summed as unique vehicle losses without unit-level tracking.</p>
+            </section>
             <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
               <div className="rounded-xl border border-slate-200 p-4">
                 <strong className="text-sm text-slate-800">Defect category breakdown</strong><span className="ml-2 text-xs text-slate-500">Rejected units</span>
