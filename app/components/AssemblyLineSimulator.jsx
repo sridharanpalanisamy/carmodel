@@ -3,6 +3,126 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
+const initialDepartments = [
+  {
+    "id": "supplier",
+    "name": "Supplier & Incoming Materials",
+    "description": "Raw materials, supplier receipts and incoming lot acceptance",
+    "unit": "lots",
+    "cycleSeconds": 12,
+    "target": 360,
+    "actual": 8,
+    "downtime": 1.5,
+    "shiftHours": 8,
+    "breakMinutes": 40,
+    "rejected": 0
+  },
+  {
+    "id": "fabrication",
+    "name": "Fabrication",
+    "description": "Cutting, bending, stamping and structural part fabrication",
+    "unit": "parts",
+    "cycleSeconds": 38,
+    "target": 340,
+    "actual": 18,
+    "downtime": 2.5,
+    "shiftHours": 8,
+    "breakMinutes": 40,
+    "rejected": 0
+  },
+  {
+    "id": "machine",
+    "name": "Machine Shop",
+    "description": "Turning, milling, drilling and precision machining",
+    "unit": "parts",
+    "cycleSeconds": 52,
+    "target": 330,
+    "actual": 22,
+    "downtime": 3,
+    "shiftHours": 8,
+    "breakMinutes": 40,
+    "rejected": 0
+  },
+  {
+    "id": "internal-logistics",
+    "name": "Internal Logistics",
+    "description": "Material movement, kitting and line-side replenishment",
+    "unit": "kits",
+    "cycleSeconds": 20,
+    "target": 350,
+    "actual": 12,
+    "downtime": 1,
+    "shiftHours": 8,
+    "breakMinutes": 40,
+    "rejected": 0
+  },
+  {
+    "id": "paint",
+    "name": "Paint Shop",
+    "description": "Surface preparation, coating, curing and finish handling",
+    "unit": "parts",
+    "cycleSeconds": 64,
+    "target": 325,
+    "actual": 28,
+    "downtime": 4,
+    "shiftHours": 8,
+    "breakMinutes": 40,
+    "rejected": 0
+  },
+  {
+    "id": "assembly",
+    "name": "Assembly Line",
+    "description": "Sub-assembly, fitment, fastening and vehicle assembly",
+    "unit": "vehicles",
+    "cycleSeconds": 78,
+    "target": 300,
+    "actual": 35,
+    "downtime": 5,
+    "shiftHours": 8,
+    "breakMinutes": 40,
+    "rejected": 0
+  },
+  {
+    "id": "testing",
+    "name": "Testing",
+    "description": "Functional, electrical, road-simulation and end-of-line tests",
+    "unit": "vehicles",
+    "cycleSeconds": 95,
+    "target": 290,
+    "actual": 20,
+    "downtime": 3,
+    "shiftHours": 8,
+    "breakMinutes": 40,
+    "rejected": 0
+  },
+  {
+    "id": "quality",
+    "name": "Quality Check Department",
+    "description": "Final inspection, defect segregation and release approval",
+    "unit": "vehicles",
+    "cycleSeconds": 42,
+    "target": 285,
+    "actual": 16,
+    "downtime": 2,
+    "shiftHours": 8,
+    "breakMinutes": 40,
+    "rejected": 0
+  },
+  {
+    "id": "dispatch",
+    "name": "Transport & Dispatch Logistics",
+    "description": "Finished-goods staging, documentation and vehicle dispatch",
+    "unit": "vehicles",
+    "cycleSeconds": 30,
+    "target": 280,
+    "actual": 10,
+    "downtime": 1,
+    "shiftHours": 8,
+    "breakMinutes": 40,
+    "rejected": 0
+  }
+];
+
 const initialStations = [
   { name: "Stamping", seconds: 42 },
   { name: "Body welding", seconds: 55 },
@@ -202,6 +322,40 @@ function buildImprovementActions(stations) {
 export default function AssemblyLineSimulator() {
   const [mount, setMount] = useState(null);
   const [dashboardNow, setDashboardNow] = useState(() => new Date());
+  const [departments, setDepartments] = useState(initialDepartments);
+  const [trackedProducts, setTrackedProducts] = useState([]);
+  const [productCodeInput, setProductCodeInput] = useState("");
+  const [activeProductId, setActiveProductId] = useState("");
+  const updateDepartment = (id, field, value) => {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) return;
+    const limits = { cycleSeconds:[1,3600], target:[0,100000], actual:[0,100000], downtime:[0,720], rejected:[0,100000], shiftHours:[1,24], breakMinutes:[0,300] };
+    const [min,max] = limits[field] || [0,100000];
+    setDepartments(current => current.map(item => item.id === id ? { ...item, [field]: clamp(numeric,min,max) } : item));
+  };
+  const addTrackedProduct = () => {
+    const code = productCodeInput.trim();
+    if (!code || trackedProducts.some(item => item.code.toLowerCase() === code.toLowerCase())) return;
+    const createdAt = new Date().toISOString();
+    setTrackedProducts(current => [{ code, createdAt, events: [] }, ...current].slice(0,100));
+    setActiveProductId(code);
+    setProductCodeInput("");
+  };
+  const recordDepartmentCompletion = (departmentId, departmentIndex) => {
+    const timestamp = new Date().toISOString();
+    setTrackedProducts(current => current.map(product => {
+      if (product.code !== activeProductId || product.events.length !== departmentIndex) return product;
+      return { ...product, events: [...product.events, { departmentId, timestamp }] };
+    }));
+  };
+  const activeTrackedProduct = trackedProducts.find(item => item.code === activeProductId);
+  const departmentTotals = departments.reduce((totals, item) => {
+    const netSeconds = Math.max(0, item.shiftHours * 3600 - item.breakMinutes * 60 - item.downtime * 60);
+    const capacity = item.cycleSeconds > 0 ? Math.floor(netSeconds / item.cycleSeconds) : 0;
+    const output = Math.max(0, item.actual - item.rejected);
+    return { target: totals.target + item.target, actual: totals.actual + output, rejected: totals.rejected + item.rejected, downtime: totals.downtime + item.downtime, capacity: totals.capacity + capacity, delayed: totals.delayed + Math.max(0,item.target-output) };
+  }, { target:0, actual:0, rejected:0, downtime:0, capacity:0, delayed:0 });
+
   useEffect(() => {
     const timer = window.setInterval(() => setDashboardNow(new Date()), 1000);
     return () => window.clearInterval(timer);
@@ -1865,6 +2019,62 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
   if (!mount) return null;
   return createPortal(
     <section className="line-simulator w-full max-w-[1440px] mx-auto px-3 sm:px-5 lg:px-8" aria-labelledby="lineSimulatorTitle">
+      <section className="factory-department-hub" aria-labelledby="departmentHubTitle">
+        <div className="factory-department-heading">
+          <div><span className="eyebrow">FACTORY OPERATIONS / DEPARTMENT CONTROL</span><h2 id="departmentHubTitle">Department-wise <em>production control.</em></h2><p>Configure each department independently. Capacity is estimated from shift time, break time, downtime and cycle time. Enter actual completed quantities to compare with today’s target.</p></div>
+          <div className="factory-department-live"><span>LIVE TIME</span><strong>{String(dashboardNow.getHours()).padStart(2,"0")}:{String(dashboardNow.getMinutes()).padStart(2,"0")}:{String(dashboardNow.getSeconds()).padStart(2,"0")}</strong><small>{dashboardNow.toLocaleDateString("en-IN",{weekday:"short",day:"2-digit",month:"short",year:"numeric"})}</small></div>
+        </div>
+        <div className="factory-department-flow" aria-label="Factory department sequence">
+          {departments.map((department,index)=><span key={department.id}><b>{String(index+1).padStart(2,"0")}</b>{department.name}{index<departments.length-1?<i>→</i>:null}</span>)}
+        </div>
+        <div className="factory-department-grid">
+          {departments.map((department,index)=>{
+            const netSeconds=Math.max(0,department.shiftHours*3600-department.breakMinutes*60-department.downtime*60);
+            const capacity=department.cycleSeconds>0?Math.floor(netSeconds/department.cycleSeconds):0;
+            const good=Math.max(0,department.actual-department.rejected);
+            const gap=good-department.target;
+            const yieldPercent=department.actual>0?good/department.actual*100:0;
+            return <article className="factory-department-card" key={department.id}>
+              <div className="factory-department-card-head"><span>DEPARTMENT {String(index+1).padStart(2,"0")}</span><small>{department.unit.toUpperCase()}</small></div>
+              <h3>{department.name}</h3><p>{department.description}</p>
+              <div className="factory-department-metrics">
+                <div><small>Today target</small><strong>{department.target.toLocaleString("en-IN")}</strong><em>{department.unit}</em></div>
+                <div><small>Actual good output</small><strong>{good.toLocaleString("en-IN")}</strong><em>{department.unit}</em></div>
+                <div><small>Estimated capacity</small><strong>{capacity.toLocaleString("en-IN")}</strong><em>{department.unit} / shift</em></div>
+                <div><small>Target gap</small><strong className={gap>=0?"is-positive":"is-negative"}>{gap>0?"+":""}{gap.toLocaleString("en-IN")}</strong><em>{gap>=0?"ahead":"behind"}</em></div>
+              </div>
+              <div className="factory-department-settings">
+                <div className="factory-department-settings-title">Department settings <span>EDIT VALUES</span></div>
+                <label>Daily target<input type="number" min="0" max="100000" value={department.target} onChange={event=>updateDepartment(department.id,"target",event.target.value)}/></label>
+                <label>Actual processed<input type="number" min="0" max="100000" value={department.actual} onChange={event=>updateDepartment(department.id,"actual",event.target.value)}/></label>
+                <label>Rejected / rework<input type="number" min="0" max="100000" value={department.rejected} onChange={event=>updateDepartment(department.id,"rejected",event.target.value)}/></label>
+                <label>Cycle time (sec / unit)<input type="number" min="1" max="3600" value={department.cycleSeconds} onChange={event=>updateDepartment(department.id,"cycleSeconds",event.target.value)}/></label>
+                <label>Downtime (minutes)<input type="number" min="0" max="720" value={department.downtime} onChange={event=>updateDepartment(department.id,"downtime",event.target.value)}/></label>
+                <label>Shift length (hours)<input type="number" min="1" max="24" value={department.shiftHours} onChange={event=>updateDepartment(department.id,"shiftHours",event.target.value)}/></label>
+                <label>Break time (minutes)<input type="number" min="0" max="300" value={department.breakMinutes} onChange={event=>updateDepartment(department.id,"breakMinutes",event.target.value)}/></label>
+              </div>
+              <div className="factory-department-insight"><span>Production time available</span><strong>{formatDuration(netSeconds)}</strong><span>Yield rate</span><strong>{yieldPercent.toFixed(1)}%</strong><span>Delay against target</span><strong className={gap<0?"is-negative":"is-positive"}>{gap<0?Math.abs(gap)+" "+department.unit+" short":"No quantity delay"}</strong></div>
+            </article>;
+          })}
+        </div>
+        <section className="factory-product-tracker" aria-labelledby="productTrackerTitle">
+          <div><span className="eyebrow">INDIVIDUAL PRODUCT TRACEABILITY</span><h3 id="productTrackerTitle">Track each product through every department</h3><p>Enter a unique product, chassis, batch or serial number. Record completion in sequence to capture each department timestamp and total elapsed time.</p></div>
+          <div className="factory-product-entry"><label htmlFor="factoryProductCode">Product / chassis / batch ID</label><div><input id="factoryProductCode" value={productCodeInput} onChange={event=>setProductCodeInput(event.target.value)} placeholder="Example: VEH-2026-0001" maxLength="64"/><button type="button" onClick={addTrackedProduct} disabled={!productCodeInput.trim()}>Start tracking</button></div></div>
+          {trackedProducts.length>0?<div className="factory-product-list"><label htmlFor="factoryTrackedProduct">Select tracked product</label><select id="factoryTrackedProduct" value={activeProductId} onChange={event=>setActiveProductId(event.target.value)}>{trackedProducts.map(item=><option key={item.code} value={item.code}>{item.code}</option>)}</select></div>:<p className="factory-product-empty">No product is being tracked yet. Add a product ID to start its department journey.</p>}
+          {activeTrackedProduct?<div className="factory-trace-detail">
+            <div className="factory-trace-summary"><strong>{activeTrackedProduct.code}</strong><span>Started {new Date(activeTrackedProduct.createdAt).toLocaleString("en-IN")}</span><span>Total elapsed <b>{formatDuration(Math.max(0,Math.floor((dashboardNow-new Date(activeTrackedProduct.createdAt))/1000)))}</b></span></div>
+            <div className="factory-trace-steps">{departments.map((department,index)=>{const event=activeTrackedProduct.events[index];const previous=index===0?activeTrackedProduct.createdAt:activeTrackedProduct.events[index-1]?.timestamp;const elapsed=event&&previous?Math.max(0,Math.floor((new Date(event.timestamp)-new Date(previous))/1000)):null;const isNext=index===activeTrackedProduct.events.length;return <div key={department.id} className={event?"is-complete":isNext?"is-current":""}><span>{String(index+1).padStart(2,"0")}</span><strong>{department.name}</strong>{event?<small>Completed {new Date(event.timestamp).toLocaleString("en-IN")} · stage time {formatDuration(elapsed)}</small>:<small>{isNext?"Awaiting completion":"Waiting for previous department"}</small>}<button type="button" disabled={!isNext} onClick={()=>recordDepartmentCompletion(department.id,index)}>{event?"Recorded":isNext?"Record completion":"Locked"}</button></div>;})}</div>
+            {activeTrackedProduct.events.length===departments.length?<p className="factory-trace-finished">All departments recorded. Total product lead time: {formatDuration(Math.max(0,Math.floor((new Date(activeTrackedProduct.events[departments.length-1].timestamp)-new Date(activeTrackedProduct.createdAt))/1000)))}.</p>:null}
+          </div>:null}
+          <small className="factory-sample-note">Timestamps are recorded when an operator clicks “Record completion”. This is manual traceability in this prototype, not an automatic machine or barcode integration.</small>
+        </section>
+        <section className="factory-overall-summary" aria-labelledby="factoryOverallTitle">
+          <div className="factory-overall-heading"><div><span className="eyebrow">END-OF-PAGE / FACTORY-WIDE SUMMARY</span><h3 id="factoryOverallTitle">Today’s overall production view</h3><p>Department totals are shown as a workload summary. They are not summed into a unique finished-vehicle count because departments handle different units and stages.</p></div><span className="factory-summary-date">{dashboardNow.toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"})}</span></div>
+          <div className="factory-overall-metrics"><div><small>Combined department targets</small><strong>{departmentTotals.target.toLocaleString("en-IN")}</strong><em>mixed units · not vehicles</em></div><div><small>Good output recorded</small><strong>{departmentTotals.actual.toLocaleString("en-IN")}</strong><em>mixed units · not vehicles</em></div><div><small>Rejected / rework</small><strong>{departmentTotals.rejected.toLocaleString("en-IN")}</strong><em>across departments</em></div><div><small>Total downtime</small><strong>{formatDuration(departmentTotals.downtime*60)}</strong><em>department-minutes summed</em></div><div><small>Target shortfall</small><strong>{departmentTotals.delayed.toLocaleString("en-IN")}</strong><em>department units</em></div></div>
+          <div className="factory-department-summary-table"><table><thead><tr><th>Department</th><th>Today target</th><th>Good output</th><th>Rejected</th><th>Capacity estimate</th><th>Delay / gap</th><th>Downtime</th></tr></thead><tbody>{departments.map(department=>{const good=Math.max(0,department.actual-department.rejected);const net=Math.max(0,department.shiftHours*3600-department.breakMinutes*60-department.downtime*60);const capacity=department.cycleSeconds>0?Math.floor(net/department.cycleSeconds):0;const gap=good-department.target;return <tr key={department.id}><th>{department.name}</th><td>{department.target.toLocaleString("en-IN")} {department.unit}</td><td>{good.toLocaleString("en-IN")}</td><td>{department.rejected}</td><td>{capacity.toLocaleString("en-IN")}</td><td className={gap<0?"is-negative":"is-positive"}>{gap>0?"+":""}{gap}</td><td>{formatDuration(department.downtime*60)}</td></tr>;})}</tbody></table></div>
+        </section>
+        <p className="factory-sample-note">All starting department values are illustrative sample figures. Replace them with verified daily production records before presenting operational performance to a client.</p>
+      </section>
       <div className="line-simulator-heading">
         <div>
           <span className="eyebrow">JAVASCRIPT PROJECT / 09</span>
