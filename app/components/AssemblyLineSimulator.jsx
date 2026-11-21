@@ -1556,6 +1556,35 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     URL.revokeObjectURL(url);
   }
 
+  function downloadStationCsvTemplate() {
+    const rows = [
+      ["Station", "Processed", "Rejected", "Downtime", "AvgCycleTime", "DefectCategory", "DowntimeCause"],
+      ...initialStationPerformance.map(station => [
+        station.name,
+        station.processed,
+        station.rejected,
+        station.downtime,
+        station.avgCycleSeconds,
+        station.defectCategory,
+        station.downtimeCause
+      ])
+    ];
+    const csv = rows.map(row => row.map(value => {
+      const cell = String(value ?? "");
+      return /[",\\n]/.test(cell) ? '"' + cell.replace(/"/g, '""') + '"' : cell;
+    }).join(",")).join("\\n");
+    const blob = new Blob(["\\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "station-performance-client-template.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setStationDataMessage("Downloaded the seven-station CSV template. Replace the illustrative figures with actual values, keep all seven station names, then upload it here.");
+  }
+
   function importWeeklyProductionCsv(event) {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -1926,10 +1955,12 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                 <button type="button" className="line-reset" onClick={() => stationCsvInput.current?.click()}>Upload station CSV ↑</button>
                 <input ref={stationCsvInput} type="file" accept=".csv,text/csv" onChange={importStationPerformanceCsv} hidden aria-label="Upload station performance CSV" />
                 <button type="button" className="line-reset" onClick={exportStationPerformanceCsv}>Export station CSV ↓</button>
+                <button type="button" className="line-reset" onClick={downloadStationCsvTemplate}>Download CSV template ↓</button>
                 <button type="button" className="line-reset" onClick={() => { setStationPerformance(initialStationPerformance); setStationDataMessage("Restored illustrative station-level sample data."); }}>Restore sample</button>
               </div>
             </div>
             <p className="mt-3 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600" role="status">{stationDataMessage}</p>
+            <p className="mt-2 text-xs leading-relaxed text-slate-500">Client data workflow: download the CSV template, replace the example numbers with the same reporting period's plant records, retain all seven station names, then upload the completed file. Do not mix daily, weekly or shift figures in one upload.</p>
             <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
               <div className="rounded-xl bg-slate-50 p-3"><span className="block text-xs text-slate-500">Units processed</span><strong className="mt-1 block text-2xl text-slate-900">{stationPerformanceSummary.processed.toLocaleString("en-IN")}</strong></div>
               <div className="rounded-xl bg-slate-50 p-3"><span className="block text-xs text-slate-500">Station rejects</span><strong className="mt-1 block text-2xl text-slate-900">{stationPerformanceSummary.rejected.toLocaleString("en-IN")}</strong></div>
