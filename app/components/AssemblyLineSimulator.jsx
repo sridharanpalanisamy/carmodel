@@ -1417,8 +1417,6 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
   }), { planned: 0, good: 0, rejected: 0, downtime: 0 }), [weeklyProduction]);
   const selectedDayProduction = weeklyProduction.find(day => day.day === selectedProductionDay) || weeklyProduction[0];
   const weeklyAttainment = weeklySummary.planned > 0 ? weeklySummary.good / weeklySummary.planned * 100 : 0;
-  const weeklyQuality = weeklySummary.good + weeklySummary.rejected > 0
-    ? weeklySummary.good / (weeklySummary.good + weeklySummary.rejected) * 100 : 0;
   const weeklyPeak = Math.max(1, ...weeklyProduction.map(day => day.good));
   const weeklyLinePoints = weeklyProduction.map((day, index) => {
     const x = 24 + index * 92;
