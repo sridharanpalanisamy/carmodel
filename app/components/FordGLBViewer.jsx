@@ -171,7 +171,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
                 );
               }
               // A small breathing margin keeps mirrors and bumpers away from the canvas edge.
-              return requiredDistance * 1.12;
+              return requiredDistance * 1.04;
             };
             getResponsiveFitDistance = getFitDistance;
             fittedDistance = getFitDistance();
