@@ -324,3 +324,41 @@
   border-radius:2px;
 }
 .menu-toggle:focus-visible{outline-offset:2px}
+
+/* HOME PAGE FINAL SPACING + LARGE SHOWROOM OVERRIDES */
+@media (min-width:901px){
+  .home-layout{
+    column-gap:22px!important;
+    row-gap:12px!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+  }
+  .home-layout .hero-photo{height:230px}
+  .home-layout .hero-brand{padding-top:16px;padding-bottom:16px}
+  .home-layout .hero-description{padding-top:18px;padding-bottom:14px}
+  .home-layout .feature-car{min-height:205px}
+  .home-layout .feature-copy{padding:16px 0}
+  .home-layout .milestone-row{padding:14px 0}
+  .home-layout .process-panel{padding-top:16px;padding-bottom:12px}
+  .home-layout .innovation-panel{padding-bottom:10px}
+  .home-layout .innovation-title{min-height:100px;padding:14px 0 12px}
+  .home-layout .innovation-image{height:170px}
+  .home-layout .orange-feature{min-height:132px;padding:16px}
+  .home-layout .turntable-panel{padding:14px 0 16px;margin-top:0}
+  .home-layout .turntable-heading{margin-bottom:8px}
+  .home-layout .viewer-toolbar{margin:10px 0 8px}
+  .home-layout .latest-panel{padding:14px 0}
+  .home-layout .quote-panel{padding:14px 0}
+  .home-layout .ford-glb-stage{height: min(76vh, 820px)!important;min-height:620px!important}
+}
+.home-model-t-panel .viewer-frame{min-height:0!important}
+.home-model-t-panel #homeModelTGLBMount{min-height:0!important}
+.home-model-t-panel .ford-glb-stage{height: min(76vh, 820px)!important;min-height:620px!important}
+.home-model-t-panel .ford-glb-stage canvas{width:100%!important;height:100%!important}
+@media (max-width:900px){
+  .home-layout{row-gap:0!important}
+  .home-model-t-panel .ford-glb-stage{height: min(68vh, 680px)!important;min-height:480px!important}
+}
+@media (max-width:600px){
+  .home-model-t-panel .ford-glb-stage{height: min(62vh, 560px)!important;min-height:400px!important}
+  .home-layout .turntable-panel{padding:14px 0}
+}
