@@ -23,6 +23,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
     let viewDirection;
     let resetView;
     let motionQuery;
+    const modelRequest = new AbortController();
     const syncMotionPreference = (event) => {
       const reducedMotion = event.matches;
       setPrefersReducedMotion(reducedMotion);
@@ -107,11 +108,40 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         loader.setMeshoptDecoder(MeshoptDecoder);
         const assetUrl = new URL(modelPath, window.location.href);
         setStatus(`Downloading local ${modelName} model…`);
-        const response = await fetch(assetUrl.href, { cache: "no-cache" });
+        const response = await fetch(assetUrl.href, { cache: "no-cache", signal: modelRequest.signal });
         if (!response.ok) {
           throw new Error(`Model request failed: HTTP ${response.status} ${response.statusText} (${assetUrl.pathname})`);
         }
-        const modelBuffer = await response.arrayBuffer();
+        let modelBuffer;
+        const contentLength = Number(response.headers.get("content-length")) || 0;
+        if (response.body?.getReader) {
+          const reader = response.body.getReader();
+          const chunks = [];
+          let received = 0;
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+            received += value.byteLength;
+            if (!disposed) {
+              const progress = contentLength > 0
+                ? ` ${Math.min(99, Math.round((received / contentLength) * 100))}%`
+                : ` ${(received / (1024 * 1024)).toFixed(1)} MB`;
+              setStatus(`Downloading local ${modelName} model…${progress}`);
+            }
+          }
+          const combined = new Uint8Array(received);
+          let offset = 0;
+          for (const chunk of chunks) {
+            combined.set(chunk, offset);
+            offset += chunk.byteLength;
+          }
+          modelBuffer = combined.buffer;
+        } else {
+          modelBuffer = await response.arrayBuffer();
+        }
+        if (disposed) return;
+        setStatus(`Preparing ${modelName} 3D model…`);
         if (modelBuffer.byteLength < 20) {
           throw new Error(`Model response is unexpectedly small (${modelBuffer.byteLength} bytes).`);
         }
@@ -258,6 +288,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
     start();
     return () => {
       disposed = true;
+      modelRequest.abort();
       motionQuery?.removeEventListener?.("change", syncMotionPreference);
       cancelAnimationFrame(frame);
       resizeObserver?.disconnect();
