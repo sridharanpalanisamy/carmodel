@@ -250,6 +250,26 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
       controls?.dispose();
       resetViewRef.current = null;
       controlsRef.current = null;
+      if (modelRoot) {
+        const geometries = new Set();
+        const materials = new Set();
+        const textures = new Set();
+        modelRoot.traverse((object) => {
+          if (object.geometry) geometries.add(object.geometry);
+          const objectMaterials = Array.isArray(object.material)
+            ? object.material
+            : object.material ? [object.material] : [];
+          objectMaterials.forEach((material) => {
+            materials.add(material);
+            Object.values(material).forEach((value) => {
+              if (value?.isTexture) textures.add(value);
+            });
+          });
+        });
+        geometries.forEach((geometry) => geometry.dispose());
+        textures.forEach((texture) => texture.dispose());
+        materials.forEach((material) => material.dispose());
+      }
       if (renderer) {
         renderer.dispose();
         renderer.domElement.remove();
