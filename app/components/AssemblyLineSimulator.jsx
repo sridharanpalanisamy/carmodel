@@ -328,6 +328,9 @@ export default function AssemblyLineSimulator() {
   const [departmentIssues, setDepartmentIssues] = useState([]);
   const [issueDraft, setIssueDraft] = useState({ departmentId: "supplier", title: "", rootCause: "", correctiveAction: "", owner: "", dueDate: "", priority: "Medium" });
   const [maintenanceRecords, setMaintenanceRecords] = useState([]);
+  const [inventoryItems, setInventoryItems] = useState([]);
+  const [inventoryDraft, setInventoryDraft] = useState({ departmentId: "supplier", category: "Raw material", itemName: "", sku: "", supplier: "", unit: "kg", openingStock: "", minimumStock: "" });
+  const [inventoryMovementDrafts, setInventoryMovementDrafts] = useState({});
   const [maintenanceDraft, setMaintenanceDraft] = useState({ departmentId: "machine", asset: "", maintenanceType: "Preventive", serviceDescription: "", technician: "", lastServiceDate: "", nextServiceDate: "", priority: "Medium" });
   const [comparisonOlderId, setComparisonOlderId] = useState("");
   const [comparisonNewerId, setComparisonNewerId] = useState("");
@@ -372,6 +375,9 @@ export default function AssemblyLineSimulator() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (typeof parsed.isSampleData === "boolean") setDepartmentDataIsSample(parsed.isSampleData);
+        if (Array.isArray(parsed.inventoryItems)) {
+          setInventoryItems(parsed.inventoryItems.filter(item => item && typeof item.id === "string" && typeof item.departmentId === "string" && initialDepartments.some(department => department.id === item.departmentId) && typeof item.itemName === "string" && Number.isFinite(Number(item.stockOnHand)) && Number.isFinite(Number(item.minimumStock))).slice(0,100));
+        }
         if (Array.isArray(parsed.maintenanceRecords)) {
           setMaintenanceRecords(parsed.maintenanceRecords.filter(record => record && typeof record.id === "string" && typeof record.departmentId === "string" && initialDepartments.some(department => department.id === record.departmentId) && typeof record.asset === "string" && typeof record.status === "string").slice(0,100));
         }
@@ -422,13 +428,13 @@ export default function AssemblyLineSimulator() {
     if (!departmentDataReady) return;
     try {
       window.localStorage.setItem("factory-department-operations-v1", JSON.stringify({
-        departments, trackedProducts, activeProductId, productionHistory, departmentIssues, maintenanceRecords, isSampleData: departmentDataIsSample, savedAt: new Date().toISOString()
+        departments, trackedProducts, activeProductId, productionHistory, departmentIssues, maintenanceRecords, inventoryItems, isSampleData: departmentDataIsSample, savedAt: new Date().toISOString()
       }));
       setDepartmentDataMessage("Saved on this device · department settings and product timestamps will remain after refresh.");
     } catch {
       setDepartmentDataMessage("Browser storage is unavailable or full. Export or record important production data separately.");
     }
-  }, [departmentDataReady, departments, trackedProducts, activeProductId, productionHistory, departmentIssues, maintenanceRecords, departmentDataIsSample]);
+  }, [departmentDataReady, departments, trackedProducts, activeProductId, productionHistory, departmentIssues, maintenanceRecords, inventoryItems, departmentDataIsSample]);
 
   const saveProductionSnapshot = () => {
     const savedAt = new Date().toISOString();
@@ -528,6 +534,44 @@ export default function AssemblyLineSimulator() {
     const url = URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
     const link = document.createElement("a"); link.href = url; link.download = "factory-maintenance-register.csv"; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
     setDepartmentDataMessage("Maintenance CSV prepared with " + maintenanceRecords.length + " record(s).");
+  }
+
+  const addInventoryItem = event => {
+    event.preventDefault();
+    const openingStock = Number(inventoryDraft.openingStock);
+    const minimumStock = Number(inventoryDraft.minimumStock);
+    if (!inventoryDraft.itemName.trim() || !inventoryDraft.sku.trim() || !inventoryDraft.supplier.trim() || !inventoryDraft.unit.trim() || inventoryDraft.openingStock === "" || inventoryDraft.minimumStock === "" || !Number.isFinite(openingStock) || !Number.isFinite(minimumStock) || openingStock < 0 || minimumStock < 0) {
+      setDepartmentDataMessage("Enter an item name, SKU, supplier, unit and valid non-negative stock quantities.");
+      return;
+    }
+    if (inventoryItems.some(item => item.sku.toLowerCase() === inventoryDraft.sku.trim().toLowerCase())) {
+      setDepartmentDataMessage("That SKU already exists. Update the existing inventory item instead.");
+      return;
+    }
+    const department = departments.find(item => item.id === inventoryDraft.departmentId);
+    const item = { ...inventoryDraft, id: "INV-" + Date.now().toString(36).toUpperCase(), itemName: inventoryDraft.itemName.trim(), sku: inventoryDraft.sku.trim(), supplier: inventoryDraft.supplier.trim(), openingStock, stockOnHand: openingStock, minimumStock, totalReceived: openingStock, totalConsumed: 0, departmentName: department?.name || "", updatedAt: new Date().toISOString() };
+    setInventoryItems(current => [item, ...current].slice(0,100));
+    setInventoryDraft(current => ({ ...current, itemName: "", sku: "", supplier: "", openingStock: "", minimumStock: "" }));
+    setDepartmentDataMessage("Inventory item " + item.sku + " added.");
+  };
+  const recordInventoryMovement = (id, movementType) => {
+    const quantity = Number(inventoryMovementDrafts[id]);
+    if (!Number.isFinite(quantity) || quantity <= 0) { setDepartmentDataMessage("Enter a movement quantity greater than zero."); return; }
+    const item = inventoryItems.find(entry => entry.id === id);
+    if (!item) return;
+    if (movementType === "Consumption" && quantity > item.stockOnHand) { setDepartmentDataMessage("Consumption exceeds available stock for " + item.sku + "."); return; }
+    setInventoryItems(current => current.map(entry => entry.id !== id ? entry : { ...entry, stockOnHand: movementType === "Receipt" ? entry.stockOnHand + quantity : entry.stockOnHand - quantity, totalReceived: movementType === "Receipt" ? entry.totalReceived + quantity : entry.totalReceived, totalConsumed: movementType === "Consumption" ? entry.totalConsumed + quantity : entry.totalConsumed, updatedAt: new Date().toISOString() }));
+    setInventoryMovementDrafts(current => ({ ...current, [id]: "" }));
+    setDepartmentDataMessage(movementType + " of " + quantity + " " + item.unit + " recorded for " + item.sku + ".");
+  };
+  function exportInventoryCsv() {
+    if (!inventoryItems.length) { setDepartmentDataMessage("No inventory items are available to export."); return; }
+    const columns = ["SKU","Item","Category","Department","Supplier","Unit","OpeningStock","TotalReceived","TotalConsumed","CurrentBalance","MinimumStock","StockStatus","LastUpdated"];
+    const rows = inventoryItems.map(item => [item.sku,item.itemName,item.category,item.departmentName || departments.find(department => department.id === item.departmentId)?.name || item.departmentId,item.supplier,item.unit,item.openingStock,item.totalReceived,item.totalConsumed,item.stockOnHand,item.minimumStock,item.stockOnHand <= item.minimumStock ? "Low stock" : "Available",item.updatedAt]);
+    const csv = [columns,...rows].map(row => row.map(value => { const cell = String(value ?? ""); return /[",\\n]/.test(cell) ? '"' + cell.replace(/"/g,'""') + '"' : cell; }).join(",")).join("\\r\\n");
+    const url = URL.createObjectURL(new Blob(["\\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
+    const link = document.createElement("a"); link.href = url; link.download = "factory-inventory-register.csv"; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+    setDepartmentDataMessage("Inventory CSV prepared with " + inventoryItems.length + " item(s).");
   }
 
   const restoreDepartmentSamples = () => {
