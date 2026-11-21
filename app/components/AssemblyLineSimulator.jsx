@@ -326,6 +326,8 @@ export default function AssemblyLineSimulator() {
   const [trackedProducts, setTrackedProducts] = useState([]);
   const [productCodeInput, setProductCodeInput] = useState("");
   const [activeProductId, setActiveProductId] = useState("");
+  const [departmentDataReady, setDepartmentDataReady] = useState(false);
+  const [departmentDataMessage, setDepartmentDataMessage] = useState("Department settings and product records are saved in this browser.");
   const updateDepartment = (id, field, value) => {
     const numeric = Number(value);
     if (!Number.isFinite(numeric)) return;
@@ -355,6 +357,65 @@ export default function AssemblyLineSimulator() {
     const output = Math.max(0, item.actual - item.rejected);
     return { target: totals.target + item.target, actual: totals.actual + output, rejected: totals.rejected + item.rejected, downtime: totals.downtime + item.downtime, capacity: totals.capacity + capacity, delayed: totals.delayed + Math.max(0,item.target-output) };
   }, { target:0, actual:0, rejected:0, downtime:0, capacity:0, delayed:0 });
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("factory-department-operations-v1");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed.departments)) {
+          const validById = new Map(parsed.departments.filter(item => item && typeof item.id === "string").map(item => [item.id, item]));
+          setDepartments(initialDepartments.map(base => {
+            const stored = validById.get(base.id);
+            if (!stored) return base;
+            const next = { ...base };
+            ["cycleSeconds","target","actual","downtime","rejected","shiftHours","breakMinutes"].forEach(field => {
+              const value = Number(stored[field]);
+              if (Number.isFinite(value)) next[field] = value;
+            });
+            return next;
+          }));
+        }
+        if (Array.isArray(parsed.trackedProducts)) {
+          const validProducts = parsed.trackedProducts.filter(product =>
+            product && typeof product.code === "string" && typeof product.createdAt === "string" &&
+            Array.isArray(product.events) && product.events.length <= initialDepartments.length &&
+            product.events.every((event,index) => event && event.departmentId === initialDepartments[index]?.id && typeof event.timestamp === "string")
+          ).slice(0,100);
+          setTrackedProducts(validProducts);
+          if (typeof parsed.activeProductId === "string" && validProducts.some(product => product.code === parsed.activeProductId)) {
+            setActiveProductId(parsed.activeProductId);
+          } else if (validProducts[0]) {
+            setActiveProductId(validProducts[0].code);
+          }
+        }
+      }
+    } catch {
+      setDepartmentDataMessage("Could not read saved department data. Current sample values remain available.");
+    } finally {
+      setDepartmentDataReady(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!departmentDataReady) return;
+    try {
+      window.localStorage.setItem("factory-department-operations-v1", JSON.stringify({
+        departments, trackedProducts, activeProductId, savedAt: new Date().toISOString()
+      }));
+      setDepartmentDataMessage("Saved on this device · department settings and product timestamps will remain after refresh.");
+    } catch {
+      setDepartmentDataMessage("Browser storage is unavailable or full. Export or record important production data separately.");
+    }
+  }, [departmentDataReady, departments, trackedProducts, activeProductId]);
+
+  const restoreDepartmentSamples = () => {
+    setDepartments(initialDepartments);
+    setTrackedProducts([]);
+    setActiveProductId("");
+    setProductCodeInput("");
+    setDepartmentDataMessage("Illustrative department samples restored. Previous product tracking records were cleared from this browser.");
+  };
 
   useEffect(() => {
     const timer = window.setInterval(() => setDashboardNow(new Date()), 1000);
@@ -2022,7 +2083,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
       <section className="factory-department-hub" aria-labelledby="departmentHubTitle">
         <div className="factory-department-heading">
           <div><span className="eyebrow">FACTORY OPERATIONS / DEPARTMENT CONTROL</span><h2 id="departmentHubTitle">Department-wise <em>production control.</em></h2><p>Configure each department independently. Capacity is estimated from shift time, break time, downtime and cycle time. Enter actual completed quantities to compare with today’s target.</p></div>
-          <div className="factory-department-live"><span>LIVE TIME</span><strong>{String(dashboardNow.getHours()).padStart(2,"0")}:{String(dashboardNow.getMinutes()).padStart(2,"0")}:{String(dashboardNow.getSeconds()).padStart(2,"0")}</strong><small>{dashboardNow.toLocaleDateString("en-IN",{weekday:"short",day:"2-digit",month:"short",year:"numeric"})}</small></div>
+          <div className="factory-department-live"><span>LIVE TIME</span><strong>{String(dashboardNow.getHours()).padStart(2,"0")}:{String(dashboardNow.getMinutes()).padStart(2,"0")}:{String(dashboardNow.getSeconds()).padStart(2,"0")}</strong><small>{dashboardNow.toLocaleDateString("en-IN",{weekday:"short",day:"2-digit",month:"short",year:"numeric"})}</small></div><button type="button" className="factory-department-restore" onClick={restoreDepartmentSamples}>Restore department samples</button>
         </div>
         <div className="factory-department-flow" aria-label="Factory department sequence">
           {departments.map((department,index)=><span key={department.id}><b>{String(index+1).padStart(2,"0")}</b>{department.name}{index<departments.length-1?<i>→</i>:null}</span>)}
@@ -2073,7 +2134,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
           <div className="factory-overall-metrics"><div><small>Combined department targets</small><strong>{departmentTotals.target.toLocaleString("en-IN")}</strong><em>mixed units · not vehicles</em></div><div><small>Good output recorded</small><strong>{departmentTotals.actual.toLocaleString("en-IN")}</strong><em>mixed units · not vehicles</em></div><div><small>Rejected / rework</small><strong>{departmentTotals.rejected.toLocaleString("en-IN")}</strong><em>across departments</em></div><div><small>Total downtime</small><strong>{formatDuration(departmentTotals.downtime*60)}</strong><em>department-minutes summed</em></div><div><small>Target shortfall</small><strong>{departmentTotals.delayed.toLocaleString("en-IN")}</strong><em>department units</em></div></div>
           <div className="factory-department-summary-table"><table><thead><tr><th>Department</th><th>Today target</th><th>Good output</th><th>Rejected</th><th>Capacity estimate</th><th>Delay / gap</th><th>Downtime</th></tr></thead><tbody>{departments.map(department=>{const good=Math.max(0,department.actual-department.rejected);const net=Math.max(0,department.shiftHours*3600-department.breakMinutes*60-department.downtime*60);const capacity=department.cycleSeconds>0?Math.floor(net/department.cycleSeconds):0;const gap=good-department.target;return <tr key={department.id}><th>{department.name}</th><td>{department.target.toLocaleString("en-IN")} {department.unit}</td><td>{good.toLocaleString("en-IN")}</td><td>{department.rejected}</td><td>{capacity.toLocaleString("en-IN")}</td><td className={gap<0?"is-negative":"is-positive"}>{gap>0?"+":""}{gap}</td><td>{formatDuration(department.downtime*60)}</td></tr>;})}</tbody></table></div>
         </section>
-        <p className="factory-sample-note">All starting department values are illustrative sample figures. Replace them with verified daily production records before presenting operational performance to a client.</p>
+        <p className="factory-sample-note" role="status">{departmentDataMessage}</p><p className="factory-sample-note">All starting department values are illustrative sample figures. Replace them with verified daily production records before presenting operational performance to a client.</p>
       </section>
       <div className="line-simulator-heading">
         <div>
