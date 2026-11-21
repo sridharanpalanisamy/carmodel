@@ -150,7 +150,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
               // Using the narrower vertical FOV for a long, low vehicle leaves it tiny
               // in the middle of an otherwise empty showroom.
               const limitingFov = camera.aspect >= 1 ? horizontalFov : verticalFov;
-              return Math.max(sphere.radius / Math.sin(limitingFov / 2) * 0.78, maxDimension * 0.72);
+              return Math.max(sphere.radius / Math.sin(limitingFov / 2) * 0.52, maxDimension * 0.52);
             };
             getResponsiveFitDistance = getFitDistance;
             fittedDistance = getFitDistance();
