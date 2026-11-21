@@ -1936,6 +1936,29 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
               <div className="rounded-xl bg-slate-50 p-3"><span className="block text-xs text-slate-500">Recorded downtime</span><strong className="mt-1 block text-2xl text-slate-900">{stationPerformanceSummary.downtime} min</strong></div>
               <div className="rounded-xl bg-slate-50 p-3"><span className="block text-xs text-slate-500">Station yield</span><strong className="mt-1 block text-2xl text-slate-900">{stationPerformanceSummary.yieldPercent.toFixed(1)}%</strong></div>
             </div>
+            <section className="mt-4 rounded-xl border border-indigo-200 bg-indigo-50/40 p-4" aria-label="Client review summary">
+              <span className="text-xs font-semibold uppercase tracking-wide text-indigo-800">CLIENT REVIEW / MANAGEMENT SUMMARY</span>
+              <h4 className="mt-1 text-lg font-semibold text-slate-900">What this production data tells us</h4>
+              <p className="mt-1 text-sm leading-relaxed text-slate-700">Across the seven reported stations, <strong>{stationPerformanceSummary.processed.toLocaleString("en-IN")} station operations</strong> and <strong>{stationPerformanceSummary.rejected.toLocaleString("en-IN")} station rejection records</strong> have been captured, with <strong>{stationPerformanceSummary.downtime} minutes</strong> of recorded downtime. The calculated station yield is <strong>{stationPerformanceSummary.yieldPercent.toFixed(1)}%</strong>.</p>
+              <div className="mt-3 grid grid-cols-1 gap-2 md:grid-cols-3">
+                <div className="rounded-lg bg-white/80 p-3">
+                  <span className="block text-xs text-slate-500">First area to review</span>
+                  <strong className="mt-1 block text-sm text-slate-900">{stationPerformanceSummary.bottleneck.name}</strong>
+                  <p className="mt-1 text-xs text-slate-600">Longest average cycle time: {formatDuration(stationPerformanceSummary.bottleneck.avgCycleSeconds)}.</p>
+                </div>
+                <div className="rounded-lg bg-white/80 p-3">
+                  <span className="block text-xs text-slate-500">Downtime focus</span>
+                  <strong className="mt-1 block text-sm text-slate-900">{stationPerformanceSummary.downtimeLeader.name}</strong>
+                  <p className="mt-1 text-xs text-slate-600">{formatMinutesAsClock(stationPerformanceSummary.downtimeLeader.downtime)} recorded downtime; review its stoppage cause.</p>
+                </div>
+                <div className="rounded-lg bg-white/80 p-3">
+                  <span className="block text-xs text-slate-500">Quality focus</span>
+                  <strong className="mt-1 block text-sm text-slate-900">{stationPerformanceSummary.topDefect[0]}</strong>
+                  <p className="mt-1 text-xs text-slate-600">{stationPerformanceSummary.topDefect[1]} recorded rejects in this category.</p>
+                </div>
+              </div>
+              <p className="mt-3 text-xs leading-relaxed text-slate-600"><strong>Suggested client discussion:</strong> validate the bottleneck's cycle time, investigate the main downtime cause, and confirm the top defect's root cause before agreeing improvement actions. These totals are station-level records, not unique vehicle counts. Use a common reporting period and actual plant data before making production or financial decisions.</p>
+            </section>
             <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
               <div className="rounded-xl border border-amber-200 bg-amber-50/60 p-3">
                 <span className="text-xs font-semibold uppercase tracking-wide text-amber-800">Slowest recorded station</span>
