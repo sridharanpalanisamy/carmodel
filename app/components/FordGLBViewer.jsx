@@ -237,7 +237,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
             };
             resetViewRef.current = resetView;
             setModelReady(true);
-            setStatus(`${modelName} loaded · drag to rotate · scroll to zoom`);
+            setStatus(`${modelName} loaded · drag to rotate · scroll to zoom · focus viewer for arrow keys`);
           },
           (error) => {
             console.error(`Unable to parse local ${modelName} GLB:`, error);
