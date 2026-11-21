@@ -141,16 +141,37 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
             if (!Number.isFinite(maxDimension) || maxDimension <= 0) {
               throw new Error("The GLB contains no visible model geometry.");
             }
-            const sphere = new THREE.Sphere();
-            new THREE.Box3().setFromObject(modelGroup).getBoundingSphere(sphere);
+            const centeredBounds = new THREE.Box3().setFromObject(modelGroup);
+            const fitCorners = [];
+            for (const x of [centeredBounds.min.x, centeredBounds.max.x]) {
+              for (const y of [centeredBounds.min.y, centeredBounds.max.y]) {
+                for (const z of [centeredBounds.min.z, centeredBounds.max.z]) {
+                  fitCorners.push(new THREE.Vector3(x, y, z));
+                }
+              }
+            }
             const getFitDistance = () => {
               const verticalFov = THREE.MathUtils.degToRad(camera.fov);
               const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * Math.max(camera.aspect, 0.35));
-              // On wide desktop canvases, fit the car to the horizontal field of view.
-              // Using the narrower vertical FOV for a long, low vehicle leaves it tiny
-              // in the middle of an otherwise empty showroom.
-              const limitingFov = camera.aspect >= 1 ? horizontalFov : verticalFov;
-              return Math.max(sphere.radius / Math.sin(limitingFov / 2) * 1.08, maxDimension * 0.72);
+              const tanHorizontal = Math.tan(horizontalFov / 2);
+              const tanVertical = Math.tan(verticalFov / 2);
+              const worldUp = new THREE.Vector3(0, 1, 0);
+              const cameraForward = viewDirection.clone().negate();
+              const cameraRight = new THREE.Vector3().crossVectors(cameraForward, worldUp).normalize();
+              const cameraUp = new THREE.Vector3().crossVectors(cameraRight, cameraForward).normalize();
+              let requiredDistance = maxDimension * 0.55;
+              for (const corner of fitCorners) {
+                const alongView = corner.dot(viewDirection);
+                const horizontal = Math.abs(corner.dot(cameraRight));
+                const vertical = Math.abs(corner.dot(cameraUp));
+                requiredDistance = Math.max(
+                  requiredDistance,
+                  alongView + horizontal / tanHorizontal,
+                  alongView + vertical / tanVertical
+                );
+              }
+              // A small breathing margin keeps mirrors and bumpers away from the canvas edge.
+              return requiredDistance * 1.12;
             };
             getResponsiveFitDistance = getFitDistance;
             fittedDistance = getFitDistance();
