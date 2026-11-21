@@ -92,6 +92,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         }
         controls.autoRotateSpeed = 1.35;
         controls.enableKeys = true;
+        controls.listenToKeyEvents(window);
         controls.enableRotate = true;
         controls.enableZoom = true;
         controls.mouseButtons = {
@@ -295,6 +296,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
       motionQuery?.removeEventListener?.("change", syncMotionPreference);
       cancelAnimationFrame(frame);
       resizeObserver?.disconnect();
+      controls?.stopListenToKeyEvents();
       controls?.dispose();
       resetViewRef.current = null;
       controlsRef.current = null;
