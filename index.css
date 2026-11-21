@@ -484,3 +484,105 @@
     grid-template-columns: minmax(0, 1fr) auto;
   }
 }
+
+
+/* STRUCTURAL HOMEPAGE RESET — final source of truth for the home page. */
+.home-layout{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr)!important;
+  grid-template-areas:"left right" "showroom showroom" "bottom bottom"!important;
+  column-gap:clamp(24px,3vw,42px)!important;
+  row-gap:22px!important;
+  align-items:start!important;
+}
+.home-layout>.left-column{
+  grid-area:left!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:0!important;
+  min-width:0!important;
+  width:auto!important;
+  padding:0!important;
+  border:0!important;
+}
+.home-layout>.right-column{
+  grid-area:right!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:18px!important;
+  min-width:0!important;
+  width:auto!important;
+  padding:0!important;
+  border:0!important;
+}
+.home-layout>.left-column>.hero-panel,
+.home-layout>.left-column>.process-panel,
+.home-layout>.right-column>.innovation-panel,
+.home-layout>.right-column>.orange-feature{
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+}
+.home-layout>.left-column>.hero-panel{padding:0!important}
+.home-layout>.left-column>.process-panel{
+  padding:22px 0 18px!important;
+  border-top:1px solid var(--line)!important;
+}
+.home-layout>.right-column>.innovation-panel{padding:0 0 14px!important}
+.home-layout .innovation-title{
+  min-height:100px!important;
+  padding:8px 0 12px!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  grid-template-rows:auto 1fr!important;
+  align-items:start!important;
+  align-content:start!important;
+  gap:7px 12px!important;
+}
+.home-layout .innovation-title .eyebrow{grid-column:1/-1!important;grid-row:1!important}
+.home-layout .innovation-title h2{grid-column:1!important;grid-row:2!important;margin:0!important;align-self:start!important}
+.home-layout .innovation-title .button{grid-column:2!important;grid-row:2!important;align-self:end!important;justify-self:end!important}
+.home-layout .innovation-image{height:clamp(170px,18vw,230px)!important}
+.home-layout>.right-column>.orange-feature{min-height:145px!important}
+.home-layout>.turntable-panel{
+  grid-area:showroom!important;
+  display:block!important;
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:22px 0!important;
+  border-top:1px solid var(--line)!important;
+  border-bottom:1px solid var(--line)!important;
+}
+.home-layout>.home-bottom-row{
+  grid-area:bottom!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr)!important;
+  gap:clamp(24px,3vw,42px)!important;
+  min-width:0!important;
+}
+.home-layout>.home-bottom-row>.latest-panel,
+.home-layout>.home-bottom-row>.quote-panel{min-width:0!important;margin:0!important}
+.home-layout .ford-glb-stage{height:clamp(430px,48vw,620px)!important;min-height:430px!important}
+@media(max-width:900px){
+ .home-layout{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:"left" "right" "showroom" "bottom"!important;row-gap:18px!important}
+ .home-layout>.left-column,.home-layout>.right-column{display:flex!important;flex-direction:column!important;gap:16px!important}
+ .home-layout>.left-column>.process-panel{padding-top:18px!important}
+ .home-layout>.turntable-panel{padding:18px 0!important}
+ .home-layout>.home-bottom-row{gap:18px!important}
+ .home-layout .ford-glb-stage{height:min(68vh,620px)!important;min-height:420px!important}
+}
+@media(max-width:600px){
+ .page-shell{padding-inline:14px!important}
+ .home-layout{row-gap:14px!important}
+ .home-layout>.home-bottom-row{grid-template-columns:minmax(0,1fr)!important}
+ .home-layout .innovation-title{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto auto!important}
+ .home-layout .innovation-title .eyebrow,
+ .home-layout .innovation-title h2,
+ .home-layout .innovation-title .button{grid-column:1!important}
+ .home-layout .innovation-title .eyebrow{grid-row:1!important}
+ .home-layout .innovation-title h2{grid-row:2!important}
+ .home-layout .innovation-title .button{grid-row:3!important;justify-self:start!important}
+ .home-layout .ford-glb-stage{height:min(62vh,520px)!important;min-height:360px!important}
+}
