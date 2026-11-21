@@ -16,7 +16,8 @@ const links = [
 ];
 
 export default function SiteHeader() {
-  const pathname = (usePathname() || "/").replace(/\\/+$/, "") || "/";
+  const currentPath = usePathname() || "/";
+  const pathname = currentPath.length > 1 && currentPath.endsWith("/") ? currentPath.slice(0, -1) : currentPath;
   const [open, setOpen] = useState(false);
   const activePage = pathname === "/ford-dashboard" ? "dashboard"
     : pathname === "/models" ? "models"
