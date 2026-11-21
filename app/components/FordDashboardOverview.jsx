@@ -67,17 +67,11 @@ export default function FordDashboardOverview() {
   const categoryGradient = "conic-gradient(" + categoryDonut.stops.join(", ") + ")";
 
   return (
-    <main className="page-shell ford-command-dashboard">
-      <section className="ford-command-hero">
-        <div className="ford-command-hero-copy">
-          <span className="eyebrow">FORD / VEHICLE KNOWLEDGE CENTRE</span>
-          <h1>Explore the story<br/><em>behind every Ford.</em></h1>
-          <p>A central workspace for Ford models, vehicle specifications, engineering systems, manufacturing and heritage.</p>
-          <div className="ford-command-actions">
-            <Link href="/models/" className="ford-command-primary">Explore Ford models <span>↗</span></Link>
-            <Link href="/heritage/" className="ford-command-secondary">Discover the heritage</Link>
-          </div>
-        </div>
+    <main className="page-shell inner-page models-directory-page ford-command-dashboard">
+      <section className="az-page-heading">
+        <span className="eyebrow">FORD / VEHICLE KNOWLEDGE CENTRE</span>
+        <h1>Explore the <em>Ford reference library.</em></h1>
+        <p>A central workspace for Ford models, vehicle specifications, engineering systems, manufacturing and heritage. Search the archive or open a focused reference area below.</p>
       </section>
 
       <section className="ford-command-kpis" aria-label="Ford archive summary">
@@ -163,5 +157,10 @@ export default function FordDashboardOverview() {
       </section>
       <p className="ford-command-footnote">Dashboard figures reflect the current website directory and reference modules. Historical vehicle specifications vary by year, market and trim; unavailable values are not estimated.</p>
     </main>
+    <footer className="site-footer inner-footer">
+      <Link className="brand" href="/"><span className="brand-mark">F</span><span>CLASSIC FORD<small>THE HERITAGE COLLECTION</small></span></Link>
+      <p>Ford model, engineering and heritage reference workspace.</p>
+      <div className="footer-bottom"><span>© 2026 Classic Ford Collection</span><span>Built for automotive enthusiasts</span></div>
+    </footer>
   );
 }
