@@ -86,7 +86,9 @@ function parseStationPerformanceCsv(text) {
   const headers = rows[0].map(value => value.toLowerCase().replace(/[ _-]/g, ""));
   const required = ["station", "processed", "rejected", "downtime", "avgcycletime"];
   const positions = required.map(header => headers.indexOf(header));
-  if (positions.some(index => index < 0)) throw new Error("Required columns: Station, Processed, Rejected, Downtime, AvgCycleTime.");
+  if (positions.some(index => index < 0)) throw new Error("Required columns: Station, Processed, Rejected, Downtime, AvgCycleTime. Optional: DefectCategory, DowntimeCause.");
+  const defectPosition = headers.indexOf("defectcategory");
+  const downtimeCausePosition = headers.indexOf("downtimecause");
   const seen = new Set();
   return rows.slice(1).map(values => {
     const name = values[positions[0]];
@@ -99,18 +101,18 @@ function parseStationPerformanceCsv(text) {
       throw new Error(name + ": enter whole non-negative counts/minutes and an average cycle time from 1 to 600 seconds.");
     }
     if (rejected > processed) throw new Error(name + ": rejected units cannot exceed processed units.");
-    return { name, processed, rejected, downtime, avgCycleSeconds };
+    return { name, processed, rejected, downtime, avgCycleSeconds, defectCategory: defectPosition >= 0 ? (values[defectPosition] || "Not specified") : "Not specified", downtimeCause: downtimeCausePosition >= 0 ? (values[downtimeCausePosition] || "Not specified") : "Not specified" };
   }).sort((a, b) => initialStations.findIndex(station => station.name === a.name) - initialStations.findIndex(station => station.name === b.name));
 }
 
 const initialStationPerformance = [
-  { name: "Stamping", processed: 342, rejected: 3, downtime: 18, avgCycleSeconds: 42 },
-  { name: "Body welding", processed: 338, rejected: 4, downtime: 32, avgCycleSeconds: 55 },
-  { name: "Surface preparation", processed: 334, rejected: 5, downtime: 27, avgCycleSeconds: 48 },
-  { name: "Paint finishing", processed: 329, rejected: 9, downtime: 46, avgCycleSeconds: 62 },
-  { name: "Powertrain preparation", processed: 326, rejected: 2, downtime: 21, avgCycleSeconds: 50 },
-  { name: "Final assembly", processed: 324, rejected: 3, downtime: 38, avgCycleSeconds: 68 },
-  { name: "Quality validation", processed: 321, rejected: 7, downtime: 16, avgCycleSeconds: 45 }
+  { name: "Stamping", processed: 342, rejected: 3, downtime: 18, avgCycleSeconds: 42, defectCategory: "Dimensional variation", downtimeCause: "Die adjustment" },
+  { name: "Body welding", processed: 338, rejected: 4, downtime: 32, avgCycleSeconds: 55, defectCategory: "Weld porosity", downtimeCause: "Welding fixture reset" },
+  { name: "Surface preparation", processed: 334, rejected: 5, downtime: 27, avgCycleSeconds: 48, defectCategory: "Surface contamination", downtimeCause: "Cleaning equipment stoppage" },
+  { name: "Paint finishing", processed: 329, rejected: 9, downtime: 46, avgCycleSeconds: 62, defectCategory: "Paint finish defect", downtimeCause: "Booth maintenance" },
+  { name: "Powertrain preparation", processed: 326, rejected: 2, downtime: 21, avgCycleSeconds: 50, defectCategory: "Fitment mismatch", downtimeCause: "Part replenishment" },
+  { name: "Final assembly", processed: 324, rejected: 3, downtime: 38, avgCycleSeconds: 68, defectCategory: "Assembly mismatch", downtimeCause: "Tool changeover" },
+  { name: "Quality validation", processed: 321, rejected: 7, downtime: 16, avgCycleSeconds: 45, defectCategory: "Inspection failure", downtimeCause: "Retest queue" }
 ];
 
 const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
@@ -1481,7 +1483,11 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
     }), { processed: 0, rejected: 0, downtime: 0 });
     const bottleneck = stationPerformance.reduce((slowest, station) => station.avgCycleSeconds > slowest.avgCycleSeconds ? station : slowest, stationPerformance[0]);
     const downtimeLeader = stationPerformance.reduce((highest, station) => station.downtime > highest.downtime ? station : highest, stationPerformance[0]);
-    return { ...totals, bottleneck, downtimeLeader, yieldPercent: totals.processed > 0 ? (totals.processed - totals.rejected) / totals.processed * 100 : 0 };
+    const defects = stationPerformance.reduce((groups, station) => { const key = station.defectCategory || "Not specified"; groups[key] = (groups[key] || 0) + station.rejected; return groups; }, {});
+    const downtimeCauses = stationPerformance.reduce((groups, station) => { const key = station.downtimeCause || "Not specified"; groups[key] = (groups[key] || 0) + station.downtime; return groups; }, {});
+    const topDefect = Object.entries(defects).sort((a, b) => b[1] - a[1])[0] || ["—", 0];
+    const topDowntimeCause = Object.entries(downtimeCauses).sort((a, b) => b[1] - a[1])[0] || ["—", 0];
+    return { ...totals, bottleneck, downtimeLeader, defects, downtimeCauses, topDefect, topDowntimeCause, yieldPercent: totals.processed > 0 ? (totals.processed - totals.rejected) / totals.processed * 100 : 0 };
   }, [stationPerformance]);
 
   function importStationPerformanceCsv(event) {
@@ -1512,8 +1518,8 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 
   function exportStationPerformanceCsv() {
     const rows = [
-      ["Station", "Processed", "Rejected", "Downtime", "AvgCycleTime"],
-      ...stationPerformance.map(station => [station.name, station.processed, station.rejected, station.downtime, station.avgCycleSeconds])
+      ["Station", "Processed", "Rejected", "Downtime", "AvgCycleTime", "DefectCategory", "DowntimeCause"],
+      ...stationPerformance.map(station => [station.name, station.processed, station.rejected, station.downtime, station.avgCycleSeconds, station.defectCategory || "Not specified", station.downtimeCause || "Not specified"])
     ];
     const csv = rows.map(row => row.map(value => {
       const cell = String(value ?? "");
@@ -1919,7 +1925,27 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                 })}</tbody>
               </table>
             </div>
-            <p className="mt-3 text-xs leading-relaxed text-slate-500">Station sample figures are illustrative and are not automatically calculated from the weekly totals. For a real comparison, upload station-level CSV data using the exact seven station names and columns: Station, Processed, Rejected, Downtime, AvgCycleTime.</p>
+            <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <div className="rounded-xl border border-slate-200 p-4">
+                <strong className="text-sm text-slate-800">Defect category breakdown</strong><span className="ml-2 text-xs text-slate-500">Rejected units</span>
+                <div className="mt-3 space-y-3">{Object.entries(stationPerformanceSummary.defects).sort((a,b)=>b[1]-a[1]).map(([category,count]) => <div key={category} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-0"><span className="text-sm text-slate-600">{category}</span><strong className="text-sm tabular-nums">{count}</strong></div>)}</div>
+                <p className="mt-2 text-xs text-slate-500">Most recorded rejects: <strong>{stationPerformanceSummary.topDefect[0]}</strong> ({stationPerformanceSummary.topDefect[1]} units).</p>
+              </div>
+              <div className="rounded-xl border border-slate-200 p-4">
+                <strong className="text-sm text-slate-800">Downtime cause breakdown</strong><span className="ml-2 text-xs text-slate-500">Minutes</span>
+                <div className="mt-3 space-y-3">{Object.entries(stationPerformanceSummary.downtimeCauses).sort((a,b)=>b[1]-a[1]).map(([cause,minutes]) => <div key={cause} className="flex items-center justify-between gap-3 border-b border-slate-100 pb-2 last:border-0"><span className="text-sm text-slate-600">{cause}</span><strong className="text-sm tabular-nums">{minutes} min</strong></div>)}</div>
+                <p className="mt-2 text-xs text-slate-500">Largest recorded cause: <strong>{stationPerformanceSummary.topDowntimeCause[0]}</strong> ({stationPerformanceSummary.topDowntimeCause[1]} min).</p>
+              </div>
+            </div>
+            <div className="mt-4 rounded-xl border border-teal-200 bg-teal-50/50 p-4">
+              <strong className="text-sm text-slate-900">Improvement review priorities</strong>
+              <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-slate-700">
+                <li>Review <strong>{stationPerformanceSummary.bottleneck.name}</strong> first: it has the longest average cycle time ({stationPerformanceSummary.bottleneck.avgCycleSeconds}s).</li>
+                <li>Investigate <strong>{stationPerformanceSummary.downtimeLeader.name}</strong> and its recorded cause, <strong>{stationPerformanceSummary.downtimeLeader.downtimeCause || "Not specified"}</strong> ({stationPerformanceSummary.downtimeLeader.downtime} min).</li>
+                <li>Start defect containment at <strong>{stationPerformance.find(station => station.defectCategory === stationPerformanceSummary.topDefect[0])?.name || "the reporting station"}</strong> for <strong>{stationPerformanceSummary.topDefect[0]}</strong>; verify the root cause before changing the process.</li>
+              </ol>
+            </div>
+            <p className="mt-3 text-xs leading-relaxed text-slate-500">Station sample figures and causes are illustrative, not measured factory data. CSV requires the seven station names and columns Station, Processed, Rejected, Downtime, AvgCycleTime. Optional columns: DefectCategory and DowntimeCause. Older station CSV files remain supported; missing categories appear as Not specified.</p>
           </section>
           {chartEditMode && (
             <div className="factory-chart-editor" aria-label="Edit chart visibility and titles">
