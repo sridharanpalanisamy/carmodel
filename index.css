@@ -586,3 +586,60 @@
  .home-layout .innovation-title .button{grid-row:3!important;justify-self:start!important}
  .home-layout .ford-glb-stage{height:min(62vh,520px)!important;min-height:360px!important}
 }
+
+
+/* 3D-ONLY HOME: remove all editorial homepage framing and give the viewer
+   the full viewport width and height. */
+.home-3d-only{
+  width:100%;
+  max-width:none!important;
+  min-height:100vh;
+  margin:0!important;
+  padding:clamp(16px,2.2vw,32px)!important;
+}
+.home-3d-only>.turntable-panel{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+}
+.home-3d-only .turntable-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:24px;
+  margin:0 0 16px!important;
+}
+.home-3d-only .viewer-toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  margin:0 0 10px!important;
+}
+.home-3d-only .viewer-frame{
+  width:100%!important;
+  min-height:0!important;
+  margin:0!important;
+  overflow:hidden;
+}
+.home-3d-only .ford-glb-stage,
+.home-3d-only #homeModelTGLBMount{
+  width:100%!important;
+  height:calc(100vh - 250px)!important;
+  min-height:520px!important;
+  max-height:900px!important;
+}
+.home-3d-only .viewer-credit,
+.home-3d-only .model-disclaimer{margin-top:10px!important}
+@media(max-width:700px){
+  .home-3d-only{padding:14px!important}
+  .home-3d-only .turntable-heading{gap:12px}
+  .home-3d-only .ford-glb-stage,
+  .home-3d-only #homeModelTGLBMount{
+    height:calc(100svh - 260px)!important;
+    min-height:420px!important;
+  }
+}
