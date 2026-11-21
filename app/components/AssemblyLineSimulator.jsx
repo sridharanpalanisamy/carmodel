@@ -1760,10 +1760,23 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
           <p>Change station cycle times and shift conditions to understand how a bottleneck affects the output of a balanced production line.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <div className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-right shadow-sm" aria-label="Live local dashboard clock">
-            <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Live local time</span>
-            <strong className="block font-mono text-xl tabular-nums text-slate-900">{dashboardNow.toLocaleTimeString("en-GB", { hour12: false })}</strong>
-            <span className="block text-[10px] text-slate-500">{dashboardNow.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</span>
+          <div className="flex flex-col gap-2" aria-label="Live local dashboard clock">
+            <span className="text-right text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Live local time</span>
+            <div className="grid grid-cols-3 gap-2">
+              <div className="min-w-[58px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-center shadow-sm">
+                <strong className="block font-mono text-2xl tabular-nums text-slate-900">{String(dashboardNow.getHours()).padStart(2, "0")}</strong>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Hours</span>
+              </div>
+              <div className="min-w-[58px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-center shadow-sm">
+                <strong className="block font-mono text-2xl tabular-nums text-slate-900">{String(dashboardNow.getMinutes()).padStart(2, "0")}</strong>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Minutes</span>
+              </div>
+              <div className="min-w-[58px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-center shadow-sm">
+                <strong className="block font-mono text-2xl tabular-nums text-slate-900">{String(dashboardNow.getSeconds()).padStart(2, "0")}</strong>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Seconds</span>
+              </div>
+            </div>
+            <span className="text-right text-[10px] text-slate-500">{dashboardNow.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</span>
           </div>
           <button className="line-reset" type="button" onClick={reset}>Reset example ↺</button>
         </div>
@@ -1827,7 +1840,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
           </div>
           <div className="line-target-meter">
             <div><span>OUTPUT VS TARGET</span><strong>{target > 0 ? Math.min(100, result.goodUnits / target * 100).toFixed(0) : 0}%</strong></div>
-            <div className="line-target-track"><i style={{ width: `${target > 0 ? clamp(result.goodUnits / target * 100, 0, 100) : 0}%` }}/></div>
+            <p className="mt-2 text-sm text-slate-600">{result.goodUnits.toLocaleString("en-IN")} good vehicles produced against a target of {target.toLocaleString("en-IN")}.</p>
           </div>
           <div className="factory-chart-toolbar">
             <div><span className="eyebrow">LIVE PRODUCTION ANALYTICS</span><p>Four chart views update as you change the simulator settings.</p></div>
@@ -2042,7 +2055,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
                   <ul aria-label="Saved named scenarios">
                   {visibleScenarioLibrary.map(item => <li key={item.name}>
                     <span className="factory-scenario-item-details">
-                      {renamingScenario === item.name ? <span className="factory-scenario-rename"><label htmlFor={`rename-${item.name}`}>New scenario name</label><input id={`rename-${item.name}`} value={renameScenarioValue} maxLength={48} onChange={event => setRenameScenarioValue(event.target.value)} onKeyDown={event => { if (event.key === "Enter") renameNamedScenario(item.name); if (event.key === "Escape") setRenamingScenario(""); }} /><span><button type="button" className="line-reset" onClick={() => renameNamedScenario(item.name)}>Save name</button><button type="button" className="line-reset" onClick={() => setRenamingScenario("")}>Cancel</button></span></span> : <><strong>{item.name}</strong><small>{new Date(item.snapshot.savedAt).toLocaleString()} · target {item.snapshot.target}/shift</small><small>{getScenarioProjection(item.snapshot).good.toLocaleString("en-IN")} good vehicles/shift · bottleneck {getScenarioProjection(item.snapshot).bottleneckName} ({getScenarioProjection(item.snapshot).bottleneck}s)</small><small className={getScenarioProjection(item.snapshot).gap >= 0 ? "factory-named-on-target" : "factory-named-below-target"}>{getScenarioProjection(item.snapshot).gap >= 0 ? `Target met · ${getScenarioProjection(item.snapshot).gap} above` : `${Math.abs(getScenarioProjection(item.snapshot).gap)} below target`}</small><span className="mt-2 block max-w-sm"><span className="mb-1 flex items-center justify-between gap-2 text-xs"><span>Target attainment</span><strong>{getScenarioProjection(item.snapshot).attainmentPercent.toFixed(1)}%</strong></span><span className="block h-2 overflow-hidden rounded-full bg-slate-200" role="progressbar" aria-label={`${item.name} target attainment`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.min(100, getScenarioProjection(item.snapshot).attainmentPercent)} aria-valuetext={`${getScenarioProjection(item.snapshot).attainmentPercent.toFixed(1)} percent of target`}><span className="block h-full rounded-full bg-teal-600 transition-[width]" style={{ width: `${clamp(getScenarioProjection(item.snapshot).attainmentPercent, 0, 100)}%` }} /></span></span>{pinnedScenarioProjection && (() => {
+                      {renamingScenario === item.name ? <span className="factory-scenario-rename"><label htmlFor={`rename-${item.name}`}>New scenario name</label><input id={`rename-${item.name}`} value={renameScenarioValue} maxLength={48} onChange={event => setRenameScenarioValue(event.target.value)} onKeyDown={event => { if (event.key === "Enter") renameNamedScenario(item.name); if (event.key === "Escape") setRenamingScenario(""); }} /><span><button type="button" className="line-reset" onClick={() => renameNamedScenario(item.name)}>Save name</button><button type="button" className="line-reset" onClick={() => setRenamingScenario("")}>Cancel</button></span></span> : <><strong>{item.name}</strong><small>{new Date(item.snapshot.savedAt).toLocaleString()} · target {item.snapshot.target}/shift</small><small>{getScenarioProjection(item.snapshot).good.toLocaleString("en-IN")} good vehicles/shift · bottleneck {getScenarioProjection(item.snapshot).bottleneckName} ({getScenarioProjection(item.snapshot).bottleneck}s)</small><small className={getScenarioProjection(item.snapshot).gap >= 0 ? "factory-named-on-target" : "factory-named-below-target"}>{getScenarioProjection(item.snapshot).gap >= 0 ? `Target met · ${getScenarioProjection(item.snapshot).gap} above` : `${Math.abs(getScenarioProjection(item.snapshot).gap)} below target`}</small><span className="mt-2 block max-w-sm text-xs text-slate-600">Target attainment: <strong>{getScenarioProjection(item.snapshot).attainmentPercent.toFixed(1)}%</strong></span>{pinnedScenarioProjection && (() => {
                       if (item.name === pinnedScenarioName) return <small className="font-medium text-teal-700">Pinned baseline scenario</small>;
                       const sameAssumptions = ["shiftHours", "breakMinutes", "availability", "yieldRate"].every(key => item.snapshot[key] === pinnedScenario.snapshot[key]);
                       const actualDelta = getScenarioProjection(item.snapshot).good - pinnedScenarioProjection.good;
