@@ -404,14 +404,34 @@
   .home-layout .hero-panel,
   .home-layout .innovation-panel { padding: 0; }
 }
-@media (max-width: 900px) {
+@media (min-width: 601px) and (max-width: 900px) {
   .home-layout > .left-column,
   .home-layout > .right-column,
   .home-layout .hero-panel,
   .home-layout .innovation-panel { display: block !important; }
   .home-layout { grid-template-columns: minmax(0,1fr) !important; grid-template-areas: none !important; row-gap: 0 !important; }
+  .home-layout .right-column {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) minmax(0,1fr) !important;
+    column-gap: 18px !important;
+  }
+  .home-layout .innovation-panel,
+  .home-layout .orange-feature,
+  .home-layout .turntable-panel { grid-column: 1 / -1 !important; }
+  .home-layout .latest-panel { grid-column: 1 !important; }
+  .home-layout .quote-panel { grid-column: 2 !important; }
   .home-layout .process-panel { border-top: 1px solid var(--line); }
   .home-layout .ford-glb-stage { height: min(68vh, 620px) !important; min-height: 420px !important; }
+}
+@media (max-width: 600px) {
+  .home-layout > .left-column,
+  .home-layout > .right-column,
+  .home-layout .hero-panel,
+  .home-layout .innovation-panel { display: block !important; }
+  .home-layout .right-column { display: block !important; }
+  .home-layout { grid-template-columns: minmax(0,1fr) !important; grid-template-areas: none !important; row-gap: 0 !important; }
+  .home-layout .process-panel { border-top: 1px solid var(--line); }
+  .home-layout .ford-glb-stage { height: min(62vh, 520px) !important; min-height: 360px !important; }
 }
 @media (max-width: 600px) {
   .home-layout .ford-glb-stage { height: min(62vh, 520px) !important; min-height: 360px !important; }
