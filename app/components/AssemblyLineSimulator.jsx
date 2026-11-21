@@ -327,6 +327,8 @@ export default function AssemblyLineSimulator() {
   const [productionHistory, setProductionHistory] = useState([]);
   const [departmentIssues, setDepartmentIssues] = useState([]);
   const [issueDraft, setIssueDraft] = useState({ departmentId: "supplier", title: "", rootCause: "", correctiveAction: "", owner: "", dueDate: "", priority: "Medium" });
+  const [maintenanceRecords, setMaintenanceRecords] = useState([]);
+  const [maintenanceDraft, setMaintenanceDraft] = useState({ departmentId: "machine-shop", asset: "", maintenanceType: "Preventive", serviceDescription: "", technician: "", lastServiceDate: "", nextServiceDate: "", priority: "Medium" });
   const [comparisonOlderId, setComparisonOlderId] = useState("");
   const [comparisonNewerId, setComparisonNewerId] = useState("");
   const [productCodeInput, setProductCodeInput] = useState("");
@@ -370,6 +372,9 @@ export default function AssemblyLineSimulator() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (typeof parsed.isSampleData === "boolean") setDepartmentDataIsSample(parsed.isSampleData);
+        if (Array.isArray(parsed.maintenanceRecords)) {
+          setMaintenanceRecords(parsed.maintenanceRecords.filter(record => record && typeof record.id === "string" && typeof record.departmentId === "string" && initialDepartments.some(department => department.id === record.departmentId) && typeof record.asset === "string" && typeof record.status === "string").slice(0,100));
+        }
         if (Array.isArray(parsed.departmentIssues)) {
           setDepartmentIssues(parsed.departmentIssues.filter(issue => issue && typeof issue.id === "string" && typeof issue.departmentId === "string" && initialDepartments.some(department => department.id === issue.departmentId) && typeof issue.title === "string" && typeof issue.status === "string").slice(0,100));
         }
@@ -417,13 +422,13 @@ export default function AssemblyLineSimulator() {
     if (!departmentDataReady) return;
     try {
       window.localStorage.setItem("factory-department-operations-v1", JSON.stringify({
-        departments, trackedProducts, activeProductId, productionHistory, departmentIssues, isSampleData: departmentDataIsSample, savedAt: new Date().toISOString()
+        departments, trackedProducts, activeProductId, productionHistory, departmentIssues, maintenanceRecords, isSampleData: departmentDataIsSample, savedAt: new Date().toISOString()
       }));
       setDepartmentDataMessage("Saved on this device · department settings and product timestamps will remain after refresh.");
     } catch {
       setDepartmentDataMessage("Browser storage is unavailable or full. Export or record important production data separately.");
     }
-  }, [departmentDataReady, departments, trackedProducts, activeProductId, productionHistory, departmentIssues, departmentDataIsSample]);
+  }, [departmentDataReady, departments, trackedProducts, activeProductId, productionHistory, departmentIssues, maintenanceRecords, departmentDataIsSample]);
 
   const saveProductionSnapshot = () => {
     const savedAt = new Date().toISOString();
@@ -496,6 +501,33 @@ export default function AssemblyLineSimulator() {
     const url = URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
     const link = document.createElement("a"); link.href = url; link.download = "factory-department-issue-register.csv"; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
     setDepartmentDataMessage("Department issue register CSV prepared with " + departmentIssues.length + " record(s).");
+  }
+
+  const addMaintenanceRecord = event => {
+    event.preventDefault();
+    if (!maintenanceDraft.asset.trim() || !maintenanceDraft.serviceDescription.trim() || !maintenanceDraft.technician.trim() || !maintenanceDraft.lastServiceDate || !maintenanceDraft.nextServiceDate) {
+      setDepartmentDataMessage("Complete the asset, service details, technician and both service dates before saving.");
+      return;
+    }
+    if (maintenanceDraft.nextServiceDate < maintenanceDraft.lastServiceDate) {
+      setDepartmentDataMessage("Next service date cannot be earlier than the last service date.");
+      return;
+    }
+    const department = departments.find(item => item.id === maintenanceDraft.departmentId);
+    const record = { ...maintenanceDraft, asset: maintenanceDraft.asset.trim(), serviceDescription: maintenanceDraft.serviceDescription.trim(), technician: maintenanceDraft.technician.trim(), id: "MNT-" + Date.now().toString(36).toUpperCase(), departmentName: department?.name || "", status: "Scheduled", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+    setMaintenanceRecords(current => [record, ...current].slice(0,100));
+    setMaintenanceDraft(current => ({ ...current, asset: "", serviceDescription: "", technician: "", lastServiceDate: "", nextServiceDate: "" }));
+    setDepartmentDataMessage("Maintenance record " + record.id + " added.");
+  };
+  const updateMaintenanceRecord = (id, changes) => setMaintenanceRecords(current => current.map(record => record.id === id ? { ...record, ...changes, updatedAt: new Date().toISOString() } : record));
+  function exportMaintenanceCsv() {
+    if (!maintenanceRecords.length) { setDepartmentDataMessage("No maintenance records are available to export."); return; }
+    const columns = ["RecordId","Department","Asset","MaintenanceType","ServiceDescription","Technician","LastServiceDate","NextServiceDate","Priority","Status","CreatedAt","UpdatedAt"];
+    const rows = maintenanceRecords.map(record => [record.id, record.departmentName || departments.find(item => item.id === record.departmentId)?.name || record.departmentId, record.asset, record.maintenanceType, record.serviceDescription, record.technician, record.lastServiceDate, record.nextServiceDate, record.priority, record.status, record.createdAt, record.updatedAt]);
+    const csv = [columns,...rows].map(row => row.map(value => { const cell = String(value ?? ""); return cell.includes('"') || cell.includes(",") || cell.includes("\n") ? '"' + cell.replace(/"/g,'""') + '"' : cell; }).join(",")).join("\r\n");
+    const url = URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
+    const link = document.createElement("a"); link.href = url; link.download = "factory-maintenance-register.csv"; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+    setDepartmentDataMessage("Maintenance CSV prepared with " + maintenanceRecords.length + " record(s).");
   }
 
   const restoreDepartmentSamples = () => {
