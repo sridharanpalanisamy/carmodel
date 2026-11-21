@@ -324,6 +324,7 @@ export default function AssemblyLineSimulator() {
   const [dashboardNow, setDashboardNow] = useState(() => new Date());
   const [departments, setDepartments] = useState(initialDepartments);
   const [trackedProducts, setTrackedProducts] = useState([]);
+  const [productionHistory, setProductionHistory] = useState([]);
   const [productCodeInput, setProductCodeInput] = useState("");
   const [activeProductId, setActiveProductId] = useState("");
   const [departmentDataReady, setDepartmentDataReady] = useState(false);
@@ -365,6 +366,12 @@ export default function AssemblyLineSimulator() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (typeof parsed.isSampleData === "boolean") setDepartmentDataIsSample(parsed.isSampleData);
+        if (Array.isArray(parsed.productionHistory)) {
+          setProductionHistory(parsed.productionHistory.filter(item =>
+            item && typeof item.id === "string" && typeof item.savedAt === "string" &&
+            Array.isArray(item.departments) && item.departments.length === initialDepartments.length
+          ).slice(0,60));
+        }
         if (Array.isArray(parsed.departments)) {
           const validById = new Map(parsed.departments.filter(item => item && typeof item.id === "string").map(item => [item.id, item]));
           setDepartments(initialDepartments.map(base => {
@@ -403,18 +410,57 @@ export default function AssemblyLineSimulator() {
     if (!departmentDataReady) return;
     try {
       window.localStorage.setItem("factory-department-operations-v1", JSON.stringify({
-        departments, trackedProducts, activeProductId, isSampleData: departmentDataIsSample, savedAt: new Date().toISOString()
+        departments, trackedProducts, activeProductId, productionHistory, isSampleData: departmentDataIsSample, savedAt: new Date().toISOString()
       }));
       setDepartmentDataMessage("Saved on this device · department settings and product timestamps will remain after refresh.");
     } catch {
       setDepartmentDataMessage("Browser storage is unavailable or full. Export or record important production data separately.");
     }
-  }, [departmentDataReady, departments, trackedProducts, activeProductId, departmentDataIsSample]);
+  }, [departmentDataReady, departments, trackedProducts, activeProductId, productionHistory, departmentDataIsSample]);
+
+  const saveProductionSnapshot = () => {
+    const savedAt = new Date().toISOString();
+    const snapshot = {
+      id: savedAt + "-" + Math.random().toString(36).slice(2,8),
+      savedAt,
+      isSampleData: departmentDataIsSample,
+      departments: departments.map(item => ({...item}))
+    };
+    setProductionHistory(current => [snapshot,...current].slice(0,60));
+    setDepartmentDataMessage("Production snapshot saved for " + new Date(savedAt).toLocaleString("en-IN") + ".");
+  };
+
+  function exportProductionHistoryCsv() {
+    if (!productionHistory.length) {
+      setDepartmentDataMessage("No saved production history is available to export yet.");
+      return;
+    }
+    const header = ["SnapshotAt","DataType","DepartmentId","Department","Unit","Target","Processed","GoodOutput","Rejected","YieldPercent","DowntimeMinutes","CycleTimeSeconds","ShiftHours","BreakMinutes"];
+    const rows = productionHistory.flatMap(snapshot => snapshot.departments.map(department => {
+      const good = Math.max(0,department.actual-department.rejected);
+      const yieldRate = department.actual > 0 ? (good/department.actual*100).toFixed(1) : "0.0";
+      return [snapshot.savedAt,snapshot.isSampleData?"Illustrative sample":"User entered",department.id,department.name,department.unit,department.target,department.actual,good,department.rejected,yieldRate,department.downtime,department.cycleSeconds,department.shiftHours,department.breakMinutes];
+    }));
+    const csv = [header,...rows].map(row => row.map(value => {
+      const cell = String(value ?? "");
+      return /[",\\n]/.test(cell) ? '"' + cell.replace(/"/g,'""') + '"' : cell;
+    }).join(",")).join("\\n");
+    const url = URL.createObjectURL(new Blob(["\\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "factory-daily-production-history.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setDepartmentDataMessage("Production history CSV prepared with " + productionHistory.length + " saved snapshot(s).");
+  }
 
   const restoreDepartmentSamples = () => {
     setDepartments(initialDepartments);
     setDepartmentDataIsSample(true);
     setTrackedProducts([]);
+    setProductionHistory([]);
     setActiveProductId("");
     setProductCodeInput("");
     setDepartmentDataMessage("Illustrative department samples restored. Previous product tracking records were cleared from this browser.");
@@ -2291,6 +2337,16 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
           <div className="factory-overall-heading"><div><span className="eyebrow">END-OF-PAGE / FACTORY-WIDE SUMMARY</span><h3 id="factoryOverallTitle">Today’s overall production view</h3><p>Department totals are shown as a workload summary. They are not summed into a unique finished-vehicle count because departments handle different units and stages.</p></div><span className="factory-summary-date">{dashboardNow.toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"})}</span></div>
           <div className="factory-overall-metrics"><div><small>Combined department targets</small><strong>{departmentTotals.target.toLocaleString("en-IN")}</strong><em>mixed units · not vehicles</em></div><div><small>Good output recorded</small><strong>{departmentTotals.actual.toLocaleString("en-IN")}</strong><em>mixed units · not vehicles</em></div><div><small>Rejected / rework</small><strong>{departmentTotals.rejected.toLocaleString("en-IN")}</strong><em>across departments</em></div><div><small>Total downtime</small><strong>{formatDuration(departmentTotals.downtime*60)}</strong><em>department-minutes summed</em></div><div><small>Target shortfall</small><strong>{departmentTotals.delayed.toLocaleString("en-IN")}</strong><em>department units</em></div></div>
           <div className="factory-department-summary-table"><table><thead><tr><th>Department</th><th>Today target</th><th>Good output</th><th>Rejected</th><th>Capacity estimate</th><th>Delay / gap</th><th>Downtime</th></tr></thead><tbody>{departments.map(department=>{const good=Math.max(0,department.actual-department.rejected);const net=Math.max(0,department.shiftHours*3600-department.breakMinutes*60-department.downtime*60);const capacity=department.cycleSeconds>0?Math.floor(net/department.cycleSeconds):0;const gap=good-department.target;return <tr key={department.id}><th>{department.name}</th><td>{department.target.toLocaleString("en-IN")} {department.unit}</td><td>{good.toLocaleString("en-IN")}</td><td>{department.rejected}</td><td>{capacity.toLocaleString("en-IN")}</td><td className={gap<0?"is-negative":"is-positive"}>{gap>0?"+":""}{gap}</td><td>{formatDuration(department.downtime*60)}</td></tr>;})}</tbody></table></div>
+        </section>
+        <section className="factory-overall-summary" aria-labelledby="factoryHistoryTitle">
+          <div className="factory-overall-heading">
+            <div><span className="eyebrow">DAILY RECORDS / HISTORICAL REVIEW</span><h3 id="factoryHistoryTitle">Production history</h3><p>Save a dated snapshot after entering a shift’s figures. Each snapshot preserves all nine department values for later comparison and export.</p></div>
+            <div className="factory-department-tools">
+              <button type="button" className="factory-department-restore" onClick={saveProductionSnapshot}>Save current snapshot ↓</button>
+              <button type="button" className="factory-department-restore" onClick={exportProductionHistoryCsv} disabled={!productionHistory.length}>Export history CSV ↓</button>
+            </div>
+          </div>
+          {productionHistory.length ? <div className="factory-department-summary-table"><table><thead><tr><th>Saved date &amp; time</th><th>Data source</th><th>Departments</th><th>Combined target*</th><th>Good output*</th><th>Rejected records</th><th>Downtime</th></tr></thead><tbody>{productionHistory.map(snapshot=>{const totals=snapshot.departments.reduce((acc,item)=>{const good=Math.max(0,item.actual-item.rejected);return {target:acc.target+item.target,good:acc.good+good,rejected:acc.rejected+item.rejected,downtime:acc.downtime+item.downtime};},{target:0,good:0,rejected:0,downtime:0});return <tr key={snapshot.id}><th>{new Date(snapshot.savedAt).toLocaleString("en-IN",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"})}</th><td>{snapshot.isSampleData?"Illustrative sample":"User entered"}</td><td>{snapshot.departments.length}</td><td>{totals.target.toLocaleString("en-IN")}</td><td>{totals.good.toLocaleString("en-IN")}</td><td>{totals.rejected.toLocaleString("en-IN")}</td><td>{formatDuration(totals.downtime*60)}</td></tr>;})}</tbody></table><p className="factory-sample-note">*Totals combine different units and process stages. They are workload indicators, not unique finished-vehicle counts. Up to 60 snapshots are retained in this browser.</p></div> : <p className="factory-sample-note">No historical snapshots saved yet. Enter the department figures for a shift, then select “Save current snapshot”.</p>}
         </section>
         <p className="factory-sample-note" role="status">{departmentDataMessage}</p><p className="factory-sample-note">All starting department values are illustrative sample figures. Replace them with verified daily production records before presenting operational performance to a client.</p>
       </section>
