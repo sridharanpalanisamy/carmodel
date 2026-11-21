@@ -28,6 +28,10 @@ export default function SiteHeader() {
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [open]);
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
   const activePage = pathname === "/ford-dashboard" ? "dashboard"
     : pathname === "/models" ? "models"
     : pathname === "/specifications" ? "specifications"
