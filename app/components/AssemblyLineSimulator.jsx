@@ -423,9 +423,9 @@ export default function AssemblyLineSimulator() {
     const rows = departments.map(item => [item.id,item.name,item.target,item.actual,item.rejected,item.cycleSeconds,item.downtime,item.shiftHours,item.breakMinutes]);
     const csv = [columns,...rows].map(row => row.map(value => {
       const cell = String(value ?? "");
-      return /[",\\n]/.test(cell) ? '"' + cell.replace(/"/g,'""') + '"' : cell;
-    }).join(",")).join("\\n");
-    const url = URL.createObjectURL(new Blob(["\\uFEFF" + csv],{type:"text/csv;charset=utf-8"}));
+      return /[",\n]/.test(cell) ? '"' + cell.replace(/"/g,'""') + '"' : cell;
+    }).join(",")).join("\n");
+    const url = URL.createObjectURL(new Blob(["\uFEFF" + csv],{type:"text/csv;charset=utf-8"}));
     const link = document.createElement("a");
     link.href = url;
     link.download = "factory-department-production.csv";
@@ -441,7 +441,7 @@ export default function AssemblyLineSimulator() {
     if (!file) return;
     try {
       if (file.size > 100 * 1024) throw new Error("CSV is too large. Please upload a file smaller than 100 KB.");
-      const source = (await file.text()).replace(/^\\uFEFF/,"");
+      const source = (await file.text()).replace(/^\uFEFF/,"");
       const rows = [];
       let row = [], cell = "", quoted = false;
       for (let index=0; index<source.length; index++) {
@@ -452,8 +452,8 @@ export default function AssemblyLineSimulator() {
           else cell += char;
         } else if (char === '"' && cell === "") quoted = true;
         else if (char === ",") { row.push(cell.trim()); cell = ""; }
-        else if (char === "\\n" || char === "\\r") {
-          if (char === "\\r" && source[index+1] === "\\n") index++;
+        else if (char === "\n" || char === "\r") {
+          if (char === "\r" && source[index+1] === "\n") index++;
           row.push(cell.trim()); cell = "";
           if (row.some(value => value !== "")) rows.push(row);
           row = [];
@@ -463,7 +463,7 @@ export default function AssemblyLineSimulator() {
       row.push(cell.trim());
       if (row.some(value => value !== "")) rows.push(row);
       if (rows.length < 2) throw new Error("CSV must contain a header and at least one department row.");
-      const headers = rows[0].map(value => value.replace(/^\\uFEFF/,"").trim());
+      const headers = rows[0].map(value => value.replace(/^\uFEFF/,"").trim());
       const required = ["DepartmentId","Target","Actual","Rejected","CycleTimeSeconds","DowntimeMinutes","ShiftHours","BreakMinutes"];
       const positions = Object.fromEntries(required.map(name => [name,headers.indexOf(name)]));
       const missing = required.filter(name => positions[name] < 0);
