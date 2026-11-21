@@ -2418,3 +2418,20 @@ body:has(.dashboard-sidebar-icon-rail) .site-footer{
 .factory-maintenance-register td select{min-width:116px}
 @media(max-width:900px){.factory-maintenance-register .factory-issue-form{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.factory-maintenance-register .factory-issue-form{grid-template-columns:1fr}}
+
+/* Department inventory stock controls and availability indicators. */
+.factory-inventory-register .factory-issue-form{grid-template-columns:repeat(3,minmax(0,1fr))}
+.factory-inventory-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.factory-inventory-summary>div{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px;border:1px solid #e0e8e2;border-radius:8px;background:#fbfcfb}
+.factory-inventory-summary span{color:#64746c;font-size:11px}
+.factory-inventory-summary strong{color:#263a30;font-size:20px;font-variant-numeric:tabular-nums}
+.factory-inventory-register .factory-stock-quantity{width:105px;min-width:95px;min-height:34px;padding:6px 8px;border:1px solid #d7e0da;border-radius:6px;background:#fff;font-size:12px}
+.factory-stock-actions{display:flex;flex-wrap:wrap;gap:5px;min-width:190px}
+.factory-stock-actions button{padding:6px 8px;border:1px solid #d7e0da;border-radius:6px;background:#fff;color:#294437;font-size:11px;font-weight:650}
+.factory-stock-actions button:hover{background:#edf4ef}
+.factory-stock-actions .factory-stock-delete{color:#9b3d36}
+.factory-stock-low,.factory-stock-ok{display:inline-block;padding:5px 8px;border-radius:5px;font-size:11px;font-weight:700;white-space:nowrap}
+.factory-stock-low{background:#fff0e9;color:#a4422d}
+.factory-stock-ok{background:#eaf5ed;color:#286341}
+@media(max-width:900px){.factory-inventory-register .factory-issue-form{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.factory-inventory-register .factory-issue-form{grid-template-columns:1fr}.factory-inventory-summary{grid-template-columns:1fr}}
