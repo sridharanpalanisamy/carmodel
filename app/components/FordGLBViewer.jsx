@@ -54,6 +54,9 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         renderer.domElement.setAttribute("aria-label", `Interactive real 3D ${modelName} vehicle model`);
+        renderer.domElement.tabIndex = 0;
+        renderer.domElement.setAttribute("title", "Focus this viewer to use arrow keys to rotate the vehicle; use the mouse wheel to zoom.");
+        renderer.domElement.setAttribute("aria-keyshortcuts", "ArrowUp ArrowDown ArrowLeft ArrowRight");
         renderer.domElement.style.width = "100%";
         renderer.domElement.style.height = "100%";
         renderer.domElement.style.display = "block";
