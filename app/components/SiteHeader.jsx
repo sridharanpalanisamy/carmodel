@@ -16,13 +16,15 @@ const links = [
 ];
 
 export default function SiteHeader() {
-  const pathname = usePathname() || "/";
+  const pathname = (usePathname() || "/").replace(/\\/+$/, "") || "/";
   const [open, setOpen] = useState(false);
-  const activePage = pathname.endsWith("/ford-dashboard/") ? "dashboard"
-    : pathname.endsWith("/models/") ? "models"
-    : pathname.endsWith("/factory/") ? "factory"
-    : pathname.endsWith("/heritage/") ? "heritage"
-    : pathname.endsWith("/contact/") ? "contact" : "home";
+  const activePage = pathname === "/ford-dashboard" ? "dashboard"
+    : pathname === "/models" ? "models"
+    : pathname === "/specifications" ? "specifications"
+    : pathname === "/engineering" ? "engineering"
+    : pathname === "/factory" ? "factory"
+    : pathname === "/heritage" ? "heritage"
+    : pathname === "/contact" ? "contact" : "home";
 
   return (
     <header className="site-header">
