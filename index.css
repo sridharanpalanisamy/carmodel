@@ -813,3 +813,10 @@
   .home-layout > .home-bottom-row > .latest-panel { grid-area: models !important; }
   .home-layout > .home-bottom-row > .quote-panel { grid-area: quote !important; }
 }
+
+
+/* Keep keyboard focus visible when users navigate to the 3D vehicle canvas. */
+.ford-glb-stage canvas:focus-visible {
+  outline: 3px solid #c65a2e;
+  outline-offset: -5px;
+}
