@@ -568,7 +568,7 @@ export default function AssemblyLineSimulator() {
     if (!inventoryItems.length) { setDepartmentDataMessage("No inventory items are available to export."); return; }
     const columns = ["SKU","Item","Category","Department","Supplier","Unit","OpeningStock","TotalReceived","TotalConsumed","CurrentBalance","MinimumStock","StockStatus","LastUpdated"];
     const rows = inventoryItems.map(item => [item.sku,item.itemName,item.category,item.departmentName || departments.find(department => department.id === item.departmentId)?.name || item.departmentId,item.supplier,item.unit,item.openingStock,item.totalReceived,item.totalConsumed,item.stockOnHand,item.minimumStock,item.stockOnHand <= item.minimumStock ? "Low stock" : "Available",item.updatedAt]);
-    const csv = [columns,...rows].map(row => row.map(value => { const cell = String(value ?? ""); return /[",\n]/.test(cell) ? '"' + cell.replace(/"/g,'""') + '"' : cell; }).join(",")).join("\\r\n");
+    const csv = [columns,...rows].map(row => row.map(value => { const cell = String(value ?? ""); return /[",\n]/.test(cell) ? '"' + cell.replace(/"/g,'""') + '"' : cell; }).join(",")).join("\r\n");
     const url = URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
     const link = document.createElement("a"); link.href = url; link.download = "factory-inventory-register.csv"; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
     setDepartmentDataMessage("Inventory CSV prepared with " + inventoryItems.length + " item(s).");
