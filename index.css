@@ -328,8 +328,8 @@
 /* HOME PAGE FINAL SPACING + LARGE SHOWROOM OVERRIDES */
 @media (min-width:901px){
   .home-layout{
-    column-gap:22px!important;
-    row-gap:12px!important;
+    column-gap:16px!important;
+    row-gap:8px!important;
     grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
   }
   .home-layout .hero-photo{height:230px}
