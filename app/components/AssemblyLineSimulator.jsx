@@ -325,6 +325,8 @@ export default function AssemblyLineSimulator() {
   const [departments, setDepartments] = useState(initialDepartments);
   const [trackedProducts, setTrackedProducts] = useState([]);
   const [productionHistory, setProductionHistory] = useState([]);
+  const [departmentIssues, setDepartmentIssues] = useState([]);
+  const [issueDraft, setIssueDraft] = useState({ departmentId: "supplier", title: "", rootCause: "", correctiveAction: "", owner: "", dueDate: "", priority: "Medium" });
   const [comparisonOlderId, setComparisonOlderId] = useState("");
   const [comparisonNewerId, setComparisonNewerId] = useState("");
   const [productCodeInput, setProductCodeInput] = useState("");
@@ -368,6 +370,9 @@ export default function AssemblyLineSimulator() {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (typeof parsed.isSampleData === "boolean") setDepartmentDataIsSample(parsed.isSampleData);
+        if (Array.isArray(parsed.departmentIssues)) {
+          setDepartmentIssues(parsed.departmentIssues.filter(issue => issue && typeof issue.id === "string" && typeof issue.departmentId === "string" && initialDepartments.some(department => department.id === issue.departmentId) && typeof issue.title === "string" && typeof issue.status === "string").slice(0,100));
+        }
         if (Array.isArray(parsed.productionHistory)) {
           setProductionHistory(parsed.productionHistory.filter(item =>
             item && typeof item.id === "string" && typeof item.savedAt === "string" &&
@@ -412,13 +417,13 @@ export default function AssemblyLineSimulator() {
     if (!departmentDataReady) return;
     try {
       window.localStorage.setItem("factory-department-operations-v1", JSON.stringify({
-        departments, trackedProducts, activeProductId, productionHistory, isSampleData: departmentDataIsSample, savedAt: new Date().toISOString()
+        departments, trackedProducts, activeProductId, productionHistory, departmentIssues, isSampleData: departmentDataIsSample, savedAt: new Date().toISOString()
       }));
       setDepartmentDataMessage("Saved on this device · department settings and product timestamps will remain after refresh.");
     } catch {
       setDepartmentDataMessage("Browser storage is unavailable or full. Export or record important production data separately.");
     }
-  }, [departmentDataReady, departments, trackedProducts, activeProductId, productionHistory, departmentDataIsSample]);
+  }, [departmentDataReady, departments, trackedProducts, activeProductId, productionHistory, departmentIssues, departmentDataIsSample]);
 
   const saveProductionSnapshot = () => {
     const savedAt = new Date().toISOString();
@@ -468,6 +473,31 @@ export default function AssemblyLineSimulator() {
         return { id:current.id,name:current.name,unit:current.unit,targetDelta:current.target-(previous?.target ?? 0),goodDelta:good-oldGood,rejectedDelta:current.rejected-(previous?.rejected ?? 0),downtimeDelta:current.downtime-(previous?.downtime ?? 0),yieldDelta:(current.actual>0?good/current.actual*100:0)-(previous?.actual>0?oldGood/previous.actual*100:0) };
       })
     : [];
+
+  const addDepartmentIssue = event => {
+    event.preventDefault();
+    const title = issueDraft.title.trim();
+    if (!title || !issueDraft.rootCause.trim() || !issueDraft.correctiveAction.trim() || !issueDraft.owner.trim() || !issueDraft.dueDate) {
+      setDepartmentDataMessage("Complete the issue, root cause, corrective action, owner and due date before saving.");
+      return;
+    }
+    const department = departments.find(item => item.id === issueDraft.departmentId);
+    const issue = { ...issueDraft, title, rootCause: issueDraft.rootCause.trim(), correctiveAction: issueDraft.correctiveAction.trim(), owner: issueDraft.owner.trim(), id: "ISS-" + Date.now().toString(36).toUpperCase(), departmentName: department?.name || "", status: "Open", resolutionNotes: "", createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+    setDepartmentIssues(current => [issue, ...current].slice(0,100));
+    setIssueDraft(current => ({ ...current, title: "", rootCause: "", correctiveAction: "", owner: "", dueDate: "" }));
+    setDepartmentDataMessage("Issue " + issue.id + " added to the department issue register.");
+  };
+  const updateDepartmentIssue = (id, changes) => setDepartmentIssues(current => current.map(issue => issue.id === id ? { ...issue, ...changes, updatedAt: new Date().toISOString() } : issue));
+  function exportDepartmentIssuesCsv() {
+    if (!departmentIssues.length) { setDepartmentDataMessage("No department issues are available to export."); return; }
+    const columns = ["IssueId","Department","Issue","RootCause","CorrectiveAction","Owner","DueDate","Priority","Status","ResolutionNotes","CreatedAt","UpdatedAt"];
+    const rows = departmentIssues.map(issue => [issue.id, issue.departmentName || departments.find(item => item.id === issue.departmentId)?.name || issue.departmentId, issue.title, issue.rootCause, issue.correctiveAction, issue.owner, issue.dueDate, issue.priority, issue.status, issue.resolutionNotes, issue.createdAt, issue.updatedAt]);
+    const csv = [columns,...rows].map(row => row.map(value => { const cell = String(value ?? ""); return /[",\n]/.test(cell) ? '"' + cell.replace(/"/g,'""') + '"' : cell; }).join(",")).join("\r\n");
+    const url = URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
+    const link = document.createElement("a"); link.href = url; link.download = "factory-department-issue-register.csv"; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url);
+    setDepartmentDataMessage("Department issue register CSV prepared with " + departmentIssues.length + " record(s).");
+  }
+
   const restoreDepartmentSamples = () => {
     setDepartments(initialDepartments);
     setDepartmentDataIsSample(true);
