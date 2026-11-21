@@ -460,7 +460,6 @@ export default function AssemblyLineSimulator() {
     setDepartments(initialDepartments);
     setDepartmentDataIsSample(true);
     setTrackedProducts([]);
-    setProductionHistory([]);
     setActiveProductId("");
     setProductCodeInput("");
     setDepartmentDataMessage("Illustrative department samples restored. Previous product tracking records were cleared from this browser.");
