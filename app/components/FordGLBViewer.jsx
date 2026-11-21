@@ -143,7 +143,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
             const verticalFov = THREE.MathUtils.degToRad(camera.fov);
             const horizontalFov = 2 * Math.atan(Math.tan(verticalFov / 2) * Math.max(camera.aspect, 0.5));
             const limitingFov = Math.min(verticalFov, horizontalFov);
-            const distance = Math.max(sphere.radius / Math.sin(limitingFov / 2) * 1.7, maxDimension * 2.1);
+            const distance = Math.max(sphere.radius / Math.sin(limitingFov / 2) * 1.12, maxDimension * 1.25);
             const viewDirection = new THREE.Vector3(1.35, 0.38, 1.55).normalize();
             camera.position.copy(viewDirection.multiplyScalar(distance));
             camera.near = Math.max(maxDimension / 1000, 0.001);
@@ -151,7 +151,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
             camera.lookAt(0, 0, 0);
             camera.updateProjectionMatrix();
             controls.target.set(0, 0, 0);
-            controls.minDistance = maxDimension * 0.65;
+            controls.minDistance = maxDimension * 0.48;
             controls.maxDistance = maxDimension * 8;
             controls.update();
             resetView = () => {
@@ -219,7 +219,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
 
   return (
     <div className="ford-glb-viewer">
-      <div ref={hostRef} className="ford-glb-stage" style={{ width: "100%", height: "320px", minHeight: "320px", position: "relative", overflow: "hidden" }} />
+      <div ref={hostRef} className="ford-glb-stage" style={{ width: "100%", height: "min(76vh, 820px)", minHeight: "620px", position: "relative", overflow: "hidden" }} />
       <div className="ford-glb-controls" style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:"10px",padding:"10px 12px",background:"#202126",color:"#f7f5f3"}}>
         <div className="ford-glb-status" role="status" style={{fontSize:"11px",lineHeight:1.5,flex:"1 1 180px",minWidth:0}}>{status}</div>
         <div style={{display:"flex",gap:"8px",flex:"0 1 auto",flexWrap:"wrap"}}><button type="button" onClick={() => { const next = !autoRotate; setAutoRotate(next); if (controlsRef.current) controlsRef.current.autoRotate = next; }} disabled={!modelReady || prefersReducedMotion} aria-pressed={autoRotate} aria-label={autoRotate?"Pause automatic model rotation":"Start automatic model rotation"} title={prefersReducedMotion?"Automatic rotation is disabled by your reduced-motion setting":undefined} style={{border:"1px solid #ffffff66",background:autoRotate?"#f7f5f3":"transparent",color:autoRotate?"#202126":"inherit",padding:"8px 12px",fontSize:"10px",fontWeight:700,cursor:modelReady&&!prefersReducedMotion?"pointer":"not-allowed",opacity:modelReady&&!prefersReducedMotion?1:0.5}}>{autoRotate?"Pause rotation":"Auto rotate"}</button><button type="button" onClick={() => resetViewRef.current?.()} disabled={!modelReady} aria-label="Reset the 3D model camera view" style={{border:"1px solid #ffffff66",background:"transparent",color:"inherit",padding:"8px 12px",fontSize:"10px",fontWeight:700,cursor:modelReady?"pointer":"not-allowed",opacity:modelReady?1:0.5}}>Reset view</button></div>
