@@ -417,6 +417,83 @@ export default function AssemblyLineSimulator() {
     setDepartmentDataMessage("Illustrative department samples restored. Previous product tracking records were cleared from this browser.");
   };
 
+  const departmentCsvInput = useRef(null);
+  function exportDepartmentCsv() {
+    const columns = ["DepartmentId","Department","Target","Actual","Rejected","CycleTimeSeconds","DowntimeMinutes","ShiftHours","BreakMinutes"];
+    const rows = departments.map(item => [item.id,item.name,item.target,item.actual,item.rejected,item.cycleSeconds,item.downtime,item.shiftHours,item.breakMinutes]);
+    const csv = [columns,...rows].map(row => row.map(value => {
+      const cell = String(value ?? "");
+      return /[",\\n]/.test(cell) ? '"' + cell.replace(/"/g,'""') + '"' : cell;
+    }).join(",")).join("\\n");
+    const url = URL.createObjectURL(new Blob(["\\uFEFF" + csv],{type:"text/csv;charset=utf-8"}));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "factory-department-production.csv";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setDepartmentDataMessage("Exported all nine department settings and daily figures to CSV.");
+  }
+
+  async function importDepartmentCsv(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      if (file.size > 100 * 1024) throw new Error("CSV is too large. Please upload a file smaller than 100 KB.");
+      const source = (await file.text()).replace(/^\\uFEFF/,"");
+      const rows = [];
+      let row = [], cell = "", quoted = false;
+      for (let index=0; index<source.length; index++) {
+        const char = source[index];
+        if (quoted) {
+          if (char === '"' && source[index+1] === '"') { cell += '"'; index++; }
+          else if (char === '"') quoted = false;
+          else cell += char;
+        } else if (char === '"' && cell === "") quoted = true;
+        else if (char === ",") { row.push(cell.trim()); cell = ""; }
+        else if (char === "\\n" || char === "\\r") {
+          if (char === "\\r" && source[index+1] === "\\n") index++;
+          row.push(cell.trim()); cell = "";
+          if (row.some(value => value !== "")) rows.push(row);
+          row = [];
+        } else cell += char;
+      }
+      if (quoted) throw new Error("CSV contains an unclosed quoted value.");
+      row.push(cell.trim());
+      if (row.some(value => value !== "")) rows.push(row);
+      if (rows.length < 2) throw new Error("CSV must contain a header and at least one department row.");
+      const headers = rows[0].map(value => value.replace(/^\\uFEFF/,"").trim());
+      const required = ["DepartmentId","Target","Actual","Rejected","CycleTimeSeconds","DowntimeMinutes","ShiftHours","BreakMinutes"];
+      const positions = Object.fromEntries(required.map(name => [name,headers.indexOf(name)]));
+      const missing = required.filter(name => positions[name] < 0);
+      if (missing.length) throw new Error("Missing required CSV columns: " + missing.join(", "));
+      const limits = {Target:[0,100000],Actual:[0,100000],Rejected:[0,100000],CycleTimeSeconds:[1,3600],DowntimeMinutes:[0,720],ShiftHours:[1,24],BreakMinutes:[0,300]};
+      const importedById = new Map();
+      rows.slice(1).forEach((values,index) => {
+        const id = values[positions.DepartmentId];
+        if (!initialDepartments.some(item => item.id === id)) throw new Error("Row " + (index+2) + " has an unknown DepartmentId: " + (id || "(blank)"));
+        if (importedById.has(id)) throw new Error("Department " + id + " appears more than once.");
+        const fields = {};
+        Object.entries(limits).forEach(([field,[min,max]]) => {
+          const raw = values[positions[field]];
+          const number = Number(raw);
+          if (raw === "" || !Number.isFinite(number) || number < min || number > max) {
+            throw new Error("Row " + (index+2) + ": " + field + " must be between " + min + " and " + max + ".");
+          }
+          fields[({Target:"target",Actual:"actual",Rejected:"rejected",CycleTimeSeconds:"cycleSeconds",DowntimeMinutes:"downtime",ShiftHours:"shiftHours",BreakMinutes:"breakMinutes"})[field]] = number;
+        });
+        importedById.set(id,fields);
+      });
+      setDepartments(current => current.map(item => importedById.has(item.id) ? {...item,...importedById.get(item.id)} : item));
+      setDepartmentDataMessage("Imported " + importedById.size + " department row(s) from " + file.name + ". Departments omitted from the CSV kept their existing values.");
+    } catch (error) {
+      setDepartmentDataMessage(error.message || "Could not import department CSV. Existing values were not changed.");
+    } finally {
+      event.target.value = "";
+    }
+  }
+
   useEffect(() => {
     const timer = window.setInterval(() => setDashboardNow(new Date()), 1000);
     return () => window.clearInterval(timer);
@@ -2083,7 +2160,13 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
       <section className="factory-department-hub" aria-labelledby="departmentHubTitle">
         <div className="factory-department-heading">
           <div><span className="eyebrow">FACTORY OPERATIONS / DEPARTMENT CONTROL</span><h2 id="departmentHubTitle">Department-wise <em>production control.</em></h2><p>Configure each department independently. Capacity is estimated from shift time, break time, downtime and cycle time. Enter actual completed quantities to compare with today’s target.</p></div>
-          <div className="factory-department-live"><span>LIVE TIME</span><strong>{String(dashboardNow.getHours()).padStart(2,"0")}:{String(dashboardNow.getMinutes()).padStart(2,"0")}:{String(dashboardNow.getSeconds()).padStart(2,"0")}</strong><small>{dashboardNow.toLocaleDateString("en-IN",{weekday:"short",day:"2-digit",month:"short",year:"numeric"})}</small></div><button type="button" className="factory-department-restore" onClick={restoreDepartmentSamples}>Restore department samples</button>
+          <div className="factory-department-live"><span>LIVE TIME</span><strong>{String(dashboardNow.getHours()).padStart(2,"0")}:{String(dashboardNow.getMinutes()).padStart(2,"0")}:{String(dashboardNow.getSeconds()).padStart(2,"0")}</strong><small>{dashboardNow.toLocaleDateString("en-IN",{weekday:"short",day:"2-digit",month:"short",year:"numeric"})}</small></div>
+          <div className="factory-department-tools">
+            <input ref={departmentCsvInput} type="file" accept=".csv,text/csv" onChange={importDepartmentCsv} hidden aria-label="Import department production CSV"/>
+            <button type="button" className="factory-department-restore" onClick={()=>departmentCsvInput.current?.click()}>Import CSV ↑</button>
+            <button type="button" className="factory-department-restore" onClick={exportDepartmentCsv}>Export CSV ↓</button>
+            <button type="button" className="factory-department-restore" onClick={restoreDepartmentSamples}>Restore samples</button>
+          </div>
         </div>
         <div className="factory-department-flow" aria-label="Factory department sequence">
           {departments.map((department,index)=><span key={department.id}><b>{String(index+1).padStart(2,"0")}</b>{department.name}{index<departments.length-1?<i>→</i>:null}</span>)}
