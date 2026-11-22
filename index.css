@@ -1166,8 +1166,10 @@
 .home-model-picker button{font-size:7px!important;padding:6px 7px!important}
 .home-single-viewer .ford-glb-viewer{width:100%;min-width:0}
 .home-single-viewer .ford-glb-stage{width:100%!important;height:clamp(190px,22vw,260px)!important;min-height:190px!important;max-height:260px!important}
-.home-single-viewer .viewer-toolbar{font-size:8px!important;gap:6px!important}
-.home-single-viewer .viewer-controls{flex-wrap:wrap}
+.home-single-viewer .ford-glb-controls{gap:7px!important;padding:8px!important}
+.home-single-viewer .ford-glb-controls button{padding:6px 9px!important;font-size:8px!important}
+.home-single-viewer .ford-glb-status{font-size:9px!important}
+.home-single-viewer .ford-glb-controls>div:last-child{gap:5px!important}
 .home-single-viewer .studio-model-credit{font-size:7px}
 .home-studio-note{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:auto;padding-top:12px}
 .home-studio-note span{font-size:7px;letter-spacing:.7px;color:var(--muted)}
