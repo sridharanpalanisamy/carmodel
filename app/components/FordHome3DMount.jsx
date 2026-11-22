@@ -1,100 +1,63 @@
 "use client";
-
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import FordGLBViewer from "./FordGLBViewer";
 
 const SHOWROOM_MODELS = [
-  { id: "model-t", name: "Ford Model T", path: "/carmodel/models/ford-model-t.glb", credit: "OpenGameArt · egore911" },
   { id: "mustang-1967", name: "1967 Mustang Fastback", path: "/carmodel/models/ford-mustang-1967.glb", credit: "Mark Peters · CC BY 4.0" },
+  { id: "model-t", name: "Ford Model T", path: "/carmodel/models/ford-model-t.glb", credit: "OpenGameArt · egore911" },
   { id: "falcon-1973", name: "1973 Falcon GT", path: "/carmodel/models/ford-falcon-gt-1973.glb", credit: "Tom Zimmermann · CC BY 4.0" },
 ];
 
-function ModelPicker({ selected, available, onSelect, label }) {
-  return (
-    <div className="ford-showroom-picker" role="group" aria-label={label}>
-      {available.map((model) => (
-        <button key={model.id} type="button" onClick={() => onSelect(model.id)}
-          aria-pressed={selected.id === model.id}>
-          {model.name}
-        </button>
-      ))}
-    </div>
-  );
+function ModelPicker({ selected, available, onSelect }) {
+  return <div className="ford-showroom-picker home-model-picker" role="group" aria-label="Choose a classic Ford model">
+    {available.map(model => <button key={model.id} type="button" onClick={() => onSelect(model.id)} aria-pressed={selected.id === model.id}>{model.name}</button>)}
+  </div>;
 }
 
 export default function FordHome3DMount() {
-  const [targets, setTargets] = useState({ mustang: null, modelT: null });
-  const targetsRef = useRef({});
+  const [target, setTarget] = useState(null);
+  const targetRef = useRef(null);
   const [available, setAvailable] = useState(SHOWROOM_MODELS.slice(0, 2));
-  const [mustangId, setMustangId] = useState("mustang-1967");
-  const [modelTId, setModelTId] = useState("model-t");
+  const [selectedId, setSelectedId] = useState("mustang-1967");
 
   useEffect(() => {
     let cancelled = false;
-    const findMounts = () => {
-      const next = {
-        mustang: document.getElementById("homeModelMustangMount"),
-        modelT: document.getElementById("homeModelTMount"),
-      };
-      const changed = Object.keys(next).some((key) => next[key] && targetsRef.current[key] !== next[key]);
-      if (changed && !cancelled) {
-        Object.values(next).forEach((mount) => {
-          if (mount) {
-            mount.style.width = "100%";
-            mount.style.minWidth = "0";
-          }
-        });
-        targetsRef.current = next;
-        setTargets(next);
+    const findMount = () => {
+      const next = document.getElementById("homeModelMount");
+      if (next && next !== targetRef.current && !cancelled) {
+        next.style.width = "100%";
+        next.style.minWidth = "0";
+        targetRef.current = next;
+        setTarget(next);
       }
     };
-    findMounts();
-    const observer = new MutationObserver(findMounts);
+    findMount();
+    const observer = new MutationObserver(findMount);
     observer.observe(document.body, { childList: true, subtree: true });
-    return () => {
-      cancelled = true;
-      observer.disconnect();
-      targetsRef.current = {};
-    };
+    return () => { cancelled = true; observer.disconnect(); targetRef.current = null; };
   }, []);
 
   useEffect(() => {
     let cancelled = false;
-    async function checkAssets() {
-      const falcon = SHOWROOM_MODELS[2];
+    async function checkFalcon() {
       try {
-        const response = await fetch(falcon.path, { method: "HEAD", cache: "no-store" });
+        const response = await fetch(SHOWROOM_MODELS[2].path, { method: "HEAD", cache: "no-store" });
         if (!cancelled && response.ok) setAvailable(SHOWROOM_MODELS);
-      } catch {
-        // Keep the two verified local models available if Falcon is absent.
-      }
+      } catch { /* Keep the two locally verified models available. */ }
     }
-    checkAssets();
+    checkFalcon();
     return () => { cancelled = true; };
   }, []);
 
-  const mustang = available.find((model) => model.id === mustangId) || available[1] || available[0];
-  const modelT = available.find((model) => model.id === modelTId) || available[0];
-
-  return (
-    <>
-      {targets.mustang && createPortal(
-        <div className="ford-showroom studio-viewer">
-          <ModelPicker selected={mustang} available={available} onSelect={setMustangId} label="Choose the left studio vehicle" />
-          <FordGLBViewer key={mustang.id} modelPath={mustang.path} modelName={mustang.name} />
-          <div className="studio-model-credit">3D model credit: {mustang.credit}. Hosted locally.</div>
-        </div>,
-        targets.mustang
-      )}
-      {targets.modelT && createPortal(
-        <div className="ford-showroom studio-viewer">
-          <ModelPicker selected={modelT} available={available} onSelect={setModelTId} label="Choose the right studio vehicle" />
-          <FordGLBViewer key={modelT.id} modelPath={modelT.path} modelName={modelT.name} />
-          <div className="studio-model-credit">3D model credit: {modelT.credit}. Hosted locally.</div>
-        </div>,
-        targets.modelT
-      )}
-    </>
-  );
+  const selected = available.find(model => model.id === selectedId) || available[0];
+  if (!target || !selected) return null;
+  return createPortal(<div className="ford-showroom home-single-showroom">
+    <div className="home-viewer-model-line"><span>NOW VIEWING</span><strong>{selected.name}</strong></div>
+    <div className="ford-showroom-picker home-model-picker" role="group" aria-label="Choose a classic Ford model">
+      {available.map(model => <button key={model.id} type="button" onClick={() => setSelectedId(model.id)} aria-pressed={selected.id === model.id}>{model.name}</button>)}
+    </div>
+    <FordGLBViewer key={selected.id} modelPath={selected.path} modelName={selected.name} />
+    <div className="studio-model-credit">3D model credit: {selected.credit}. Hosted locally.</div>
+  </div>, target);
 }
