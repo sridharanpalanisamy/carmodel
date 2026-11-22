@@ -1074,8 +1074,17 @@
 .studio-view-card .viewer-frame {
   width: 100%;
   min-height: 0;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
+  /* The portal contains the picker, canvas, viewer controls and credit.
+     Keep the whole control stack visible instead of clipping it to the canvas ratio. */
+  aspect-ratio: auto;
+  overflow: visible;
+  background: transparent;
+}
+.studio-view-card .ford-glb-viewer {
+  width: 100%;
+  min-width: 0;
+}
+.studio-view-card .ford-glb-stage {
   background: #e7e6e3;
 }
 .studio-view-card .ford-glb-stage,
