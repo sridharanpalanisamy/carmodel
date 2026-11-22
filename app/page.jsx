@@ -47,13 +47,6 @@ const markup = `<header class="site-header">
 
 
 </aside>
-<section class="turntable-panel home-model-t-panel" aria-labelledby="turntableTitle">
-<div class="turntable-heading"><div><span class="eyebrow">LOCAL INTERACTIVE 3D SHOWROOM</span><h2 id="turntableTitle">Ford icons<br><em>from every angle.</em></h2><p>The 1967 Mustang Fastback is selected by default. Choose another available Ford model, drag to rotate and scroll or pinch to zoom.</p></div><span class="turntable-mark">3D</span></div>
-<div class="viewer-toolbar"><span class="viewer-count">LOCAL FORD 3D SHOWROOM</span><span id="viewerStatus" aria-live="polite">Loading the local 3D model…</span></div>
-<div class="viewer-frame"><div id="homeModelTGLBMount"></div></div>
-<div class="viewer-credit"><span>The Mustang is the default 3D model. Other available Ford models can be selected above. Models are hosted locally; no third-party viewer is used.</span></div>
-<p class="model-disclaimer">Community-created 3D models; not official Ford factory scans. Creator credits and licenses are listed with each model.</p>
-</section>
 <div class="home-bottom-row"><section class="latest-panel">
 <div class="latest-heading"><div><span class="eyebrow">SELECTED ICONS</span><h2>Explore the classics.</h2></div><a href="/carmodel/models/">All models ↗</a></div>
 <div class="latest-feature"><img src="/carmodel/assets/images/Ford_GT-40.jpg" alt="Ford GT40" loading="lazy" decoding="async"><div><span>1964 — 1969 / MOTORSPORT</span><strong>Ford GT40</strong><a href="/carmodel/models/">Discover ↗</a></div></div>
@@ -64,6 +57,26 @@ const markup = `<header class="site-header">
 </div>
 </section>
 <section class="quote-panel"><span class="eyebrow">THE SPIRIT OF FORD</span><blockquote>“The road to tomorrow is built on the ideas of yesterday.”</blockquote><a href="/carmodel/heritage/">Explore the heritage ↗</a></section></div>
+<section class="turntable-panel home-model-t-panel home-studio-panel" aria-labelledby="turntableTitle">
+  <div class="studio-intro">
+    <div><span class="eyebrow">INTERACTIVE FORD STUDIO</span><h2 id="turntableTitle">Explore the icons.<br><em>From every angle.</em></h2><p>Step inside the collection. Rotate, inspect and compare two classic Ford vehicles in the interactive 3D studio.</p></div>
+    <a class="button button-orange" href="/carmodel/models/">Explore all models <span>↗</span></a>
+  </div>
+  <div class="studio-view-grid">
+    <section class="studio-view-card" aria-labelledby="studioMustangTitle">
+      <div class="studio-view-heading"><div><span class="eyebrow">01 / THE FASTBACK</span><h3 id="studioMustangTitle">1967 Mustang Fastback</h3></div><span class="studio-view-number">01</span></div>
+      <div class="viewer-toolbar"><span class="viewer-count">INTERACTIVE 3D MODEL</span><span aria-live="polite">Drag to rotate · Scroll to zoom</span></div>
+      <div class="viewer-frame"><div id="homeModelMustangMount"></div></div>
+    </section>
+    <section class="studio-view-card" aria-labelledby="studioModelTTitle">
+      <div class="studio-view-heading"><div><span class="eyebrow">02 / THE ORIGINAL</span><h3 id="studioModelTTitle">Ford Model T</h3></div><span class="studio-view-number">02</span></div>
+      <div class="viewer-toolbar"><span class="viewer-count">INTERACTIVE 3D MODEL</span><span aria-live="polite">Drag to rotate · Scroll to zoom</span></div>
+      <div class="viewer-frame"><div id="homeModelTMount"></div></div>
+    </section>
+  </div>
+  <div class="studio-footer"><p>Choose a model to explore. Both viewers support rotation, zoom and reset controls.</p><a class="text-link" href="/carmodel/heritage/">Discover the Ford story ↗</a></div>
+  <p class="model-disclaimer">Community-created 3D models; not official Ford factory scans. Creator credits and licenses are listed with each model.</p>
+</section>
 </div>
 <footer class="site-footer"><a class="brand" href="/carmodel/"><span class="brand-mark">F</span><span>CLASSIC FORD<small>THE HERITAGE COLLECTION</small></span></a><p>A visual tribute to the cars that moved generations.</p><p class="image-credits">Vehicle photographs are loaded locally from the project's assets/images folder.</p><div class="footer-bottom"><span>© 2026 Classic Ford Collection</span><span>Built for automotive enthusiasts</span></div></footer>
 </main>`;
