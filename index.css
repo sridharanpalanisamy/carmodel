@@ -989,3 +989,145 @@
     border-top: 1px solid var(--line) !important;
   }
 }
+
+
+/* FINAL STUDIO LAYOUT: preserve all editorial homepage sections, then place
+   the closing model/quote pair above one full-width Studio with two live views. */
+@media (min-width: 901px) {
+  .home-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-areas:
+      "hero story"
+      "engineering collection"
+      "models quote"
+      "studio studio" !important;
+    column-gap: clamp(24px, 2.4vw, 36px) !important;
+    row-gap: clamp(22px, 2vw, 30px) !important;
+    align-items: start !important;
+  }
+  .home-layout > .left-column,
+  .home-layout > .right-column,
+  .home-layout > .home-bottom-row { display: contents !important; }
+  .home-layout > .left-column > .hero-panel { grid-area: hero !important; }
+  .home-layout > .right-column > .innovation-panel { grid-area: story !important; }
+  .home-layout > .left-column > .process-panel { grid-area: engineering !important; }
+  .home-layout > .right-column > .orange-feature { grid-area: collection !important; }
+  .home-layout > .home-bottom-row > .latest-panel { grid-area: models !important; }
+  .home-layout > .home-bottom-row > .quote-panel { grid-area: quote !important; }
+  .home-layout > .home-studio-panel { grid-area: studio !important; }
+}
+.home-studio-panel {
+  width: 100%;
+  min-width: 0;
+  padding: clamp(24px, 3vw, 42px) 0 26px !important;
+  border-top: 1px solid var(--line);
+  border-bottom: 0 !important;
+}
+.studio-intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+.studio-intro h2 {
+  font: 700 clamp(30px, 4vw, 48px)/.98 var(--display);
+  letter-spacing: -2px;
+  margin: 9px 0;
+}
+.studio-intro h2 em { color: var(--orange); font-style: normal; }
+.studio-intro p { max-width: 54ch; font-size: 11px; color: var(--muted); margin: 0; }
+.studio-view-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(14px, 2vw, 26px);
+  align-items: start;
+}
+.studio-view-card {
+  min-width: 0;
+  padding: 14px;
+  background: #f1eff0;
+  border: 1px solid var(--line);
+}
+.studio-view-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  margin-bottom: 8px;
+}
+.studio-view-heading h3 {
+  font: 700 clamp(15px, 1.5vw, 20px)/1.1 var(--display);
+  margin: 5px 0 0;
+  letter-spacing: -.4px;
+}
+.studio-view-number {
+  font: 800 26px var(--display);
+  color: #c8c1c4;
+}
+.studio-view-card .viewer-toolbar {
+  justify-content: space-between;
+  margin: 8px 0 !important;
+  font-size: 8px;
+}
+.studio-view-card .viewer-frame {
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #e7e6e3;
+}
+.studio-view-card .ford-glb-stage,
+.studio-view-card .ford-glb-stage canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+.studio-view-card .ford-glb-stage { min-height: 280px !important; height: 320px !important; }
+.studio-viewer .ford-showroom-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 0 !important;
+}
+.studio-viewer .ford-showroom-picker button {
+  border: 1px solid #b9b5ae;
+  padding: 7px 9px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+.studio-viewer .ford-showroom-picker button[aria-pressed="true"] {
+  background: var(--orange);
+  color: #fff;
+  border-color: var(--orange);
+}
+.studio-model-credit { padding-top: 7px; font-size: 8px; color: var(--muted); }
+.studio-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.studio-footer p { margin: 0; font-size: 10px; color: var(--muted); }
+.studio-footer .text-link { color: var(--orange); }
+@media (max-width: 900px) {
+  .home-layout { grid-template-areas: none !important; }
+  .home-studio-panel { margin-top: 4px !important; }
+  .studio-view-card .ford-glb-stage { height: 300px !important; min-height: 260px !important; }
+}
+@media (max-width: 600px) {
+  .studio-intro { display: block; }
+  .studio-intro .button { margin-top: 14px; }
+  .studio-view-grid { grid-template-columns: minmax(0, 1fr); }
+  .studio-view-card { padding: 10px; }
+  .studio-view-card .ford-glb-stage { height: 300px !important; min-height: 260px !important; }
+  .studio-footer { align-items: flex-start; flex-direction: column; }
+}
