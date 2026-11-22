@@ -1289,3 +1289,9 @@
 @media (max-width: 600px) {
   .home-hero-photo { height: 260px !important; }
 }
+
+
+/* Keep a single divider between the hero and the editorial content. */
+.home-lower-grid {
+  border-top: 0 !important;
+}
