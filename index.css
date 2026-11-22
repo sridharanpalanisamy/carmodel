@@ -1295,3 +1295,28 @@
 .home-lower-grid {
   border-top: 0 !important;
 }
+
+
+/* Align both hero columns to one shared row without introducing extra section gaps. */
+.home-main-grid {
+  align-items: stretch !important;
+}
+.home-hero-card,
+.home-studio-card {
+  height: 100%;
+  min-height: 0;
+}
+.home-hero-photo {
+  flex: 1 0 clamp(270px, 27vw, 340px);
+  min-height: clamp(270px, 27vw, 340px);
+}
+.home-studio-card .home-single-viewer {
+  flex: 0 0 auto;
+}
+@media (max-width: 760px) {
+  .home-main-grid { align-items: start !important; }
+  .home-hero-photo {
+    flex: 0 0 260px;
+    min-height: 260px;
+  }
+}
