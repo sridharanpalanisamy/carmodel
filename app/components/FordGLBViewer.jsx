@@ -18,7 +18,28 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
     let frame = 0;
     let controls;
     let resizeObserver;
+    let renderObserver;
     let disposed = false;
+    let isInViewport = true;
+    let isPageVisible = !document.hidden;
+    let animationRunning = false;
+    const onPageVisibilityChange = () => {
+      isPageVisible = !document.hidden;
+      if (isPageVisible && isInViewport) startAnimation();
+      else stopAnimation();
+    };
+    const stopAnimation = () => {
+      if (animationRunning) {
+        cancelAnimationFrame(frame);
+        animationRunning = false;
+      }
+    };
+    const startAnimation = () => {
+      if (!disposed && isInViewport && isPageVisible && !animationRunning) {
+        animationRunning = true;
+        frame = requestAnimationFrame(animate);
+      }
+    };
     let modelRoot;
     let fittedDistance = 0;
     let viewDirection;
@@ -276,13 +297,25 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         resizeObserver.observe(host);
         resize();
 
-        const animate = () => {
-          if (disposed) return;
-          frame = requestAnimationFrame(animate);
+        function animate() {
+          if (disposed || !isInViewport || !isPageVisible) {
+            animationRunning = false;
+            return;
+          }
           controls?.update();
           renderer?.render(scene, camera);
-        };
-        animate();
+          frame = requestAnimationFrame(animate);
+        }
+        document.addEventListener("visibilitychange", onPageVisibilityChange);
+        if ("IntersectionObserver" in window) {
+          renderObserver = new IntersectionObserver(([entry]) => {
+            isInViewport = entry.isIntersecting;
+            if (isInViewport && isPageVisible) startAnimation();
+            else stopAnimation();
+          }, { rootMargin: "160px" });
+          renderObserver.observe(host);
+        }
+        startAnimation();
 
         host.dataset.viewerReady = "true";
       } catch (error) {
@@ -300,7 +333,9 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
       modelRequest.abort();
       if (motionQuery?.removeEventListener) motionQuery.removeEventListener("change", syncMotionPreference);
       else motionQuery?.removeListener?.(syncMotionPreference);
-      cancelAnimationFrame(frame);
+      stopAnimation();
+      document.removeEventListener("visibilitychange", onPageVisibilityChange);
+      renderObserver?.disconnect();
       resizeObserver?.disconnect();
       controls?.stopListenToKeyEvents();
       controls?.dispose();
