@@ -23,6 +23,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
     let isInViewport = true;
     let isPageVisible = !document.hidden;
     let animationRunning = false;
+    let animate;
     const onPageVisibilityChange = () => {
       isPageVisible = !document.hidden;
       if (isPageVisible && isInViewport) startAnimation();
@@ -297,7 +298,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         resizeObserver.observe(host);
         resize();
 
-        function animate() {
+        animate = () => {
           if (disposed || !isInViewport || !isPageVisible) {
             animationRunning = false;
             return;
@@ -305,7 +306,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
           controls?.update();
           renderer?.render(scene, camera);
           frame = requestAnimationFrame(animate);
-        }
+        };
         document.addEventListener("visibilitychange", onPageVisibilityChange);
         if ("IntersectionObserver" in window) {
           renderObserver = new IntersectionObserver(([entry]) => {
