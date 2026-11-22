@@ -1194,3 +1194,64 @@
 @media(max-width:900px){.home-single-viewer .ford-glb-stage{height:290px!important;min-height:270px!important;max-height:320px!important}}
 @media(max-width:760px){.home-main-grid{grid-template-columns:minmax(0,1fr);gap:16px}.home-hero-photo{height:clamp(190px,36vw,300px)}}
 @media(max-width:600px){.home-main-grid{padding:14px 0 18px;gap:12px}.home-hero-card,.home-studio-card,.home-content-card{padding:13px}.home-hero-copy h1{font-size:42px}.home-hero-photo{height:190px}.home-lower-grid{grid-template-columns:minmax(0,1fr);gap:12px;padding:16px 0}.home-content-image{height:180px}.home-studio-note{align-items:flex-start;flex-direction:column}.home-single-viewer .ford-glb-stage{height:260px!important;min-height:240px!important;max-height:280px!important}.home-closing{padding:24px 18px}}
+
+
+/* COMPACT EDITORIAL HOMEPAGE: continuous brand story, not separated catalogue cards. */
+.home-main-grid {
+  gap: 18px !important;
+  padding: 14px 0 18px !important;
+  align-items: start !important;
+}
+.home-hero-card,
+.home-studio-card {
+  padding: 12px 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+.home-hero-copy h1 { margin-top: 7px !important; }
+.home-hero-copy > p { margin: 0 !important; }
+.home-hero-photo {
+  margin-top: 12px !important;
+  height: clamp(170px, 19vw, 230px) !important;
+}
+.home-hero-highlights { padding-top: 11px !important; }
+.home-studio-heading h2 { margin: 7px 0 !important; }
+.home-studio-heading p { margin-bottom: 9px !important; }
+.home-single-viewer { padding: 8px !important; }
+.home-studio-note { padding-top: 8px !important; }
+
+.home-lower-grid {
+  gap: 0 !important;
+  padding: 8px 0 14px !important;
+  border-top: 1px solid var(--line);
+}
+.home-content-card {
+  padding: 15px 18px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+.home-content-card:nth-child(odd) {
+  border-right: 1px solid var(--line) !important;
+}
+.home-content-card:nth-child(-n+2) {
+  border-bottom: 1px solid var(--line) !important;
+}
+.home-content-card h2 { margin: 6px 0 10px !important; }
+.home-content-image { height: clamp(125px, 14vw, 175px) !important; }
+.home-content-card > p { margin: 9px 0 !important; }
+.home-classic-list { margin: 10px 0 !important; }
+.home-closing {
+  padding: 22px 24px !important;
+  gap: 5px !important;
+}
+.home-closing blockquote { margin: 5px 0 !important; }
+
+@media (max-width: 760px) {
+  .home-main-grid { gap: 12px !important; padding: 10px 0 14px !important; }
+  .home-lower-grid { grid-template-columns: minmax(0, 1fr) !important; }
+  .home-content-card { padding: 13px 0 !important; }
+  .home-content-card:nth-child(odd) { border-right: 0 !important; }
+  .home-content-card:nth-child(-n+3) { border-bottom: 1px solid var(--line) !important; }
+  .home-content-image { height: 165px !important; }
+}
