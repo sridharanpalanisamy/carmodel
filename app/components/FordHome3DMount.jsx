@@ -10,68 +10,91 @@ const SHOWROOM_MODELS = [
   { id: "falcon-1973", name: "1973 Falcon GT", path: "/carmodel/models/ford-falcon-gt-1973.glb", credit: "Tom Zimmermann · CC BY 4.0" },
 ];
 
+function ModelPicker({ selected, available, onSelect, label }) {
+  return (
+    <div className="ford-showroom-picker" role="group" aria-label={label}>
+      {available.map((model) => (
+        <button key={model.id} type="button" onClick={() => onSelect(model.id)}
+          aria-pressed={selected.id === model.id}>
+          {model.name}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export default function FordHome3DMount() {
-  const [target, setTarget] = useState(null);
-  const targetRef = useRef(null);
-  const [available, setAvailable] = useState([SHOWROOM_MODELS[0], SHOWROOM_MODELS[1]]);
-  const [selectedId, setSelectedId] = useState("mustang-1967");
+  const [targets, setTargets] = useState({ mustang: null, modelT: null });
+  const targetsRef = useRef({});
+  const [available, setAvailable] = useState(SHOWROOM_MODELS.slice(0, 2));
+  const [mustangId, setMustangId] = useState("mustang-1967");
+  const [modelTId, setModelTId] = useState("model-t");
 
   useEffect(() => {
     let cancelled = false;
-    const findMount = () => {
-      const mount = document.getElementById("homeModelTGLBMount");
-      // The legacy page is hydrated from injected HTML. React may replace that
-      // subtree after the first paint, so keep the portal attached to the live node.
-      if (mount && !cancelled && (!mount.isConnected || targetRef.current !== mount)) {
-        mount.style.width = "100%";
-        mount.style.minWidth = "0";
-        targetRef.current = mount;
-        setTarget(mount);
+    const findMounts = () => {
+      const next = {
+        mustang: document.getElementById("homeModelMustangMount"),
+        modelT: document.getElementById("homeModelTMount"),
+      };
+      const changed = Object.keys(next).some((key) => next[key] && targetsRef.current[key] !== next[key]);
+      if (changed && !cancelled) {
+        Object.values(next).forEach((mount) => {
+          if (mount) {
+            mount.style.width = "100%";
+            mount.style.minWidth = "0";
+          }
+        });
+        targetsRef.current = next;
+        setTargets(next);
       }
     };
-    findMount();
-    const observer = new MutationObserver(findMount);
+    findMounts();
+    const observer = new MutationObserver(findMounts);
     observer.observe(document.body, { childList: true, subtree: true });
     return () => {
       cancelled = true;
       observer.disconnect();
-      targetRef.current = null;
+      targetsRef.current = {};
     };
   }, []);
 
   useEffect(() => {
     let cancelled = false;
     async function checkAssets() {
-      const results = await Promise.all(SHOWROOM_MODELS.slice(1).map(async (model) => {
-        try {
-          const response = await fetch(model.path, { method: "HEAD", cache: "no-store" });
-          return response.ok ? model : null;
-        } catch {
-          return null;
-        }
-      }));
-      if (!cancelled) setAvailable([SHOWROOM_MODELS[0], ...results.filter(Boolean)]);
+      const falcon = SHOWROOM_MODELS[2];
+      try {
+        const response = await fetch(falcon.path, { method: "HEAD", cache: "no-store" });
+        if (!cancelled && response.ok) setAvailable(SHOWROOM_MODELS);
+      } catch {
+        // Keep the two verified local models available if Falcon is absent.
+      }
     }
     checkAssets();
     return () => { cancelled = true; };
   }, []);
 
-  if (!target) return null;
-  const selected = available.find((model) => model.id === selectedId) || available[0];
+  const mustang = available.find((model) => model.id === mustangId) || available[1] || available[0];
+  const modelT = available.find((model) => model.id === modelTId) || available[0];
 
-  return createPortal(
-    <div className="ford-showroom">
-      <div className="ford-showroom-picker" role="group" aria-label="Choose a Ford 3D model" style={{display:"flex",gap:"8px",flexWrap:"wrap",padding:"12px 0"}}>
-        {available.map((model) => (
-          <button key={model.id} type="button" onClick={() => setSelectedId(model.id)} aria-pressed={selected.id === model.id}
-            style={{border:"1px solid #b9b5ae",padding:"9px 12px",fontSize:"10px",fontWeight:700,letterSpacing:".06em",textTransform:"uppercase",background:selected.id === model.id ? "#df5a2b" : "transparent",color:selected.id === model.id ? "#fff" : "inherit",cursor:"pointer"}}>
-            {model.name}
-          </button>
-        ))}
-      </div>
-      <FordGLBViewer key={selected.id} modelPath={selected.path} modelName={selected.name} />
-      <div style={{fontSize:"10px",padding:"8px 2px",opacity:.75}}>3D model credit: {selected.credit}. The model is served locally by this website.</div>
-    </div>,
-    target
+  return (
+    <>
+      {targets.mustang && createPortal(
+        <div className="ford-showroom studio-viewer">
+          <ModelPicker selected={mustang} available={available} onSelect={setMustangId} label="Choose the left studio vehicle" />
+          <FordGLBViewer key={mustang.id} modelPath={mustang.path} modelName={mustang.name} />
+          <div className="studio-model-credit">3D model credit: {mustang.credit}. Hosted locally.</div>
+        </div>,
+        targets.mustang
+      )}
+      {targets.modelT && createPortal(
+        <div className="ford-showroom studio-viewer">
+          <ModelPicker selected={modelT} available={available} onSelect={setModelTId} label="Choose the right studio vehicle" />
+          <FordGLBViewer key={modelT.id} modelPath={modelT.path} modelName={modelT.name} />
+          <div className="studio-model-credit">3D model credit: {modelT.credit}. Hosted locally.</div>
+        </div>,
+        targets.modelT
+      )}
+    </>
   );
 }
