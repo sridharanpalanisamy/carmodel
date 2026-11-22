@@ -1442,3 +1442,32 @@
     margin-bottom: 7px !important;
   }
 }
+
+
+/* Alternate the second editorial row to create a deliberate left-right rhythm. */
+@media (min-width: 761px) {
+  .home-story-reverse {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .home-story-reverse .home-story-heading {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: right;
+  }
+  .home-story-reverse .home-story-copy {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+  }
+}
+@media (max-width: 760px) {
+  .home-story-reverse .home-story-heading {
+    grid-column: 1;
+    grid-row: 1;
+    text-align: left;
+  }
+  .home-story-reverse .home-story-copy {
+    grid-column: 1;
+    grid-row: 2;
+  }
+}
