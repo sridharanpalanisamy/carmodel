@@ -1255,3 +1255,20 @@
   .home-content-card:nth-child(-n+3) { border-bottom: 1px solid var(--line) !important; }
   .home-content-image { height: 165px !important; }
 }
+
+/* Editorial closing statement */
+.home-closing h2 {
+  max-width: 760px;
+  margin: 5px 0;
+  font: 600 clamp(26px, 3.5vw, 44px)/1.08 var(--display);
+  letter-spacing: -1.4px;
+}
+.home-closing h2 em { color: #f17a55; font-style: normal; }
+.home-lower-grid.home-editorial-grid .home-content-card:nth-child(-n+2) {
+  border-bottom: 0 !important;
+}
+@media (max-width: 760px) {
+  .home-lower-grid.home-editorial-grid .home-content-card:first-child {
+    border-bottom: 1px solid var(--line) !important;
+  }
+}
