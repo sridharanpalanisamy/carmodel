@@ -1404,3 +1404,20 @@
     font-size: 10px;
   }
 }
+
+
+/* Tighten the two new editorial rows so the homepage reads as one continuous story. */
+.home-story-row {
+  padding: 14px 0 !important;
+  gap: clamp(18px, 3vw, 40px) !important;
+}
+.home-story-copy p {
+  margin-bottom: 8px !important;
+  line-height: 1.6 !important;
+}
+@media (max-width: 600px) {
+  .home-story-row {
+    padding: 12px 0 !important;
+    gap: 6px !important;
+  }
+}
