@@ -1471,3 +1471,43 @@
     grid-row: 2;
   }
 }
+
+
+/* Finish the homepage with a compact closing statement and a clear CTA anchor. */
+.home-closing {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto auto;
+  align-items: center;
+  column-gap: clamp(18px, 4vw, 54px) !important;
+  row-gap: 5px !important;
+}
+.home-closing > .eyebrow,
+.home-closing > h2,
+.home-closing > p {
+  grid-column: 1;
+}
+.home-closing > .button {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: center;
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .home-closing {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    row-gap: 7px !important;
+  }
+  .home-closing > .eyebrow,
+  .home-closing > h2,
+  .home-closing > p,
+  .home-closing > .button {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .home-closing > .button {
+    justify-self: start;
+    margin-top: 5px;
+  }
+}
