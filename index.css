@@ -1421,3 +1421,24 @@
     gap: 6px !important;
   }
 }
+
+
+/* Tablet and mobile editorial alignment: stack story copy before the columns
+   become too narrow, keeping the heading and paragraph on a clean reading line. */
+@media (max-width: 760px) {
+  .home-story-row {
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-items: start !important;
+    gap: 8px !important;
+    padding: 13px 0 !important;
+  }
+  .home-story-heading h2 {
+    font-size: clamp(26px, 4.2vw, 31px) !important;
+  }
+  .home-story-copy {
+    max-width: 66ch !important;
+  }
+  .home-story-copy p {
+    margin-bottom: 7px !important;
+  }
+}
