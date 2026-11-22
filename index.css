@@ -1346,3 +1346,14 @@
     min-width: 0;
   }
 }
+
+
+/* Align the editorial stories with the outer edges of the two hero columns. */
+@media (min-width: 761px) {
+  .home-lower-grid.home-editorial-grid .home-content-card:first-child {
+    padding-left: 0 !important;
+  }
+  .home-lower-grid.home-editorial-grid .home-content-card:last-child {
+    padding-right: 0 !important;
+  }
+}
