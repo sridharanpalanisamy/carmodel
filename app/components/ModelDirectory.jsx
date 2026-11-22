@@ -308,7 +308,10 @@ export default function ModelDirectory() {
       <div className="az-grid az-photo-grid az-photo-grid-upgraded">
         {filteredModels.map((model,index)=>(
           <article className={"az-card az-photo-card az-photo-card-upgraded "+(selected===model.name?"is-selected":"")} key={model.name}>
-            <div className="az-photo-frame"><img src={model.image.startsWith("http")?model.image:"/carmodel/assets/images/"+model.image} alt={"Ford "+model.name+" — "+model.years} loading={index<3?"eager":"lazy"} onError={event=>{event.currentTarget.style.visibility="hidden";}}/><span className="az-photo-number">0{categorizedModels.indexOf(model)+1}</span><span className="az-photo-type">{model.category} · {model.type}</span></div>
+            <div className={"az-photo-frame"+(!model.image?" is-image-missing":"")}>
+                {model.image?<img src={model.image.startsWith("http")?model.image:"/carmodel/assets/images/"+model.image} alt={"Ford "+model.name+" — "+model.years} loading={index<3?"eager":"lazy"} onError={event=>{event.currentTarget.style.display="none";event.currentTarget.parentElement.classList.add("is-image-missing");}}/>:<div className="az-photo-placeholder" aria-label={"Photograph unavailable for Ford "+model.name}><span className="az-placeholder-mark">FORD</span><strong>{model.name}</strong><span>ARCHIVE IMAGE UNAVAILABLE</span></div>}
+                <span className="az-photo-number">0{categorizedModels.indexOf(model)+1}</span><span className="az-photo-type">{model.category} · {model.type}</span>
+              </div>
             <div className="az-card-copy">
               <div className="az-card-title-row"><div><div className="az-card-meta">{model.years}</div><h3>Ford {model.name}</h3></div>
                 <button type="button" className="az-view-button" aria-expanded={selected===model.name} onClick={()=>setSelected(selected===model.name?"":model.name)}>{selected===model.name?"Hide details":"View details"} <span>{selected===model.name?"−":"↗"}</span></button>
