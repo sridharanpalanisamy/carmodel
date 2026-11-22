@@ -907,3 +907,85 @@
     border-top: 1px solid var(--line) !important;
   }
 }
+
+
+/* USER-APPROVED HOMEPAGE COMPOSITION: keep the 3D showcase at the upper-right.
+   The hero and viewer start on the same top line; the viewer continues beside
+   the engineering section, then the remaining paired content follows below. */
+@media (min-width: 901px) {
+  .home-layout {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+    grid-template-areas:
+      "hero showroom"
+      "engineering showroom"
+      "story collection"
+      "models quote" !important;
+    column-gap: clamp(24px, 2.4vw, 36px) !important;
+    row-gap: clamp(22px, 2vw, 30px) !important;
+    align-items: start !important;
+  }
+  .home-layout > .left-column,
+  .home-layout > .right-column,
+  .home-layout > .home-bottom-row { display: contents !important; }
+
+  .home-layout > .left-column > .hero-panel { grid-area: hero !important; }
+  .home-layout > .left-column > .process-panel { grid-area: engineering !important; }
+  .home-layout > .right-column > .innovation-panel { grid-area: story !important; }
+  .home-layout > .right-column > .orange-feature { grid-area: collection !important; }
+  .home-layout > .turntable-panel {
+    grid-area: showroom !important;
+    align-self: start !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 0 18px !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--line) !important;
+  }
+  .home-layout > .home-bottom-row > .latest-panel { grid-area: models !important; }
+  .home-layout > .home-bottom-row > .quote-panel { grid-area: quote !important; }
+
+  .home-layout .hero-panel,
+  .home-layout .process-panel,
+  .home-layout .innovation-panel,
+  .home-layout .orange-feature,
+  .home-layout .latest-panel,
+  .home-layout .quote-panel {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    align-self: start !important;
+  }
+  .home-layout > .left-column > .hero-panel { padding: 0 !important; }
+  .home-layout > .left-column > .process-panel {
+    padding: 20px 0 0 !important;
+    border-top: 1px solid var(--line) !important;
+  }
+  .home-layout > .right-column > .innovation-panel { padding: 0 0 14px !important; }
+  .home-layout > .right-column > .orange-feature { min-height: 160px !important; }
+  .home-layout > .turntable-panel .turntable-heading {
+    align-items: flex-start !important;
+    gap: 12px !important;
+    margin: 0 0 10px !important;
+  }
+  .home-layout > .turntable-panel .turntable-heading h2 {
+    font-size: clamp(26px, 2.4vw, 36px) !important;
+  }
+  .home-layout > .turntable-panel .turntable-heading p {
+    max-width: 34ch !important;
+    font-size: 11px !important;
+  }
+  .home-layout > .turntable-panel .ford-glb-stage,
+  .home-layout > .turntable-panel #homeModelTGLBMount {
+    width: 100% !important;
+    height: clamp(480px, 43vw, 600px) !important;
+    min-height: 480px !important;
+    max-height: 600px !important;
+  }
+  .home-layout > .home-bottom-row > .latest-panel,
+  .home-layout > .home-bottom-row > .quote-panel {
+    padding: 18px 0 !important;
+    border-top: 1px solid var(--line) !important;
+  }
+}
