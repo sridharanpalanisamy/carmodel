@@ -256,10 +256,35 @@ const categoryFor = name => ["Bronco","Explorer","Everest"].includes(name) ? "SU
 const categorizedModels = models.map(model => ({...model, category: model.category || categoryFor(model.name)}));
 export const fordNameplates = models.map(({name,years}) => ({name,years}));
 
+export default function ModelDirectory() {
+  const [mount, setMount] = useState(null);
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("All vehicles");
+  const [tractorSeries, setTractorSeries] = useState("All tractor series");
+  const [selected, setSelected] = useState("");
+
+  useEffect(() => {
+    setMount(document.body);
+  }, []);
+
+  const tractorSeriesGroups = [
+    { title: "Heritage & classic", categories: ["N-Series","Fordson","Hundred Series","01 Series","600 / 700 Series","Industrial Series"] },
+    { title: "Utility & compact", categories: ["Compact Series","Ten Compact Series","Twenty Compact Series","Utility Series","10 Series","10 Mark III Series","30 Series","40 Series","Thousand Series"] },
+    { title: "Power & articulated", categories: ["Large Frame Series","TW Series","FW Series","Versatile Series","Genesis Series","Global Series"] }
+  ];
+  const availableTractorSeries = [...new Set(categorizedModels.filter(model => tractorModels.has(model.name)).map(model => model.category))];
+  const remainingTractorSeries = availableTractorSeries.filter(series => !tractorSeriesGroups.some(group => group.categories.includes(series)));
+
   const filteredModels = useMemo(() => {
     const term=query.trim().toLowerCase();
-    return categorizedModels.filter(model => (category === "All vehicles" || (category === "Tractors" ? tractorModels.has(model.name) : model.category === category) || (["01 Series","10 Mark III Series","10 Series","30 Series","40 Series","600 / 700 Series","Compact Series","FW Series","Fordson","Global Series","Hundred Series","Industrial Series","Large Frame Series","N-Series","TW Series","Ten Compact Series","Thousand Series","Twenty Compact Series","Utility Series"].includes(category) && model.category === category)) && (model.name+" "+model.years+" "+model.period+" "+model.type+" "+model.description).toLowerCase().includes(term));
-  },[query,category]);
+    return categorizedModels.filter(model => {
+      const isTractor = tractorModels.has(model.name);
+      const categoryMatch = category === "All vehicles" || (category === "Tractors" ? isTractor : model.category === category);
+      const seriesMatch = category !== "Tractors" || tractorSeries === "All tractor series" || model.category === tractorSeries;
+      const searchMatch = (model.name+" "+model.years+" "+model.period+" "+model.type+" "+model.description).toLowerCase().includes(term);
+      return categoryMatch && seriesMatch && searchMatch;
+    });
+  },[query,category,tractorSeries]);
   if(!mount) return null;
   return createPortal(
     <section className="az-archive az-photo-collection" id="az-archive">
@@ -267,7 +292,19 @@ export const fordNameplates = models.map(({name,years}) => ({name,years}));
         <div><span className="eyebrow">FORD VEHICLE COLLECTION</span><h2>Explore the <em>lineup.</em></h2><p className="collection-subtitle">Browse Ford cars, SUVs, pickups, tractors, commercial vehicles and performance models. This is the visual gallery; detailed engineering comparisons are on their own page.</p></div>
         <label className="search-wrap"><span>⌕</span><input type="search" placeholder="Search Ford vehicles..." aria-label="Search Ford models" value={query} onChange={event=>setQuery(event.target.value)}/></label>
       </div>
-      <div className="model-category-filter" role="group" aria-label="Filter vehicle category">{["All vehicles","Cars","SUVs & 4×4","Trucks & Pickups","Tractors","01 Series","10 Mark III Series","10 Series","30 Series","40 Series","600 / 700 Series","Compact Series","FW Series","Fordson","Genesis Series","Global Series","Hundred Series","Industrial Series","Large Frame Series","N-Series","TW Series","Ten Compact Series","Thousand Series","Twenty Compact Series","Utility Series","Versatile Series"].map(item=><button type="button" key={item} className={category===item?"is-active":""} aria-pressed={category===item} onClick={()=>setCategory(item)}>{item}</button>)}</div><div className="model-collection-summary"><span><b>{filteredModels.length.toString().padStart(2,"0")}</b> VEHICLES SHOWN</span><span>VISUAL COLLECTION <i>·</i> MODEL HISTORY</span></div>
+      <div className="model-category-filter" role="group" aria-label="Main vehicle categories">{["All vehicles","Cars","SUVs & 4×4","Trucks & Pickups","Tractors"].map(item=><button type="button" key={item} className={category===item?"is-active":""} aria-pressed={category===item} onClick={()=>{setCategory(item);if(item!=="Tractors")setTractorSeries("All tractor series");}}>{item}</button>)}</div>
+      {category==="Tractors"&&<div className="tractor-series-panel">
+        <div className="tractor-series-heading"><span className="eyebrow">TRACTOR COLLECTION</span><span>Choose a series to narrow the gallery</span></div>
+        <button type="button" className={"tractor-series-all"+(tractorSeries==="All tractor series"?" is-active":"")} aria-pressed={tractorSeries==="All tractor series"} onClick={()=>setTractorSeries("All tractor series")}>All tractor models <span>{categorizedModels.filter(model=>tractorModels.has(model.name)).length}</span></button>
+        <div className="tractor-series-groups">
+          {tractorSeriesGroups.map(group=><div className="tractor-series-group" key={group.title}>
+            <h3>{group.title}</h3>
+            <div className="tractor-series-buttons">{group.categories.filter(series=>availableTractorSeries.includes(series)).map(series=><button type="button" key={series} className={tractorSeries===series?"is-active":""} aria-pressed={tractorSeries===series} onClick={()=>setTractorSeries(series)}>{series}<span>{categorizedModels.filter(model=>tractorModels.has(model.name)&&model.category===series).length}</span></button>)}</div>
+          </div>)}
+          {remainingTractorSeries.length>0&&<div className="tractor-series-group"><h3>More series</h3><div className="tractor-series-buttons">{remainingTractorSeries.map(series=><button type="button" key={series} className={tractorSeries===series?"is-active":""} aria-pressed={tractorSeries===series} onClick={()=>setTractorSeries(series)}>{series}<span>{categorizedModels.filter(model=>tractorModels.has(model.name)&&model.category===series).length}</span></button>)}</div></div>}
+        </div>
+      </div>}
+      <div className="model-collection-summary"><span><b>{filteredModels.length.toString().padStart(2,"0")}</b> VEHICLES SHOWN</span><span>VISUAL COLLECTION <i>·</i> MODEL HISTORY</span></div>
       <div className="az-grid az-photo-grid az-photo-grid-upgraded">
         {filteredModels.map((model,index)=>(
           <article className={"az-card az-photo-card az-photo-card-upgraded "+(selected===model.name?"is-selected":"")} key={model.name}>
