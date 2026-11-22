@@ -1357,3 +1357,50 @@
     padding-right: 0 !important;
   }
 }
+
+
+/* Two compact editorial story rows beneath the heritage introduction. */
+.home-story-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(20px, 4vw, 56px);
+  padding: 22px 0;
+  border-top: 1px solid var(--line);
+}
+.home-story-heading h2 {
+  margin: 7px 0 0;
+  font: 650 clamp(25px, 3vw, 38px)/1.04 var(--display);
+  letter-spacing: -1.4px;
+}
+.home-story-heading h2 em {
+  color: var(--orange);
+  font-style: normal;
+}
+.home-story-copy {
+  max-width: 54ch;
+}
+.home-story-copy p {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.home-story-copy .text-link {
+  color: var(--orange);
+  font-size: 9px;
+  font-weight: 700;
+}
+@media (max-width: 600px) {
+  .home-story-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 9px;
+    padding: 17px 0;
+  }
+  .home-story-heading h2 {
+    font-size: 29px;
+  }
+  .home-story-copy p {
+    font-size: 10px;
+  }
+}
