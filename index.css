@@ -1165,7 +1165,7 @@
 .home-model-picker{padding:0 0 8px!important;gap:5px!important}
 .home-model-picker button{font-size:7px!important;padding:6px 7px!important}
 .home-single-viewer .ford-glb-viewer{width:100%;min-width:0}
-.home-single-viewer .ford-glb-stage{width:100%!important;height:clamp(190px,22vw,260px)!important;min-height:190px!important;max-height:260px!important}
+.home-single-viewer .ford-glb-stage{width:100%!important;height:clamp(270px,27vw,340px)!important;min-height:270px!important;max-height:340px!important}
 .home-single-viewer .ford-glb-controls{gap:7px!important;padding:8px!important}
 .home-single-viewer .ford-glb-controls button{padding:6px 9px!important;font-size:8px!important}
 .home-single-viewer .ford-glb-status{font-size:9px!important}
@@ -1191,5 +1191,5 @@
 .home-closing blockquote{max-width:760px;font:600 clamp(24px,3.5vw,42px)/1.12 var(--display);letter-spacing:-1.3px;margin:8px 0}
 .home-closing>p{font-size:10px;color:#c9c3c9;margin:0 0 8px}
 .home-closing .button{margin-top:4px}
-@media(max-width:900px){.home-main-grid{grid-template-columns:minmax(0,1fr);gap:16px}.home-hero-photo{height:clamp(190px,36vw,300px)}.home-single-viewer .ford-glb-stage{height:260px!important;min-height:220px!important}}
-@media(max-width:600px){.home-main-grid{padding:14px 0 18px;gap:12px}.home-hero-card,.home-studio-card,.home-content-card{padding:13px}.home-hero-copy h1{font-size:42px}.home-hero-photo{height:190px}.home-lower-grid{grid-template-columns:minmax(0,1fr);gap:12px;padding:16px 0}.home-content-image{height:180px}.home-studio-note{align-items:flex-start;flex-direction:column}.home-single-viewer .ford-glb-stage{height:235px!important;min-height:210px!important}.home-closing{padding:24px 18px}}
+@media(max-width:900px){.home-main-grid{grid-template-columns:minmax(0,1fr);gap:16px}.home-hero-photo{height:clamp(190px,36vw,300px)}.home-single-viewer .ford-glb-stage{height:290px!important;min-height:270px!important;max-height:320px!important}}
+@media(max-width:600px){.home-main-grid{padding:14px 0 18px;gap:12px}.home-hero-card,.home-studio-card,.home-content-card{padding:13px}.home-hero-copy h1{font-size:42px}.home-hero-photo{height:190px}.home-lower-grid{grid-template-columns:minmax(0,1fr);gap:12px;padding:16px 0}.home-content-image{height:180px}.home-studio-note{align-items:flex-start;flex-direction:column}.home-single-viewer .ford-glb-stage{height:260px!important;min-height:240px!important;max-height:280px!important}.home-closing{padding:24px 18px}}
