@@ -1272,3 +1272,20 @@
     border-bottom: 1px solid var(--line) !important;
   }
 }
+
+/* Match the left hero photograph to the single 3D viewport for a balanced split. */
+.home-hero-photo {
+  height: clamp(270px, 27vw, 340px) !important;
+}
+.home-hero-photo img {
+  object-position: center 52%;
+}
+@media (max-width: 900px) {
+  .home-hero-photo { height: 290px !important; }
+}
+@media (max-width: 760px) {
+  .home-hero-photo { height: 260px !important; }
+}
+@media (max-width: 600px) {
+  .home-hero-photo { height: 260px !important; }
+}
