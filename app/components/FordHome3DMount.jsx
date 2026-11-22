@@ -9,12 +9,6 @@ const SHOWROOM_MODELS = [
   { id: "falcon-1973", name: "1973 Falcon GT", path: "/carmodel/models/ford-falcon-gt-1973.glb", credit: "Tom Zimmermann · CC BY 4.0" },
 ];
 
-function ModelPicker({ selected, available, onSelect }) {
-  return <div className="ford-showroom-picker home-model-picker" role="group" aria-label="Choose a classic Ford model">
-    {available.map(model => <button key={model.id} type="button" onClick={() => onSelect(model.id)} aria-pressed={selected.id === model.id}>{model.name}</button>)}
-  </div>;
-}
-
 export default function FordHome3DMount() {
   const [target, setTarget] = useState(null);
   const targetRef = useRef(null);
