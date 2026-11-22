@@ -9,6 +9,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
   const resetViewRef = useRef(null);
   const controlsRef = useRef(null);
   const [modelReady, setModelReady] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
@@ -112,6 +113,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
         // The Mustang GLB uses EXT_meshopt_compression; register its decoder before parse().
         loader.setMeshoptDecoder(MeshoptDecoder);
         const assetUrl = new URL(modelPath, window.location.href);
+        setDownloadProgress(0);
         setStatus(`Downloading local ${modelName} model…`);
         const response = await fetch(assetUrl.href, { cache: "no-cache", signal: modelRequest.signal });
         if (!response.ok) {
@@ -132,6 +134,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
               const progress = contentLength > 0
                 ? ` ${Math.min(99, Math.round((received / contentLength) * 100))}%`
                 : ` ${(received / (1024 * 1024)).toFixed(1)} MB`;
+              setDownloadProgress(contentLength > 0 ? Math.min(99, Math.round((received / contentLength) * 100)) : null);
               setStatus(`Downloading local ${modelName} model…${progress}`);
             }
           }
@@ -146,6 +149,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
           modelBuffer = await response.arrayBuffer();
         }
         if (disposed) return;
+        setDownloadProgress(100);
         setStatus(`Preparing ${modelName} 3D model…`);
         if (modelBuffer.byteLength < 20) {
           throw new Error(`Model response is unexpectedly small (${modelBuffer.byteLength} bytes).`);
@@ -333,7 +337,7 @@ export default function FordGLBViewer({ modelPath = "/carmodel/models/ford-model
     <div className="ford-glb-viewer">
       <div ref={hostRef} className="ford-glb-stage" style={{ width: "100%", height: "min(76vh, 820px)", minHeight: "620px", position: "relative", overflow: "hidden" }} />
       <div className="ford-glb-controls" style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:"10px",padding:"10px 12px",background:"#202126",color:"#f7f5f3"}}>
-        <div className="ford-glb-status" role="status" style={{fontSize:"11px",lineHeight:1.5,flex:"1 1 180px",minWidth:0}}>{status}</div>
+        <div style={{flex:"1 1 180px",minWidth:0}}><div className="ford-glb-status" role="status" style={{fontSize:"11px",lineHeight:1.5}}>{status}</div>{!modelReady && !failed && <progress aria-label={`Loading ${modelName} 3D model`} max="100" value={downloadProgress ?? undefined} style={{display:"block",width:"100%",height:"4px",marginTop:"7px",accentColor:"#e56a2f"}} />}</div>
         <div style={{display:"flex",gap:"8px",flex:"0 1 auto",flexWrap:"wrap"}}><button type="button" onClick={() => { const next = !autoRotate; setAutoRotate(next); if (controlsRef.current) controlsRef.current.autoRotate = next; }} disabled={!modelReady || prefersReducedMotion} aria-pressed={autoRotate} aria-label={autoRotate?"Pause automatic model rotation":"Start automatic model rotation"} title={prefersReducedMotion?"Automatic rotation is disabled by your reduced-motion setting":undefined} style={{border:"1px solid #ffffff66",background:autoRotate?"#f7f5f3":"transparent",color:autoRotate?"#202126":"inherit",padding:"8px 12px",fontSize:"10px",fontWeight:700,cursor:modelReady&&!prefersReducedMotion?"pointer":"not-allowed",opacity:modelReady&&!prefersReducedMotion?1:0.5}}>{autoRotate?"Pause rotation":"Auto rotate"}</button><button type="button" onClick={() => resetViewRef.current?.()} disabled={!modelReady} aria-label="Reset the 3D model camera view" style={{border:"1px solid #ffffff66",background:"transparent",color:"inherit",padding:"8px 12px",fontSize:"10px",fontWeight:700,cursor:modelReady?"pointer":"not-allowed",opacity:modelReady?1:0.5}}>Reset view</button></div>
       </div>
       {failed && <p className="ford-glb-help">Check your internet connection and reload the page. The 3D asset is served from this project, not an external 360° service.</p>}
