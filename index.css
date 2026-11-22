@@ -1320,3 +1320,29 @@
     min-height: 260px;
   }
 }
+
+
+/* Keep the 3D stage the same usable width as the hero photograph. */
+.home-single-viewer {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+.home-single-viewer .ford-glb-stage {
+  width: 100% !important;
+}
+.home-model-picker {
+  flex-wrap: wrap;
+}
+.home-viewer-model-line {
+  min-width: 0;
+}
+.home-viewer-model-line strong {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .home-model-picker button {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}
