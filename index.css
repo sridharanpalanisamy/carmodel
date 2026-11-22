@@ -1511,3 +1511,115 @@
     margin-top: 5px;
   }
 }
+
+
+/* Model directory: keep primary vehicle navigation separate from tractor series. */
+.az-photo-collection .model-category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+  margin: 16px 0 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.az-photo-collection .model-category-filter button,
+.az-photo-collection .tractor-series-buttons button,
+.az-photo-collection .tractor-series-all {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 34px;
+  padding: 7px 11px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+  transition: background .18s ease, border-color .18s ease, color .18s ease;
+}
+.az-photo-collection .model-category-filter button:hover,
+.az-photo-collection .tractor-series-buttons button:hover,
+.az-photo-collection .tractor-series-all:hover {
+  border-color: var(--orange);
+}
+.az-photo-collection .model-category-filter button.is-active,
+.az-photo-collection .tractor-series-buttons button.is-active,
+.az-photo-collection .tractor-series-all.is-active {
+  border-color: var(--orange);
+  background: var(--orange);
+  color: #fff;
+}
+.tractor-series-panel {
+  margin: 12px 0 15px;
+  padding: 13px 14px 14px;
+  border: 1px solid var(--line);
+  background: rgba(128,128,128,.035);
+}
+.tractor-series-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 9px;
+}
+.tractor-series-heading > span:last-child {
+  color: var(--muted);
+  font-size: 9px;
+}
+.az-photo-collection .tractor-series-all {
+  width: 100%;
+  margin-bottom: 12px;
+  border-color: var(--orange);
+}
+.tractor-series-all span,
+.tractor-series-buttons button span {
+  color: inherit;
+  opacity: .68;
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+}
+.tractor-series-groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.tractor-series-group {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface, transparent);
+}
+.tractor-series-group h3 {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.tractor-series-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.az-photo-collection .tractor-series-buttons button {
+  min-height: 30px;
+  padding: 6px 8px;
+  font-size: 9px;
+}
+@media (max-width: 760px) {
+  .tractor-series-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  .az-photo-collection .model-category-filter { gap: 5px; }
+  .az-photo-collection .model-category-filter button { flex: 1 1 auto; justify-content: center; }
+  .tractor-series-panel { padding: 11px; }
+  .tractor-series-heading { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .tractor-series-groups { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .tractor-series-group { padding: 9px; }
+}
