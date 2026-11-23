@@ -55,7 +55,7 @@ Do not add footage unless it depicts the exact vehicle and the rights permit its
 - Intended local file: `public/models/ford-mustang-1967.glb`
 - Optimization: 4096px textures reduced to 2048px; opaque color maps encoded as JPEG; normal/data maps retained as PNG; mesh geometry unchanged.
 - Size: 52.64 MB original → 31.96 MB optimized.
-- Status: optimized and validated; awaiting addition of the binary to the repository.
+- Status: optimized and validated; locally hosted at `public/models/ford-mustang-1967.glb`.
 
 ## 1973 Ford Falcon GT — owner-supplied GLB
 
@@ -67,4 +67,4 @@ Do not add footage unless it depicts the exact vehicle and the rights permit its
 - Size: 84.06 MB original → 13.77 MB optimized.
 - Status: optimized and validated; awaiting addition of the binary to the repository.
 
-The optimized GLBs preserve the original mesh geometry and face counts. Reduced texture resolution is a deliberate loading-performance trade-off. Provide creator attribution and a link to the CC BY 4.0 source pages wherever the models are displayed.
+The Mustang GLB is now committed at `public/models/ford-mustang-1967.glb` and mirrored in `assets/360/` (15,822,600 bytes in the repository). The Falcon GT binary is not yet committed. The optimized GLBs preserve the original mesh geometry and face counts. Reduced texture resolution is a deliberate loading-performance trade-off. Provide creator attribution and a link to the CC BY 4.0 source pages wherever the models are displayed.

@@ -7,6 +7,7 @@ The showroom uses a locally hosted viewer. It does not embed Sketchfab or anothe
 | Vehicle | Local asset | Status |
 |---|---|---|
 | Ford Model T | `assets/360/model_t.blend` → `public/models/ford-model-t.glb` | Available; locally rendered interactive 3D model |
+| 1967 Ford Mustang Fastback | `assets/360/1967_ford_mustang_fastback_-_4096px2-compressed (1).glb` → `public/models/ford-mustang-1967.glb` | Available; locally rendered interactive 3D model (15.82 MB) |
 | Ford Model A | — | Free CC BY candidate found; download and inspect pending |
 | Ford V8 | — | Exact free Ford V8 car body not yet cleared |
 | Ford Deluxe Coupe | — | Exact free model not found; paid results excluded |
@@ -91,4 +92,4 @@ Two Ford-specific GLB files were supplied and inspected. Both are valid GLB 2.0 
 | 1967 Ford Mustang Fastback | Mark Peters · CC BY 4.0 | 52.64 MB | 31.96 MB | `public/models/ford-mustang-1967.glb` | Optimized; binary awaiting repository upload |
 | 1973 Ford Falcon GT | Tom Zimmermann · CC BY 4.0 | 84.06 MB | 13.77 MB | `public/models/ford-falcon-gt-1973.glb` | Optimized; binary awaiting repository upload |
 
-The homepage 3D selector is configured to detect these local files and reveal the matching model choices only when the files exist. This avoids broken model buttons before the binary assets are committed. Download the optimized package from the conversation and copy the two GLBs into `public/models/`; the local viewer will then expose them automatically. See `CREDITS.md` for creator links and optimization details.
+The homepage currently exposes the locally committed 1967 Mustang Fastback and Model T in its model picker. The 1967 Mustang GLB is present in both `assets/360/` and `public/models/` (15.82 MB). The 1973 Falcon GT GLB is not yet present in `public/models/`, so it remains unavailable in the picker until its binary is added. The viewer checks for that file before exposing the Falcon option. See `CREDITS.md` for creator links and optimization details.
