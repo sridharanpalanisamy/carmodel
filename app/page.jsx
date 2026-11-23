@@ -34,20 +34,20 @@ const markup = `<header class="site-header">
 </section>
 <div class="home-split-panels">
 <section class="home-milestones" aria-labelledby="homeMilestonesTitle">
-<div class="home-extra-heading"><div><span class="eyebrow">MILESTONES THAT MOVED THE WORLD</span><h2 id="homeMilestonesTitle">A legacy in <em>motion.</em></h2></div><p>Four moments that helped shape Ford's place in automotive history.</p></div>
+<div class="home-extra-heading"><div><span class="eyebrow">LOOK CLOSER</span><h2 id="homeMilestonesTitle">Details make the <em>difference.</em></h2></div><p>When viewing a classic, the character often lives in the details.</p></div>
 <div class="home-milestone-grid">
-<article><span class="home-milestone-year">1903</span><h3>A company begins</h3><p>Ford Motor Company is founded in Detroit, beginning a story of accessible mobility and industrial innovation.</p></article>
-<article><span class="home-milestone-year">1932</span><h3>The V8 arrives</h3><p>The flathead V8 brings accessible eight-cylinder performance to a new generation of drivers.</p></article>
-<article><span class="home-milestone-year">1964</span><h3>A new kind of icon</h3><p>The Mustang debuts and gives birth to a car that becomes a lasting symbol of personal freedom.</p></article>
-<article><span class="home-milestone-year">1966</span><h3>Racing history</h3><p>Ford takes its first overall 24 Hours of Le Mans victory with the GT40, marking a defining motorsport moment.</p></article>
+<article><span class="home-milestone-year">01</span><h3>Body proportions</h3><p>Notice the balance between bonnet, cabin and rear body. Small changes define each model's personality.</p></article>
+<article><span class="home-milestone-year">02</span><h3>Signature profile</h3><p>Roofline, grille shape and wheel placement help distinguish one generation from another.</p></article>
+<article><span class="home-milestone-year">03</span><h3>Interior character</h3><p>Dashboard layout, materials and controls reveal the priorities of the era in which a car was made.</p></article>
+<article><span class="home-milestone-year">04</span><h3>Mechanical details</h3><p>Engine layout, suspension design and drivetrain choices explain how a vehicle was intended to be used.</p></article>
 </div>
 </section>
 <section class="home-discover" aria-labelledby="homeDiscoverTitle">
-<div class="home-extra-heading"><div><span class="eyebrow">GO BEYOND THE DRIVE</span><h2 id="homeDiscoverTitle">Discover what makes <em>Ford.</em></h2></div><p>Explore the machines, stories and engineering behind more than a century of automotive history.</p></div>
+<div class="home-extra-heading"><div><span class="eyebrow">A SMARTER WAY TO APPRECIATE A CLASSIC</span><h2 id="homeDiscoverTitle">What to check <em>before you choose.</em></h2></div><p>A few practical checks can help you understand a classic vehicle beyond its appearance.</p></div>
 <div class="home-discover-grid">
-<a href="/carmodel/models/"><span class="home-discover-index">01 / THE COLLECTION</span><strong>Explore the models <span>↗</span></strong><small>Meet the classics, from early pioneers to performance legends.</small></a>
-<a href="/carmodel/heritage/"><span class="home-discover-index">02 / THE STORY</span><strong>Explore the heritage <span>↗</span></strong><small>Follow the milestones, ideas and people that shaped the journey.</small></a>
-<a href="/carmodel/contact/"><span class="home-discover-index">03 / GET IN TOUCH</span><strong>Connect with us <span>↗</span></strong><small>Share your interest in classic Ford vehicles and their history.</small></a>
+<div><span class="home-discover-index">01 / CONDITION</span><strong>Look beyond the shine</strong><small>Check panel alignment, corrosion-prone areas, underbody condition and signs of previous repairs.</small></div>
+<div><span class="home-discover-index">02 / ORIGINALITY</span><strong>Understand what is original</strong><small>Compare key components, trim, engine details and finishes with the correct model-year specification.</small></div>
+<div><span class="home-discover-index">03 / HISTORY</span><strong>Ask for its story</strong><small>Service records, ownership documents and restoration photographs help build a clearer picture.</small></div>
 </div>
 </section>
 </div>
