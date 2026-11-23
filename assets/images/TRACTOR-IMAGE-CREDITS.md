@@ -182,6 +182,15 @@ This file records verified third-party tractor photographs used by the model dir
 - Changes: Displayed as supplied; no edits made.
 - Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/Ford_601_Workmaster_tractor_-_Food_and_Agriculture_Museum_-_Setagaya,_Tokyo,_Japan_-_DSC09686.jpg`
 
+## Ford 641 Workmaster
+
+- File: [1956 Ford 641 "Workmaster" (27921854792).jpg](https://commons.wikimedia.org/wiki/File:1956_Ford_641_%22Workmaster%22_(27921854792).jpg)
+- Creator: Don O'Brien (Flickr: dok1)
+- Depiction: 1956 Ford 641 Workmaster photographed at the Fifth Annual Antique Tractor and Machinery Show, Pike County Fairgrounds, Piketon, Ohio.
+- Licence: [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/)
+- Changes: Displayed as supplied; no edits made.
+- Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/1956_Ford_641_%22Workmaster%22_(27921854792).jpg`
+
 ## Review rule
 
 Only assign a photograph to a model when its source page identifies that exact model or the depicted tractor can be confidently verified. Do not substitute a related model, a generic tractor, or an AI-generated approximation. Check the source page for current licensing and attribution requirements before changing or redistributing an image.
