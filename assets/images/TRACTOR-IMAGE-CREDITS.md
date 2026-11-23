@@ -56,6 +56,24 @@ This file records verified third-party tractor photographs used by the model dir
 - Changes: Displayed as supplied; no edits made.
 - Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/Fordson_Power_Major_1960.jpg`
 
+## Fordson Major (New Major E1A)
+
+- File: [Fordson Major.jpg](https://commons.wikimedia.org/wiki/File:Fordson_Major.jpg)
+- Creator: Mulad
+- Depiction: Fordson Major tractor; the Commons page categorises it under Fordson New Major E1.
+- Licence: [Creative Commons Attribution 2.0 (CC BY 2.0)](https://creativecommons.org/licenses/by/2.0/)
+- Changes: Displayed as supplied; no edits made.
+- Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/Fordson_Major.jpg`
+
+## Fordson E27N Major
+
+- File: [Fordson major E27N, 1945-1951.jpg](https://commons.wikimedia.org/wiki/File:Fordson_major_E27N,_1945-1951.jpg)
+- Creator: Axel Pettersson
+- Depiction: Fordson Major E27N, 1945–1951.
+- Licence: [Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/)
+- Changes: Displayed as supplied; no edits made.
+- Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/Fordson_major_E27N,_1945-1951.jpg`
+
 ## Review rule
 
 Only assign a photograph to a model when its source page identifies that exact model or the depicted tractor can be confidently verified. Do not substitute a related model, a generic tractor, or an AI-generated approximation. Check the source page for current licensing and attribution requirements before changing or redistributing an image.
