@@ -47,6 +47,15 @@ This file records verified third-party tractor photographs used by the model dir
 - Changes: Displayed as supplied; no edits made.
 - Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/Fordson_super_major.jpg`
 
+## Fordson Power Major
+
+- File: [Fordson Power Major 1960.jpg](https://commons.wikimedia.org/wiki/File:Fordson_Power_Major_1960.jpg)
+- Creator: Johannes Hufnagl (Wikimedia username: Bobundsam)
+- Depiction: 1960 Fordson Power Major.
+- Licence: [Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0)](https://creativecommons.org/licenses/by-sa/3.0/)
+- Changes: Displayed as supplied; no edits made.
+- Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/Fordson_Power_Major_1960.jpg`
+
 ## Review rule
 
 Only assign a photograph to a model when its source page identifies that exact model or the depicted tractor can be confidently verified. Do not substitute a related model, a generic tractor, or an AI-generated approximation. Check the source page for current licensing and attribution requirements before changing or redistributing an image.
