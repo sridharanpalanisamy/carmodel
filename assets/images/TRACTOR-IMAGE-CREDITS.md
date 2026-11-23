@@ -128,6 +128,15 @@ This file records verified third-party tractor photographs used by the model dir
 - Changes: Displayed as supplied; no edits made.
 - Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/Trator_Ford_600_-_1955_02.jpg`
 
+## Ford 801 Powermaster
+
+- File: [Ford 801 tractor PA3.jpg](https://commons.wikimedia.org/wiki/File:Ford_801_tractor_PA3.jpg)
+- Creator: Acroterion
+- Depiction: 1960 Ford 801 tractor, photographed in Chambersburg, Pennsylvania, USA.
+- Licence: [Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/)
+- Changes: Displayed as supplied; no edits made.
+- Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/Ford_801_tractor_PA3.jpg`
+
 ## Review rule
 
 Only assign a photograph to a model when its source page identifies that exact model or the depicted tractor can be confidently verified. Do not substitute a related model, a generic tractor, or an AI-generated approximation. Check the source page for current licensing and attribution requirements before changing or redistributing an image.
