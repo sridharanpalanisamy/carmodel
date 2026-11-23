@@ -173,6 +173,15 @@ This file records verified third-party tractor photographs used by the model dir
 - Changes: Displayed as supplied; no edits made.
 - Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/1959_Ford_871_Gold_Select-O-Speed_Tractor_-_Flickr_-_dave_7.jpg`
 
+## Ford 601 Workmaster
+
+- File: [Ford 601 Workmaster tractor - Food and Agriculture Museum - Setagaya, Tokyo, Japan - DSC09686.jpg](https://commons.wikimedia.org/wiki/File:Ford_601_Workmaster_tractor_-_Food_and_Agriculture_Museum_-_Setagaya,_Tokyo,_Japan_-_DSC09686.jpg)
+- Creator: Daderot
+- Depiction: Ford 601 Workmaster displayed at the Food and Agriculture Museum in Setagaya, Tokyo, Japan.
+- Licence: [CC0 1.0 Universal](https://creativecommons.org/publicdomain/zero/1.0/)
+- Changes: Displayed as supplied; no edits made.
+- Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/Ford_601_Workmaster_tractor_-_Food_and_Agriculture_Museum_-_Setagaya,_Tokyo,_Japan_-_DSC09686.jpg`
+
 ## Review rule
 
 Only assign a photograph to a model when its source page identifies that exact model or the depicted tractor can be confidently verified. Do not substitute a related model, a generic tractor, or an AI-generated approximation. Check the source page for current licensing and attribution requirements before changing or redistributing an image.
