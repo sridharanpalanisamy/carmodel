@@ -1709,3 +1709,81 @@
 .home-discover-grid a,.home-discover-grid a+a,.home-discover-grid a:last-child{padding:12px 0;border-right:0;border-bottom:1px solid var(--line)}
 .home-discover-grid a:last-child{border-bottom:0}
 }
+
+
+/* Homepage lower feature area: two balanced panels, side by side. */
+.home-split-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(20px, 3vw, 38px);
+  align-items: stretch;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.home-split-panels > .home-milestones,
+.home-split-panels > .home-discover {
+  min-width: 0;
+  padding: 20px 0;
+  border-top: 0;
+  border-bottom: 0;
+}
+.home-split-panels > .home-milestones {
+  padding-right: clamp(14px, 2vw, 26px);
+  border-right: 1px solid var(--line);
+}
+.home-split-panels > .home-discover {
+  padding-left: clamp(0px, .5vw, 8px);
+}
+.home-split-panels .home-extra-heading {
+  display: block;
+  margin-bottom: 13px;
+}
+.home-split-panels .home-extra-heading > p {
+  margin-top: 8px;
+}
+.home-split-panels .home-milestone-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-bottom: 0;
+}
+.home-split-panels .home-milestone-grid article {
+  padding: 11px 10px;
+  border-bottom: 1px solid var(--line);
+}
+.home-split-panels .home-milestone-grid article:nth-child(2) {
+  border-right: 0;
+}
+.home-split-panels .home-milestone-grid article:nth-child(3) {
+  padding-left: 0;
+  border-bottom: 0;
+}
+.home-split-panels .home-milestone-grid article:nth-child(4) {
+  border-bottom: 0;
+}
+.home-split-panels .home-discover-grid {
+  grid-template-columns: minmax(0, 1fr);
+  border-bottom: 0;
+}
+.home-split-panels .home-discover-grid a,
+.home-split-panels .home-discover-grid a+a,
+.home-split-panels .home-discover-grid a:last-child {
+  padding: 10px 0;
+  border-right: 0;
+  border-bottom: 1px solid var(--line);
+}
+.home-split-panels .home-discover-grid a:last-child {
+  border-bottom: 0;
+}
+@media (max-width: 760px) {
+  .home-split-panels {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .home-split-panels > .home-milestones {
+    padding-right: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .home-split-panels > .home-discover {
+    padding-left: 0;
+  }
+}
