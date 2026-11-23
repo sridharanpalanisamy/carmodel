@@ -92,6 +92,15 @@ This file records verified third-party tractor photographs used by the model dir
 - Changes: Displayed as supplied; no edits made.
 - Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/1957_Fordson_Major_E1A_tractor_-_geograph.org.uk_-_5498004.jpg`
 
+## Fordson New Major
+
+- File: [Fordson Major tractor, east of Tolleshunt d'Arcy.jpg](https://commons.wikimedia.org/wiki/File:Fordson_Major_tractor,_east_of_Tolleshunt_d%27Arcy.jpg)
+- Creator: Rwendland
+- Depiction: Fordson Major, also called Fordson New Major, probably built 1952–1958.
+- Licence: [Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0)](https://creativecommons.org/licenses/by-sa/3.0/)
+- Changes: Displayed as supplied; no edits made.
+- Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/Fordson_Major_tractor,_east_of_Tolleshunt_d%27Arcy.jpg`
+
 ## Review rule
 
 Only assign a photograph to a model when its source page identifies that exact model or the depicted tractor can be confidently verified. Do not substitute a related model, a generic tractor, or an AI-generated approximation. Check the source page for current licensing and attribution requirements before changing or redistributing an image.
