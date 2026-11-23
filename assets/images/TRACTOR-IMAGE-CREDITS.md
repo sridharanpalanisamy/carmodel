@@ -191,6 +191,15 @@ This file records verified third-party tractor photographs used by the model dir
 - Changes: Displayed as supplied; no edits made.
 - Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/1956_Ford_641_%22Workmaster%22_(27921854792).jpg`
 
+## Ford 900
+
+- File: [Ford 900 tractor PA3.jpg](https://commons.wikimedia.org/wiki/File:Ford_900_tractor_PA3.jpg)
+- Creator: Acroterion
+- Depiction: 1956 Ford 900 tractor, photographed in Chambersburg, Pennsylvania, USA, on 13 August 2022.
+- Licence: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+- Changes: Displayed as supplied; no edits made.
+- Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/Ford_900_tractor_PA3.jpg`
+
 ## Review rule
 
 Only assign a photograph to a model when its source page identifies that exact model or the depicted tractor can be confidently verified. Do not substitute a related model, a generic tractor, or an AI-generated approximation. Check the source page for current licensing and attribution requirements before changing or redistributing an image.
