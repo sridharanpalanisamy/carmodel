@@ -263,6 +263,7 @@ export default function ModelDirectory() {
   const [category, setCategory] = useState("All vehicles");
   const [tractorSeries, setTractorSeries] = useState("All tractor series");
   const [selected, setSelected] = useState("");
+  const [failedImages, setFailedImages] = useState(() => new Set());
 
   useEffect(() => {
     setMount(document.body);
@@ -309,8 +310,8 @@ export default function ModelDirectory() {
       <div className="az-grid az-photo-grid az-photo-grid-upgraded">
         {filteredModels.map((model,index)=>(
           <article className={"az-card az-photo-card az-photo-card-upgraded "+(selected===model.name?"is-selected":"")} key={model.name}>
-            <div className={"az-photo-frame"+(!model.image?" is-image-missing":"")}>
-                {model.image?<img src={model.image.startsWith("http")?model.image:"/carmodel/assets/images/"+model.image} alt={"Ford "+model.name+" — "+model.years} loading={index<3?"eager":"lazy"} onError={event=>{event.currentTarget.style.display="none";event.currentTarget.parentElement.classList.add("is-image-missing");}}/>:<div className="az-photo-placeholder" aria-label={"Photograph unavailable for Ford "+model.name}><span className="az-placeholder-mark">FORD</span><strong>{model.name}</strong><span>ARCHIVE IMAGE UNAVAILABLE</span></div>}
+            <div className={"az-photo-frame"+(!model.image||failedImages.has(model.name)?" is-image-missing":"")}>
+                {model.image&&!failedImages.has(model.name)?<img src={model.image.startsWith("http")?model.image:"/carmodel/assets/images/"+model.image} alt={"Ford "+model.name+" — "+model.years} loading={index<3?"eager":"lazy"} onError={()=>setFailedImages(previous=>{const next=new Set(previous);next.add(model.name);return next;})}/>:<div className="az-photo-placeholder" aria-label={"Photograph unavailable for Ford "+model.name}><span className="az-placeholder-mark">FORD</span><strong>{model.name}</strong><span>{failedImages.has(model.name)?"IMAGE COULD NOT BE LOADED":"ARCHIVE IMAGE UNAVAILABLE"}</span></div>}
                 <span className="az-photo-number">0{categorizedModels.indexOf(model)+1}</span><span className="az-photo-type">{model.category} · {model.type}</span>
               </div>
             <div className="az-card-copy">
