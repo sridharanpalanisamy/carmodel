@@ -164,6 +164,15 @@ This file records verified third-party tractor photographs used by the model dir
 - Changes: Displayed as supplied; no edits made.
 - Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/Ford_5000_Tractor.jpg`
 
+## Ford 800 family – 1959 Ford 871 variant
+
+- File: [1959 Ford 871 Gold Select-O-Speed Tractor - Flickr - dave 7.jpg](https://commons.wikimedia.org/wiki/File:1959_Ford_871_Gold_Select-O-Speed_Tractor_-_Flickr_-_dave_7.jpg)
+- Creator: dave_7 (Canada)
+- Depiction: 1959 Ford 871 Gold Select-O-Speed tractor; one of 100 gold dealer demonstrators used to promote the 10-speed Select-O-Speed transmission.
+- Licence: [Creative Commons Attribution 2.0 (CC BY 2.0)](https://creativecommons.org/licenses/by/2.0/)
+- Changes: Displayed as supplied; no edits made.
+- Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/1959_Ford_871_Gold_Select-O-Speed_Tractor_-_Flickr_-_dave_7.jpg`
+
 ## Review rule
 
 Only assign a photograph to a model when its source page identifies that exact model or the depicted tractor can be confidently verified. Do not substitute a related model, a generic tractor, or an AI-generated approximation. Check the source page for current licensing and attribution requirements before changing or redistributing an image.
