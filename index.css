@@ -1542,6 +1542,21 @@
   cursor: pointer;
   transition: background .18s ease, border-color .18s ease, color .18s ease;
 }
+.az-photo-collection .model-category-filter button small {
+  min-width: 18px;
+  padding: 2px 5px;
+  border-radius: 2px;
+  background: rgba(128,128,128,.12);
+  color: inherit;
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  opacity: .78;
+}
+.az-photo-collection .model-category-filter button.is-active small {
+  background: rgba(255,255,255,.2);
+  opacity: 1;
+}
 .az-photo-collection .model-category-filter button:hover,
 .az-photo-collection .tractor-series-buttons button:hover,
 .az-photo-collection .tractor-series-all:hover {
