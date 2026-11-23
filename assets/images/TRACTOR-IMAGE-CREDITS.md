@@ -101,6 +101,15 @@ This file records verified third-party tractor photographs used by the model dir
 - Changes: Displayed as supplied; no edits made.
 - Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/Fordson_Major_tractor,_east_of_Tolleshunt_d%27Arcy.jpg`
 
+## Fordson Diesel Major
+
+- File: [Fordson Major Diesel.jpg](https://commons.wikimedia.org/wiki/File:Fordson_Major_Diesel.jpg)
+- Creator: Calreyn88
+- Depiction: Fordson Major Diesel, photographed on 2 June 2024.
+- Licence: [Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/)
+- Changes: Displayed as supplied; no edits made.
+- Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/Fordson_Major_Diesel.jpg`
+
 ## Review rule
 
 Only assign a photograph to a model when its source page identifies that exact model or the depicted tractor can be confidently verified. Do not substitute a related model, a generic tractor, or an AI-generated approximation. Check the source page for current licensing and attribution requirements before changing or redistributing an image.
