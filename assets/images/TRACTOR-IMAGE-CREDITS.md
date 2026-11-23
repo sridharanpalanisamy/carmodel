@@ -38,6 +38,15 @@ This file records verified third-party tractor photographs used by the model dir
 - Changes: Displayed as supplied; no edits made.
 - Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/Ford_2N_tractor_PA2.jpg`
 
+## Fordson Super Major
+
+- File: [Fordson super major.jpg](https://commons.wikimedia.org/wiki/File:Fordson_super_major.jpg)
+- Creator: Joost J. Bakker (IJmuiden)
+- Depiction: Fordson Super Major tractor from the early 1960s, shown with a rear backhoe attachment.
+- Licence: [Creative Commons Attribution 2.0 (CC BY 2.0)](https://creativecommons.org/licenses/by/2.0/)
+- Changes: Displayed as supplied; no edits made.
+- Image URL used by the site: `https://commons.wikimedia.org/wiki/Special:FilePath/Fordson_super_major.jpg`
+
 ## Review rule
 
 Only assign a photograph to a model when its source page identifies that exact model or the depicted tractor can be confidently verified. Do not substitute a related model, a generic tractor, or an AI-generated approximation. Check the source page for current licensing and attribution requirements before changing or redistributing an image.
